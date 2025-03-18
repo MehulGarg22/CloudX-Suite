@@ -6,7 +6,7 @@ body{
 .loginNavbar{
     color: black;
     overflow: hidden;
-    background: linear-gradient(to right, #007074, #034C53);
+    background: linear-gradient(to right, #a51d4a, #020024);
     position: relative;
     top:0;
     display: flex;

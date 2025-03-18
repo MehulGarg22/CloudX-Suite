@@ -4,15 +4,41 @@ import { AuthContext } from "../loginAuth/authContext";
 import { useLocation } from "react-router-dom";
 import {UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import {Menu, Divider} from "@aws-amplify/ui-react";
-// import {Tooltip} from "antd";
+import {Tooltip} from "antd";
+import { FaUserPlus } from "react-icons/fa6";
 
 export default function Navbar(){
     const {user, signOut}=useContext(AuthContext);
 
     const location=useLocation();
+    const handleSignup=()=>{
+
+    }
 
     return(
         <nav className="loginNavbar"> 
+            {
+                location.pathname ==="/" && (
+                <div
+                    onClick={handleSignup}
+                    style={{
+                        paddingTop:'5px',
+                        color:'white',
+                        cursor:'pointer',
+                        fontSize:'25px',
+                        textAlign:'center',
+                        marginLeft:'95%',
+                        marginTop:'5px',
+                        borderRadius:'70px', 
+                        marginBottom:'14px'
+                    }}
+                >
+                    <Tooltip title="New here? Sign up to enjoy full functionality and save your work." placement="bottom">
+                        <FaUserPlus  />
+                    </Tooltip>
+                </div>
+                )
+            }
             {
                 location.pathname !=="/" && (
                     <Menu

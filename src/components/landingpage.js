@@ -7,8 +7,8 @@ import { AuthContext } from "./loginAuth/authContext";
 import './landingpage.css';
 import Footer from "./footer/footer";
 import { IoMdInformationCircleOutline } from "react-icons/io";
-
-import { Tooltip } from "@material-tailwind/react";
+import { Tooltip, Input } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
@@ -33,15 +33,10 @@ export default function LandingPage() {
     }
   };
 
-  const handleGuestLogin=async(e)=>{
-    try {
-      await signIn("guestuser@gmail.com", "Test@123");
-      setLoading(false);
-      // Redirect to the app's main page or dashboard
-    } catch (err) {
-      console.log(err.message);
-      alert("Email or password is incorrect")
-    }
+  const handleGuest=(e)=>{
+    setUsername("guestuser@cloudxsuite.com")
+    setPassword("Test@123")
+    e.preventDefault()
   }
 
   if (user) {
@@ -51,13 +46,13 @@ export default function LandingPage() {
 
 
   return (
-    <div style={{ overflowX: "hidden",minHeight:'100vh', backgroundColor:'#EBE8DB', height:'100%', width: "100%" }}>
-      <div style={{ display: "flex", backgroundColor:'white', borderRadius:'30px', marginLeft:'30px', marginRight:'30px', marginTop:'5%', height:'500px', boxShadow: '0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%)'}}>
+    <div style={{ overflowX: "hidden", minHeight:'91.5vh', backgroundColor:'#EBE8DB', height:'100%', width: "100%" }}>
+      <div style={{ display: "flex", backgroundColor:'white', borderRadius:'30px', marginLeft:'30px', marginRight:'30px', marginTop:'3%', height:'500px', boxShadow: '0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%)'}}>
         <div
           style={{
             width: "50%",
             textAlign: "justify",
-            marginLeft: "20px",
+            marginLeft: "60px",
             marginTop: "2%",
             marginRight: "20px",
             fontSize: "20px",
@@ -89,25 +84,30 @@ export default function LandingPage() {
               <span style={{ fontSize: "30px", marginRight:'1%', color:'#a51d4a' }}>
                 <FaUserTie  />
               </span>
-              <input
+              <Input
                 className="input-field"
                 type="text"
                 width={400}
                 placeholder="Email ID"
                 name="usrnm"
+                value={username}
                 required
                 onChange={(event) => {
                   setUsername(event.target.value);
                 }}
               />
-              <IoMdInformationCircleOutline/>
+              <Tooltip placement="top" title="Enter Email ID" >
+                <span style={{cursor:'pointer', marginTop:'10px', marginLeft:'10px',fontSize:'20px'}}>
+                  <IoMdInformationCircleOutline/>
+                </span>
+              </Tooltip>
             </div>
             <br/>
             <div className="input-container">
               <span style={{ fontSize: "30px", color:'#a51d4a' }}>
                 <TbPasswordUser  />
               </span>
-              <input
+              <Input.Password
                 style={{ marginLeft: "2%" }}
                 className="input-field"
                 type="password"
@@ -117,7 +117,7 @@ export default function LandingPage() {
                 required
                 onChange={(event) => setPassword(event.target.value)}
               />
-              <Tooltip content="Material Tailwind" >
+              <Tooltip placement="top" title="Enter Password" >
                 <span style={{cursor:'pointer', marginTop:'10px', marginLeft:'10px',fontSize:'20px'}}>
                   <IoMdInformationCircleOutline/>
                 </span>
@@ -128,16 +128,19 @@ export default function LandingPage() {
                 <button type="submit" className="button-17" style={{marginRight:'10px'}}>
                   Login
                 </button>
-                {/* <Tooltip content="Material Tailwind"> */}
-                    <button onClick={handleGuestLogin} className="button-17">
-                      Guest login
-                    </button>
-                {/* </Tooltip> */}
+                <button onClick={handleGuest} className="button-17">
+                  Guest login
+                  <Tooltip placement="bottom" title="Try the app as a guest! Auto-filled credentials, full access requires sign-up." >
+                    <span style={{cursor:'pointer', marginTop:'3px', marginLeft:'10px',fontSize:'20px'}}>
+                      <IoMdInformationCircleOutline/>
+                    </span>
+                  </Tooltip>
+                </button>
             </div>
           </form>
         </div>
       </div>
-      <div style={{marginTop:'6%'}}>
+      <div style={{marginTop:'4%'}}>
         <Footer/>
       </div>
     </div>
