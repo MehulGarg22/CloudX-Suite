@@ -17,28 +17,7 @@ export default function Navbar(){
 
     return(
         <nav className="loginNavbar"> 
-            {
-                location.pathname ==="/" && (
-                <div
-                    onClick={handleSignup}
-                    style={{
-                        paddingTop:'5px',
-                        color:'white',
-                        cursor:'pointer',
-                        fontSize:'25px',
-                        textAlign:'center',
-                        marginLeft:'95%',
-                        marginTop:'5px',
-                        borderRadius:'70px', 
-                        marginBottom:'14px'
-                    }}
-                >
-                    <Tooltip title="New here? Sign up to enjoy full functionality and save your work." placement="bottom">
-                        <FaUserPlus  />
-                    </Tooltip>
-                </div>
-                )
-            }
+
             {
                 location.pathname !=="/" && (
                     <Menu
