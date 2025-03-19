@@ -4,7 +4,6 @@ import {
     AuthenticationDetails,
   } from "amazon-cognito-identity-js"
   import { cognitoConfig } from "./cognitoConfig"
-  import { Navigate, useNavigate } from "react-router-dom";
 
   const userPool = new CognitoUserPool({
     UserPoolId: cognitoConfig.UserPoolId,

@@ -7,8 +7,8 @@ import { AuthContext } from "./loginAuth/authContext";
 import './landingpage.css';
 import Footer from "./footer/footer";
 import { IoMdInformationCircleOutline } from "react-icons/io";
-import { Tooltip, Input } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { Tooltip, Input, Modal, Button, ConfigProvider, notification, Form, } from "antd";
+import { EyeTwoTone } from '@ant-design/icons';
 import { FaUserPlus } from "react-icons/fa6";
 import logo from '../assets/cloudxsuite_logo.png'
 
@@ -16,14 +16,17 @@ import logo from '../assets/cloudxsuite_logo.png'
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
-  const [userType, setUserType] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [ newPassword, setNewPassword] = useState("");
+  const [ confirmPassword, setConfirmPassword] = useState("");
   let navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
-  const { user, signIn } = useContext(AuthContext);
-  const handleSignup=()=>{
+  const { user, signIn, signUp } = useContext(AuthContext);
 
-  }
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -44,11 +47,78 @@ export default function LandingPage() {
     e.preventDefault()
   }
 
+
+  const handleSignup=()=>{
+    setIsModalOpen(true);
+  }
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const openNotificationWithIcon = (type) => {
+    if(type=='success'){
+      api[type]({
+        message: 'Signup Successful!',
+        description:
+          'Welcome to CloudX Suite! You can now log in and explore.',
+        showProgress: true,
+        pauseOnHover:true,
+      });
+    }
+    else{
+      api[type]({
+        message: 'Signup Failed',
+        description:
+          'An unexpected error occurred. Please try again later.',
+        showProgress: true,
+        pauseOnHover:true,
+      });
+    }
+  };
+
+  const handleSignupSubmit = async(e) => {
+    e.preventDefault();
+    console.log("Signup", email, newPassword, confirmPassword)
+    setLoading(true);
+    try {
+      await signUp(username, password);
+      openNotificationWithIcon('success')
+    } catch (err) {
+      console.log(err.message);
+      openNotificationWithIcon('error')
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+
   if (user) {
     // Redirect to the profile page
     return <Navigate to="/dashboard" />;
   }
-
+  const formItemLayout = {
+    labelCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 8,
+      },
+    },
+    wrapperCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 16,
+      },
+    },
+  };
+  
 
   return (
     <div>
@@ -76,8 +146,124 @@ export default function LandingPage() {
             }}
         >
             <Tooltip title="New here? Sign up to enjoy full functionality and save your work." placement="bottom">
-                <FaUserPlus  />
+                <span onClick={handleSignup}>
+                  <FaUserPlus  />
+                </span>
             </Tooltip>
+        </div>
+        <div>
+        {contextHolder}
+          <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
+            footer={[
+              <ConfigProvider
+                theme={{                                                    // To change color of antd buttons
+                  token: {
+                    colorPrimary: '#a51d4a',
+                    borderRadius: 6,
+                    colorBgContainer: 'white',
+                  },
+                }}
+              >
+                <Button type="primary" loading={loading} onClick={handleSignupSubmit}>
+                  Submit
+                </Button>
+              </ConfigProvider>
+            ]}
+          >
+            <div style={{textAlign:'center', fontSize:'20px', fontWeight:'bold'}}>Create Account</div> <br/>
+            <Form
+             {...formItemLayout}
+              form={form}
+              onFinish={handleSignupSubmit}
+              name="register"
+            >
+              
+              <Form.Item
+                name="email"
+                label="E-mail"
+                rules={[
+                  {
+                    type: 'email',
+                    message: 'The input is not valid E-mail!',
+                  },
+                  {
+                    required: true,
+                    message: 'Please input your E-mail!',
+                  },
+                ]}
+              >
+                <div style={{display:'flex'}}>                  
+                  <Input 
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                    }}
+                  />
+                  <Tooltip placement="top" title="Enter Email ID" >
+                    <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
+                      <IoMdInformationCircleOutline/>
+                    </span>
+                  </Tooltip>
+                </div>
+              </Form.Item>
+              <Form.Item
+                  name="password"
+                  label="Password"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please input your password!',
+                    },
+                  ]}
+                  hasFeedback
+              >
+                <div style={{display:'flex'}}>
+                  <Input.Password
+                      onChange={(event) => {
+                        setNewPassword(event.target.value);
+                      }}
+                  />
+                  <Tooltip placement="top" title="Enter password" >
+                    <span style={{cursor:'pointer',  marginLeft:'10px',fontSize:'20px'}}>
+                      <IoMdInformationCircleOutline/>
+                    </span>
+                  </Tooltip>
+                </div>
+              </Form.Item>
+
+              <Form.Item
+                name="confirm"
+                label="Confirm Password"
+                dependencies={['password']}
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please confirm your password!',
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('password') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('The new password that you entered do not match!'));
+                    },
+                  }),
+                ]}
+              >
+                <div style={{display:'flex'}}>
+                  <Input.Password  onChange={(event) => {
+                    setConfirmPassword(event.target.value);
+                  }}/>
+                  <Tooltip placement="top" title="Please re-enter your password!" >
+                    <span style={{cursor:'pointer',  marginLeft:'10px',fontSize:'20px'}}>
+                      <IoMdInformationCircleOutline/>
+                    </span>
+                  </Tooltip>
+                </div>
+              </Form.Item>
+
+            </Form>
+          </Modal>
         </div>
       </div>
       <div style={{ overflowX: "hidden", minHeight:'91.5vh', backgroundColor:'#EBE8DB', height:'100%', width: "100%" }}>
