@@ -20,7 +20,6 @@ export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [ newPassword, setNewPassword] = useState("");
   const [ confirmPassword, setConfirmPassword] = useState("");
-  let navigate = useNavigate();
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [api, contextHolder] = notification.useNotification();
@@ -82,10 +81,11 @@ export default function LandingPage() {
     console.log("Signup", email, newPassword, confirmPassword)
     setLoading(true);
     try {
-      await signUp(username, password);
+      const result = await signUp(email, newPassword, 'Guest User');
       openNotificationWithIcon('success')
-    } catch (err) {
-      console.log(err.message);
+      console.log('Signup successful:', result);
+    } catch (error) {
+      console.error('Signup error:', error);
       openNotificationWithIcon('error')
     }
     setIsModalOpen(false);
@@ -264,6 +264,7 @@ export default function LandingPage() {
 
             </Form>
           </Modal>
+          
         </div>
       </div>
       <div style={{ overflowX: "hidden", minHeight:'91.5vh', backgroundColor:'#EBE8DB', height:'100%', width: "100%" }}>

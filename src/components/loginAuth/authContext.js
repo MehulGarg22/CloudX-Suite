@@ -33,15 +33,17 @@ function AuthProvider({ children }) {
     setUser(null)
   }
   const signUp = async (username, password) => {
-    await auth.signIn(username, password)
+    await auth.signUp(username, password)
     await getCurrentUser()
   }
+  
 
   const authValue = {
     user,
     isLoading,
     signIn,
     signOut,
+    signUp
   }
 
   return (

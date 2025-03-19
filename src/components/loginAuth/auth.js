@@ -1,6 +1,7 @@
 import {
     CognitoUserPool,
     CognitoUser,
+    CognitoUserAttribute ,
     AuthenticationDetails,
   } from "amazon-cognito-identity-js"
   import { cognitoConfig } from "./cognitoConfig"
@@ -11,23 +12,34 @@ import {
   })
 
   
-  export function signUp(username, email, password) {
+  export function signUp(email, password, profile = "Guest User") {
     return new Promise((resolve, reject) => {
-        userPool.signUp(
-          username,
-          password,
-          [{ Name: "email", Value: email }],
-          null,
-          (err, result) => {
-            if (err) {
-              reject(err)
-              return
-            }
-            resolve(result.user)
-          }
-        )
-      })
+      const attributeList = [];
+  
+      const emailAttribute = new CognitoUserAttribute({
+        Name: 'email',
+        Value: email,
+      });
+      attributeList.push(emailAttribute);
+  
+      if (profile) {
+        const profileAttribute = new CognitoUserAttribute({
+          Name: 'profile', // Ensure this matches your Cognito attribute name
+          Value: profile,
+        });
+        attributeList.push(profileAttribute);
+      }
+  
+      userPool.signUp(email, password, attributeList, null, (result, err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(result);
+      });
+    });
   }
+  
 
   export function signIn(username, password) {
     return new Promise((resolve, reject) => {
