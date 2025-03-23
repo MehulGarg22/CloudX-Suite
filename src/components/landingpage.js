@@ -15,6 +15,7 @@ import logo from '../assets/cloudxsuite_logo.png'
 
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -26,17 +27,68 @@ export default function LandingPage() {
 
   const { user, signIn, signUp } = useContext(AuthContext);
 
+  const [isValid, setIsValid] = useState(true);
+
+  const passwordPolicy = {
+    minLength: 8,
+    hasUppercase: true,
+    hasLowercase: true,
+    hasNumber: true,
+    hasSymbol: true,
+  };
+
+  const validatePassword = (_, value) => {
+    if (!value) {
+      setIsValid(true); // Don't show error if field is empty
+      return Promise.resolve();
+    }
+
+    const { minLength, hasUppercase, hasLowercase, hasNumber, hasSymbol } = passwordPolicy;
+
+    let valid = true;
+
+    if (value.length < minLength) valid = false;
+    if (hasUppercase && !/[A-Z]/.test(value)) valid = false;
+    if (hasLowercase && !/[a-z]/.test(value)) valid = false;
+    if (hasNumber && !/[0-9]/.test(value)) valid = false;
+    if (hasSymbol && !/[!@#$%^&*(),.?":{}|<>]/.test(value)) valid = false;
+
+    setIsValid(valid);
+
+    if (valid) {
+      return Promise.resolve();
+    } else {
+      return Promise.reject('Password does not meet criteria.');
+    }
+  };
+
+  const tooltipContent = (
+    <div>
+      <p>Password must meet the following criteria:</p>
+      <ul>
+        <li>Minimum length: {passwordPolicy.minLength}</li>
+        {passwordPolicy.hasUppercase && <li>Contains an uppercase letter</li>}
+        {passwordPolicy.hasLowercase && <li>Contains a lowercase letter</li>}
+        {passwordPolicy.hasNumber && <li>Contains a number</li>}
+        {passwordPolicy.hasSymbol && <li>Contains a symbol (@ # $)</li>}
+      </ul>
+      {!isValid && <p style={{ color: 'red' }}>Password does not meet criteria.</p>}
+    </div>
+  );
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setLoading(true);
+    setLoginLoading(true);
     try {
       await signIn(username, password);
-      setLoading(false);
+      setLoginLoading(false);
       // Redirect to the app's main page or dashboard
     } catch (err) {
       console.log(err.message);
       alert("Email or password is incorrect")
+      setLoginLoading(false);
     }
   };
 
@@ -65,6 +117,15 @@ export default function LandingPage() {
         pauseOnHover:true,
       });
     }
+    else if(type=='warning'){
+      api[type]({
+        message: 'Action Needed',
+        description:
+          `Please complete all the necessary information to finish your registration. Additionally, your password must adhere to the policy described in 'i' button.`,
+        showProgress: true,
+        pauseOnHover:true,
+      });
+    }
     else{
       api[type]({
         message: 'Signup Failed',
@@ -80,15 +141,24 @@ export default function LandingPage() {
     e.preventDefault();
     console.log("Signup", email, newPassword, confirmPassword)
     setLoading(true);
-    try {
-      const result = await signUp(email, newPassword, 'Guest User');
-      openNotificationWithIcon('success')
-      console.log('Signup successful:', result);
-    } catch (error) {
-      console.error('Signup error:', error);
-      openNotificationWithIcon('error')
+    if(email==="" || newPassword==="" || confirmPassword ==="" || !isValid){
+      openNotificationWithIcon('warning')
+      setLoading(false);
     }
-    setIsModalOpen(false);
+    else{
+      try {
+        const result = await signUp(email, newPassword, 'Guest User');
+        openNotificationWithIcon('success')
+        console.log('Signup successful:', result);
+        setLoading(false);
+
+      } catch (error) {
+        console.error('Signup error:', error);
+        openNotificationWithIcon('error')
+        setLoading(false);
+      }
+      setIsModalOpen(false);
+    }
   };
 
   const handleCancel = () => {
@@ -208,10 +278,14 @@ export default function LandingPage() {
               <Form.Item
                   name="password"
                   label="Password"
+                  
                   rules={[
                     {
                       required: true,
                       message: 'Please input your password!',
+                    },
+                    {
+                      validator: validatePassword,
                     },
                   ]}
                   hasFeedback
@@ -222,7 +296,7 @@ export default function LandingPage() {
                         setNewPassword(event.target.value);
                       }}
                   />
-                  <Tooltip placement="top" title="Enter password" >
+                  <Tooltip style={{whiteSpace: 'pre-line'}} placement="top" title={tooltipContent} >
                     <span style={{cursor:'pointer',  marginLeft:'10px',fontSize:'20px'}}>
                       <IoMdInformationCircleOutline/>
                     </span>
@@ -346,17 +420,39 @@ export default function LandingPage() {
               </div>
 
               <div style={{ display: "flex",marginTop:'5%' }}>
-                  <button type="submit" className="button-17" style={{marginRight:'10px'}}>
-                    Login
-                  </button>
-                  <button onClick={handleGuest} className="button-17">
-                    Guest login
-                    <Tooltip placement="bottom" title="Try the app as a guest! Auto-filled credentials, full access requires sign-up." >
-                      <span style={{cursor:'pointer', marginTop:'3px', marginLeft:'10px',fontSize:'20px'}}>
-                        <IoMdInformationCircleOutline/>
-                      </span>
-                    </Tooltip>
-                  </button>
+
+                  <ConfigProvider
+                    theme={{                                                    // To change color of antd buttons
+                      token: {
+                        colorPrimary: '#a51d4a',
+                        borderRadius: 6,
+                        colorBgContainer: 'white',
+                      },
+                    }}
+                  >
+                    <Button onClick={handleSubmit} variant="filled" loading={loginLoading} style={{marginRight:'10px'}}>
+                      Login
+                    </Button>
+                  </ConfigProvider>
+
+                  <ConfigProvider
+                    theme={{                                                    // To change color of antd buttons
+                      token: {
+                        colorPrimary: '#a51d4a',
+                        borderRadius: 6,
+                        colorBgContainer: 'white',
+                      },
+                    }}
+                  >
+                    <Button onClick={handleGuest} variant="Outlined" style={{marginRight:'10px'}}>
+                      Guest login
+                      <Tooltip placement="bottom" title="Try the app as a guest! Auto-filled credentials, full access requires sign-up." >
+                        <span style={{cursor:'pointer', marginTop:'3px', marginLeft:'10px',fontSize:'20px'}}>
+                          <IoMdInformationCircleOutline/>
+                        </span>
+                      </Tooltip>
+                    </Button>
+                  </ConfigProvider>
               </div>
             </form>
           </div>
