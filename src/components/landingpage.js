@@ -76,19 +76,46 @@ export default function LandingPage() {
     </div>
   );
 
+  const openNotificationWithIcon1 = (type) => {
+    if(type=='warning'){
+      api[type]({
+        message: 'Missing Credentials',
+        description:
+          `It looks like you're missing either your email or password. Please double-check and try again.`,
+        showProgress: true,
+        pauseOnHover:true,
+      });
+    }
+    else if(type=='error'){
+      api[type]({
+        message: 'Login Failed',
+        description:
+          `The email or password you entered is incorrect. Please try again.`,
+        showProgress: true,
+        pauseOnHover:true,
+      });
+    }
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setLoginLoading(true);
-    try {
-      await signIn(username, password);
+    if(username==="" || password===""){
+      openNotificationWithIcon1('warning')
       setLoginLoading(false);
-      // Redirect to the app's main page or dashboard
-    } catch (err) {
-      console.log(err.message);
-      alert("Email or password is incorrect")
-      setLoginLoading(false);
+    }
+    else{
+      try {
+        await signIn(username, password);
+        setLoginLoading(false);
+        // Redirect to the app's main page or dashboard
+      } catch (err) {
+        console.log(err.message);
+        openNotificationWithIcon1('error')
+        setLoginLoading(false);
+      }
     }
   };
 
@@ -119,7 +146,7 @@ export default function LandingPage() {
     }
     else if(type=='warning'){
       api[type]({
-        message: 'Action Needed',
+        message: 'Missing Required Information',
         description:
           `Please complete all the necessary information to finish your registration. Additionally, your password must adhere to the policy described in 'i' button.`,
         showProgress: true,
