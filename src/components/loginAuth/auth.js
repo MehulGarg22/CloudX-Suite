@@ -7,8 +7,8 @@ import {
   import { cognitoConfig } from "./cognitoConfig"
 
   const userPool = new CognitoUserPool({
-    UserPoolId: cognitoConfig.UserPoolId,
-    ClientId: cognitoConfig.ClientId,
+    UserPoolId: process.env.REACT_APP_UserPoolId,
+    ClientId: process.env.REACT_APP_ClientId,
   })
 
   
