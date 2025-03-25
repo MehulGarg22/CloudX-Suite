@@ -34,7 +34,7 @@ export default function Navbar(){
                         trigger={
                             <div
                                 style={{
-                                    color:'white',
+                                    color:'black',
                                     cursor:'pointer',
                                     fontSize:'30px',
                                     marginLeft:'95%',
