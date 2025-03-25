@@ -4,7 +4,6 @@ import {
     CognitoUserAttribute ,
     AuthenticationDetails,
   } from "amazon-cognito-identity-js"
-  import { cognitoConfig } from "./cognitoConfig"
 
   const userPool = new CognitoUserPool({
     UserPoolId: process.env.REACT_APP_UserPoolId,
