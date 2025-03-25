@@ -12,10 +12,10 @@ import {
   })
 
   
-  export function signUp(email, password, profile = "Guest User") {
+  export function signUp(name, email, password, profile) {
     return new Promise((resolve, reject) => {
       const attributeList = [];
-  
+      console.log("signup attributes",name, email, password, profile)
       const emailAttribute = new CognitoUserAttribute({
         Name: 'email',
         Value: email,
@@ -28,6 +28,14 @@ import {
           Value: profile,
         });
         attributeList.push(profileAttribute);
+      }
+
+      if (name) {
+        const nameAttribute = new CognitoUserAttribute({
+          Name: 'name', // Ensure this matches your Cognito attribute name
+          Value: name,
+        });
+        attributeList.push(nameAttribute);
       }
   
       userPool.signUp(email, password, attributeList, null, (result, err) => {

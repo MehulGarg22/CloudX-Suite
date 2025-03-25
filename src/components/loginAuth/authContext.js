@@ -32,8 +32,8 @@ function AuthProvider({ children }) {
     await auth.signOut()
     setUser(null)
   }
-  const signUp = async (username, password) => {
-    await auth.signUp(username, password)
+  const signUp = async (name, email, password, profile) => {
+    await auth.signUp(name, email, password, profile)
     await getCurrentUser()
   }
   

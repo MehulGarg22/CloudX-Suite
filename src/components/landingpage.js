@@ -18,6 +18,7 @@ export default function LandingPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [ newPassword, setNewPassword] = useState("");
   const [ confirmPassword, setConfirmPassword] = useState("");
@@ -107,33 +108,7 @@ export default function LandingPage() {
       });
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    setLoginLoading(true);
-    if(username==="" || password===""){
-      openNotificationWithIcon1('warning')
-      setLoginLoading(false);
-    }
-    else{
-      try {
-        await signIn(username, password);
-        setLoginLoading(false);
-        // Redirect to the app's main page or dashboard
-      } catch (err) {
-        console.log(err.message);
-        openNotificationWithIcon1('error')
-        setLoginLoading(false);
-      }
-    }
-  };
-
-  const handleGuest=(e)=>{
-    setUsername("guestuser@cloudxsuite.com")
-    setPassword("Test@123")
-    openNotificationWithIconGuestLogin('info')
-    e.preventDefault()
-  }
 
 
   const handleSignup=()=>{
@@ -174,17 +149,46 @@ export default function LandingPage() {
     }
   };
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoginLoading(true);
+    if(username==="" || password===""){
+      openNotificationWithIcon1('warning')
+      setLoginLoading(false);
+    }
+    else{
+      try {
+        await signIn(username, password);
+        setLoginLoading(false);
+        // Redirect to the app's main page or dashboard
+      } catch (err) {
+        console.log(err.message);
+        openNotificationWithIcon1('error')
+        setLoginLoading(false);
+      }
+    }
+  };
+
+  const handleGuest=(e)=>{
+    setUsername("guestuser@cloudxsuite.com")
+    setPassword("Test@123")
+    openNotificationWithIconGuestLogin('info')
+    e.preventDefault()
+  }
+
   const handleSignupSubmit = async(e) => {
     e.preventDefault();
-    console.log("Signup", email, newPassword, confirmPassword)
+    console.log("Signup", name, email, newPassword, confirmPassword)
     setLoading(true);
-    if(email==="" || newPassword==="" || confirmPassword ==="" || !isValid){
+    if(email==="" || newPassword==="" || confirmPassword ==="" || name==="" || !isValid){
       openNotificationWithIcon('warning')
       setLoading(false);
     }
     else{
       try {
-        const result = await signUp(email, newPassword, 'Guest User');
+        const result = await signUp(name, email, newPassword, 'User');
         openNotificationWithIcon('success')
         console.log('Signup successful:', result);
         setLoading(false);
@@ -229,7 +233,14 @@ export default function LandingPage() {
 
   return (
     <div>
+
+      {/* Navbar and Signup */}
+
       <div style={{display:'flex', backgroundColor:'#EBE8DB'}}>
+
+        {/* Navbar starts */}
+
+
         <div style={{display:'flex'}}>
           <span>
             <img src={logo} style={{height:'50px', width:'60px', marginLeft:'90%',}} />
@@ -238,6 +249,13 @@ export default function LandingPage() {
             CloudX Suite
           </span>
         </div>
+
+
+        {/* Navbar ends */}
+
+        {/* Signup starts */}
+
+
         <div
             onClick={handleSignup}
             style={{
@@ -258,6 +276,9 @@ export default function LandingPage() {
                 </span>
             </Tooltip>
         </div>
+
+        {/* Create account form starts */}
+
         <div>
         {contextHolder}
           <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
@@ -284,7 +305,29 @@ export default function LandingPage() {
               onFinish={handleSignupSubmit}
               name="register"
             >
-              
+              <Form.Item
+                name="name"
+                label="Full Name"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your full name!',
+                  },
+                ]}
+              >
+                <div style={{display:'flex'}}>                  
+                  <Input 
+                    onChange={(event) => {
+                      setName(event.target.value);
+                    }}
+                  />
+                  <Tooltip placement="top" title="Enter your full name" >
+                    <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
+                      <IoMdInformationCircleOutline/>
+                    </span>
+                  </Tooltip>
+                </div>
+              </Form.Item>
               <Form.Item
                 name="email"
                 label="E-mail"
@@ -377,9 +420,20 @@ export default function LandingPage() {
           </Modal>
           
         </div>
+        {/* Create account form ends */}
+
+
+        {/* Signup ends */}
+        
       </div>
+
+      {/* Landing page information starts */}
+
+
       <div style={{ overflowX: "hidden", minHeight:'91.5vh', backgroundColor:'#EBE8DB', height:'100%', width: "100%" }}>
         <div style={{ display: "flex", backgroundColor:'white', borderRadius:'30px', marginLeft:'30px', marginRight:'30px', marginTop:'3%', height:'500px', boxShadow: '0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%)'}}>
+          
+          
           <div
             style={{
               width: "50%",
@@ -407,6 +461,9 @@ export default function LandingPage() {
               The application features user authentication via AWS Cognito, task and expense management with data visualization, and AI-powered modules like a chatbot assistant. Future enhancements include real-time notifications, workflow automation, and deeper AI-driven insights, ensuring a scalable and intelligent cloud solution.
           
           </div>
+
+          {/* Login form starts */}
+
           <div style={{ width: "50%" }}>
             <form
               style={{ width: "100%", marginTop: "20%", marginLeft: "5%" }}
@@ -493,7 +550,13 @@ export default function LandingPage() {
               </div>
             </form>
           </div>
+
+          {/* Login form end */}
+
         </div>
+
+        {/* Footer */}
+
         <div style={{marginTop:'4%'}}>
           <Footer/>
         </div>
