@@ -97,6 +97,15 @@ export default function LandingPage() {
     }
   }
 
+  const openNotificationWithIconGuestLogin = (type) => {
+      api[type]({
+        message: 'Guest Mode Activated',
+        description:
+          `Enjoy limited access. Create an account to unlock all features and save your progress.`,
+        showProgress: true,
+        pauseOnHover:true,
+      });
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -122,6 +131,7 @@ export default function LandingPage() {
   const handleGuest=(e)=>{
     setUsername("guestuser@cloudxsuite.com")
     setPassword("Test@123")
+    openNotificationWithIconGuestLogin('info')
     e.preventDefault()
   }
 
