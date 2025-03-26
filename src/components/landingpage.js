@@ -208,7 +208,15 @@ export default function LandingPage() {
 
   if (user) {
     // Redirect to the profile page
-    return <Navigate to="/dashboard" />;
+    if(localStorage.getItem("role")=="Administrator"){
+      return <Navigate to="/admin/creditcard" />;
+    }
+    else if(localStorage.getItem("role")=="Guest User"){
+      return <Navigate to="/guest" />;
+    }
+    else{
+      return <Navigate to="/user" />;
+    }
   }
   const formItemLayout = {
     labelCol: {
