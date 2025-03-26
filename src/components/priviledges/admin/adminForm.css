@@ -1,0 +1,9 @@
+.responsive-card {
+  width: calc(50% - 8px);
+}
+
+@media (max-width: 768px) {
+  .responsive-card {
+    width: 100%;
+  }
+}

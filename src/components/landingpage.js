@@ -8,7 +8,6 @@ import './landingpage.css';
 import Footer from "./footer/footer";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { Tooltip, Input, Modal, Button, ConfigProvider, notification, Form, } from "antd";
-import { EyeTwoTone } from '@ant-design/icons';
 import { FaUserPlus } from "react-icons/fa6";
 import logo from '../assets/cloudxsuite_logo.png'
 
