@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <nav className="loginNavbar">
     {
-        location.pathname === "/admin/creditcard" && (
+        location.pathname !=="/" && (
         <div style={{display:'flex'}}>
             <div style={{display:'flex'}}>
                 <span>
@@ -102,81 +102,6 @@ export default function Navbar() {
                 </Menu>
             </div>
         </div>
-        )
-    }
-    {
-        location.pathname !=="/" && location.pathname !== "/admin/creditcard" &&  (
-            <Menu
-                style={{
-                    cursor:'pointer',
-                    backgroundColor:'white',
-                    border:'2px solid black',
-                    height:'50px',
-                    width:'200px',
-                    borderRadius:'10px',
-                    marginTop:'10px',
-                    marginRight:'10px',
-                }}
-                trigger={
-                    <div
-                        style={{
-                            color:'black',
-                            cursor:'pointer',
-                            fontSize:'30px',
-                            marginLeft:'95%',
-                            marginTop:'5px',
-                            borderRadius:'70px', 
-                            marginBottom:'14px'
-                        }}
-                    >
-                        {/* <Tooltip title="CLick to view profile" placement="topRight"> */}
-                            <UserOutlined />
-                        {/* </Tooltip> */}
-                    </div>
-                }
-            >
-                <p
-                    style={{
-                        cursor:'default',
-                        color:'#034C53',
-                        fontWeight:'bold',
-                        marginLeft:'10px',
-                        marginTop:'4%',
-                        fontSize:'19px'
-                    }}
-                >
-                    {localStorage.getItem("role")}
-                </p>
-                <p
-                    style={{
-                        cursor:'default',
-                        color:'black',
-                        fontWeight:'bold',
-                        marginLeft:'10px',
-                        marginTop:'2%',
-                        fontSize:'15px'
-                    }}
-                >
-                    {localStorage.getItem("name")}
-                </p>
-                <Divider/>
-                <p
-                    style={{
-                        cursor:'pointer',
-                        color:'black',
-                        fontWeight:'bold',
-                        marginLeft:'10px',
-                        fontSize:'15px'
-                    }}
-                    onClick={signOut}
-                >
-                    {" "}
-                    <LogoutOutlined style={{fontWeight:'bold'}} />
-                    {" "}
-                    {" "}
-                    Sign Out
-                </p>
-            </Menu>
         )
     }
     </nav>
