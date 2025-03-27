@@ -80,3 +80,4 @@ npm i react-icons
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 npm i @aws-amplify/core --save --legacy-peer-deps
+npm i axios

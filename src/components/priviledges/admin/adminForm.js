@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, Tooltip, Card, Form, Input, Space, ConfigProvider, notification } from 'antd';
 import './adminForm.css'; // Import the CSS file
 import { IoMdInformationCircleOutline } from "react-icons/io";
+import axios from 'axios';
 
 export default function AdminForm(){
 
@@ -10,6 +11,16 @@ export default function AdminForm(){
     const [loading, setLoading]=useState(false)
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
+
+    const cardGetAPI="https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get"
+    const cardPostAPI="https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get"
+
+    useEffect(()=>{
+        axios.get(cardGetAPI).then((resp)=>{
+            console.log("resp", resp.data)
+            setInitialValue(resp.data)
+        })
+    },[])
 
     const openNotificationWithIconSubmit = (type) => {
         if(type=='success'){
@@ -32,9 +43,16 @@ export default function AdminForm(){
         }
     }
     const handleSubmit=()=>{
-        console.log(form.getFieldsValue(), null, 2)
-        setLoading(false)
-        openNotificationWithIconSubmit('success')
+        console.log(form.getFieldsValue())
+        console.log(form.getFieldsValue())
+        axios.post("https://q08qqknh16.execute-api.us-east-1.amazonaws.com/credit-card-details/post", (form.getFieldsValue()).items).then((res)=>{
+            console.log("card details post response",res)
+            setLoading(false)
+            openNotificationWithIconSubmit('success')
+        }).catch((err)=>{
+            console.log(err)
+            openNotificationWithIconSubmit('error')
+        })
     }
 
 
@@ -97,14 +115,33 @@ export default function AdminForm(){
                                     </Tooltip>
                                 </div>
                             </Form.Item>
-
+                            <Form.Item label="Annual fee" name={[field.name, 'annualfee']} >
+                                <div style={{display:'flex'}}>
+                                    <Input  placeholder="Annual Fee"/>
+                                    <Tooltip placement="top" title="Enter Annual Fee in INR which is charged every year" >
+                                    <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
+                                        <IoMdInformationCircleOutline/>
+                                    </span>
+                                    </Tooltip>
+                                </div>
+                            </Form.Item>
+                            <Form.Item label="Joining fee" name={[field.name, 'joiningfee']} >
+                                <div style={{display:'flex'}}>
+                                    <Input  placeholder="Annual Fee"/>
+                                    <Tooltip placement="top" title="Enter Joining Fee in INR which is charged at the time of joining the card" >
+                                    <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
+                                        <IoMdInformationCircleOutline/>
+                                    </span>
+                                    </Tooltip>
+                                </div>
+                            </Form.Item>
                             <Form.Item label="Feature">
                                 <Form.List name={[field.name, 'list']}>
                                 {(subFields, subOpt) => (
                                     <div style={{ display: 'flex', flexDirection: 'column', rowGap: 16 }}>
                                     {subFields.map((subField) => (
                                         <Space key={subField.key}>
-                                        <Form.Item noStyle name={[subField.name, 'first']}>
+                                        <Form.Item noStyle name={[subField.name, 'featureName']}>
                                             <div style={{display:'flex'}}>
                                                 <Input  placeholder="Feature"/>
                                                 <Tooltip placement="top" title="Enter feature name" >
@@ -114,7 +151,7 @@ export default function AdminForm(){
                                                 </Tooltip>
                                             </div>
                                         </Form.Item>
-                                        <Form.Item noStyle name={[subField.name, 'second']}>
+                                        <Form.Item noStyle name={[subField.name, 'featureValue']}>
                                             <div style={{display:'flex'}}>
                                                 <Input  placeholder="Feature value"/>
                                                 <Tooltip placement="top" title="Enter feature value" >
