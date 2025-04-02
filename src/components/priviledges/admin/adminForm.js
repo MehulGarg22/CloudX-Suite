@@ -17,6 +17,7 @@ export default function AdminForm() {
 
     const cardGetAPI = "https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get";
     const cardPostAPI = "https://q08qqknh16.execute-api.us-east-1.amazonaws.com/credit-card-details/post";
+    const cardDeleteAPI = "https://maqwhoyk0g.execute-api.us-east-1.amazonaws.com/credit-card-details/delete"
 
     useEffect(() => {
         axios.get(cardGetAPI).then((resp) => {
@@ -42,6 +43,26 @@ export default function AdminForm() {
             }
         });
     }, []);
+
+    const deleteCard=(index)=>{
+        console.log("inside delete function: ",index)
+        axios.delete(cardDeleteAPI, {
+            data:{
+                id: index+1           // In this case, we're sending a DELETE request to cardDeleteAPI with a request body containing { id: index }. The request body is included in the data property of the configuration object, which is the second argument passed to axios.delete().
+            }
+        }).then((res)=>{
+            console.log(res)
+            setMessage('Success!');
+            setDescription('The card detail successfully deleted');
+            setType('success');
+        }).catch((err)=>{
+            console.log(err)
+            setMessage('Oops! Something went wrong.');
+            setDescription('We were unable to delete the card detail. Please try again later.');
+            setType('error');
+        })
+    }
+
 
     const handleSubmit = () => {
         setType('');
@@ -93,6 +114,7 @@ export default function AdminForm() {
                                         extra={
                                             <CloseOutlined
                                                 onClick={() => {
+                                                    deleteCard(index)
                                                     remove(index);
                                                     console.log("close: ",field)
                                                 }}
