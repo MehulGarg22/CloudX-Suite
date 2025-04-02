@@ -22,6 +22,14 @@ export default function Notification(props) {
                 pauseOnHover: true,
             });
         }
+        else{
+            api[type]({
+              message: message,
+              description: description,
+              showProgress: true,
+              pauseOnHover:true,
+            });
+        }
     };
 
     useEffect(() => {
