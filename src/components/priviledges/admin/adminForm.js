@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
-import { Button, Tooltip, Card, Form, Input, Space, ConfigProvider, notification } from 'antd';
+import { Button, Tooltip, Card, Form, Input, Space, ConfigProvider } from 'antd';
 import './adminForm.css'; // Import the CSS file
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import axios from 'axios';
+import Notification from '../../features/notification';
+
 
 export default function AdminForm(){
 
     const [initialValue, setInitialValue]=useState({ items: [{}] })
     const [loading, setLoading]=useState(false)
+    const [type, setType]=useState("")
     const [form] = Form.useForm();
-    const [api, contextHolder] = notification.useNotification();
 
     const cardGetAPI="https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get"
-    const cardPostAPI="https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get"
+    const cardPostAPI="https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/post"
 
     useEffect(()=>{
         axios.get(cardGetAPI).then((resp)=>{
@@ -22,36 +24,17 @@ export default function AdminForm(){
         })
     },[])
 
-    const openNotificationWithIconSubmit = (type) => {
-        if(type=='success'){
-            api[type]({
-                message: 'Success!',
-                description:
-                  `The information you provided has been successfully saved.`,
-                showProgress: true,
-                pauseOnHover:true,
-            });
-        }
-        else if(type=='error'){
-          api[type]({
-            message: 'Oops! Something went wrong.',
-            description:
-              `We were unable to save your changes. Please try again later.`,
-            showProgress: true,
-            pauseOnHover:true,
-          });
-        }
-    }
     const handleSubmit=()=>{
+        setType('');
         console.log(form.getFieldsValue())
         console.log(form.getFieldsValue())
         axios.post("https://q08qqknh16.execute-api.us-east-1.amazonaws.com/credit-card-details/post", (form.getFieldsValue()).items).then((res)=>{
             console.log("card details post response",res)
             setLoading(false)
-            openNotificationWithIconSubmit('success')
+            setType('success')
         }).catch((err)=>{
             console.log(err)
-            openNotificationWithIconSubmit('error')
+            setType('error')
         })
     }
 
@@ -68,7 +51,7 @@ export default function AdminForm(){
                 autoComplete="off"
                 initialValues={initialValue}
             >
-                {contextHolder}
+                <Notification type={type} />
                 <Form.List name="items">
                     {(fields, { add, remove }) => (
                     <div>
