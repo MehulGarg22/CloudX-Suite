@@ -2,15 +2,14 @@ import React, { useState, useContext } from "react";
 import { FaUserTie  } from "react-icons/fa";
 import { TbPasswordUser  } from "react-icons/tb";
 import { Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./loginAuth/authContext";
 import './landingpage.css';
 import Footer from "./footer/footer";
 import { IoMdInformationCircleOutline } from "react-icons/io";
-import { Tooltip, Input, Modal, Button, ConfigProvider, notification, Form, } from "antd";
+import { Tooltip, Input, Modal, Button, ConfigProvider, Form, } from "antd";
 import { FaUserPlus } from "react-icons/fa6";
 import logo from '../assets/cloudxsuite_logo.png'
-
+import Notification from "./features/notification";
 
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,9 @@ export default function LandingPage() {
   const [ confirmPassword, setConfirmPassword] = useState("");
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [api, contextHolder] = notification.useNotification();
+  const [type, setType]=useState("")
+  const [message, setMessage]=useState("")
+  const [description, setDescription]=useState("")
 
   const { user, signIn, signUp } = useContext(AuthContext);
 
@@ -76,39 +77,6 @@ export default function LandingPage() {
     </div>
   );
 
-  const openNotificationWithIcon1 = (type) => {
-    if(type=='warning'){
-      api[type]({
-        message: 'Missing Credentials',
-        description:
-          `It looks like you're missing either your email or password. Please double-check and try again.`,
-        showProgress: true,
-        pauseOnHover:true,
-      });
-    }
-    else if(type=='error'){
-      api[type]({
-        message: 'Login Failed',
-        description:
-          `The email or password you entered is incorrect. Please try again.`,
-        showProgress: true,
-        pauseOnHover:true,
-      });
-    }
-  }
-
-  const openNotificationWithIconGuestLogin = (type) => {
-      api[type]({
-        message: 'Guest Mode Activated',
-        description:
-          `Enjoy limited access. Create an account to unlock all features and save your progress.`,
-        showProgress: true,
-        pauseOnHover:true,
-      });
-  }
-
-
-
 
   const handleSignup=()=>{
     setIsModalOpen(true);
@@ -118,43 +86,19 @@ export default function LandingPage() {
     setIsModalOpen(false);
   };
 
-  const openNotificationWithIcon = (type) => {
-    if(type=='success'){
-      api[type]({
-        message: 'Signup Successful!',
-        description:
-          'Welcome to CloudX Suite! You can now log in and explore.',
-        showProgress: true,
-        pauseOnHover:true,
-      });
-    }
-    else if(type=='warning'){
-      api[type]({
-        message: 'Missing Required Information',
-        description:
-          `Please complete all the necessary information to finish your registration. Additionally, your password must adhere to the policy described in 'i' button.`,
-        showProgress: true,
-        pauseOnHover:true,
-      });
-    }
-    else{
-      api[type]({
-        message: 'Signup Failed',
-        description:
-          'An unexpected error occurred. Please try again later.',
-        showProgress: true,
-        pauseOnHover:true,
-      });
-    }
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setType('');
     setLoginLoading(true);
     if(username==="" || password===""){
-      openNotificationWithIcon1('warning')
+      setMessage('Missing Credentials')
+      setDescription(`It looks like you're missing either your email or password. Please double-check and try again.`)
+      setType('warning')
       setLoginLoading(false);
     }
     else{
@@ -164,47 +108,58 @@ export default function LandingPage() {
         // Redirect to the app's main page or dashboard
       } catch (err) {
         console.log(err.message);
-        openNotificationWithIcon1('error')
+        setMessage('Login Failed')
+        setDescription(`The email or password you entered is incorrect. Please try again.`)
+        setType('error')
         setLoginLoading(false);
       }
     }
   };
 
   const handleGuest=(e)=>{
+    setType('');
     setUsername("guestuser@cloudxsuite.com")
     setPassword("Test@123")
-    openNotificationWithIconGuestLogin('info')
+    setMessage('Guest Mode Activated')
+    setDescription(`Enjoy limited access. Create an account to unlock all features and save your progress.`)
+    setType('info')
     e.preventDefault()
   }
 
   const handleSignupSubmit = async(e) => {
     e.preventDefault();
+    setType('');
     console.log("Signup", name, email, newPassword, confirmPassword)
     setLoading(true);
     if(email==="" || newPassword==="" || confirmPassword ==="" || name==="" || !isValid){
-      openNotificationWithIcon('warning')
+      
+      setMessage('Missing Required Information')
+      setDescription(`Please complete all the necessary information to finish your registration. Additionally, your password must adhere to the policy described in 'i' button.`)
+      setType('warning')
       setLoading(false);
     }
     else{
       try {
         const result = await signUp(name, email, newPassword, 'User');
-        openNotificationWithIcon('success')
+        
+        setMessage('Signup Successful!')
+        setDescription('Welcome to CloudX Suite! You can now log in and explore.')
+        setType('success')
+
         console.log('Signup successful:', result);
         setLoading(false);
 
       } catch (error) {
         console.error('Signup error:', error);
-        openNotificationWithIcon('error')
+        setMessage('Signup Failed')
+        setDescription('An unexpected error occurred. Please try again later.')
+        setType('error')
+
         setLoading(false);
       }
       setIsModalOpen(false);
     }
   };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
 
   if (user) {
     // Redirect to the profile page
@@ -218,6 +173,7 @@ export default function LandingPage() {
       return <Navigate to="/user" />;
     }
   }
+
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -287,7 +243,7 @@ export default function LandingPage() {
         {/* Create account form starts */}
 
         <div>
-        {contextHolder}
+          <Notification type={type} message={message} description={description} />
           <Modal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
             footer={[
               <ConfigProvider

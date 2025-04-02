@@ -7,29 +7,12 @@ export default function Notification(props) {
     const {type, message, description}=props
 
     const openNotificationWithIconSubmit = () => {
-        if (type === 'success') {
-            api[type]({
-                message: message,
-                description: description,
-                showProgress: true,
-                pauseOnHover: true,
-            });
-        } else if (type === 'error') {
-            api[type]({
-                message: message,
-                description: description,
-                showProgress: true,
-                pauseOnHover: true,
-            });
-        }
-        else{
-            api[type]({
-              message: message,
-              description: description,
-              showProgress: true,
-              pauseOnHover:true,
-            });
-        }
+        api[type]({
+            message: message,
+            description: description,
+            showProgress: true,
+            pauseOnHover: true,
+        });    
     };
 
     useEffect(() => {
