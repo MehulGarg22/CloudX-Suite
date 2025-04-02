@@ -12,6 +12,8 @@ export default function AdminForm(){
     const [initialValue, setInitialValue]=useState({ items: [{}] })
     const [loading, setLoading]=useState(false)
     const [type, setType]=useState("")
+    const [message, setMessage]=useState("")
+    const [description, setDescription]=useState("")
     const [form] = Form.useForm();
 
     const cardGetAPI="https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get"
@@ -31,9 +33,13 @@ export default function AdminForm(){
         axios.post("https://q08qqknh16.execute-api.us-east-1.amazonaws.com/credit-card-details/post", (form.getFieldsValue()).items).then((res)=>{
             console.log("card details post response",res)
             setLoading(false)
+            setMessage('Success!')
+            setDescription('The information you provided has been successfully saved.')
             setType('success')
         }).catch((err)=>{
             console.log(err)
+            setMessage('Oops! Something went wrong.')
+            setDescription('We were unable to save your changes. Please try again later.')
             setType('error')
         })
     }
@@ -51,7 +57,7 @@ export default function AdminForm(){
                 autoComplete="off"
                 initialValues={initialValue}
             >
-                <Notification type={type} />
+                <Notification type={type} message={message} description={description} />
                 <Form.List name="items">
                     {(fields, { add, remove }) => (
                     <div>

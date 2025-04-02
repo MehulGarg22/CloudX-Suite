@@ -2,20 +2,22 @@ import React, { useEffect } from 'react';
 import { notification } from 'antd';
 
 export default function Notification(props) {
+
     const [api, contextHolder] = notification.useNotification();
+    const {type, message, description}=props
 
     const openNotificationWithIconSubmit = () => {
-        if (props.type === 'success') {
-            api[props.type]({
-                message: 'Success!',
-                description: 'The information you provided has been successfully saved.',
+        if (type === 'success') {
+            api[type]({
+                message: message,
+                description: description,
                 showProgress: true,
                 pauseOnHover: true,
             });
-        } else if (props.type === 'error') {
-            api[props.type]({
-                message: 'Oops! Something went wrong.',
-                description: 'We were unable to save your changes. Please try again later.',
+        } else if (type === 'error') {
+            api[type]({
+                message: message,
+                description: description,
                 showProgress: true,
                 pauseOnHover: true,
             });
@@ -23,10 +25,10 @@ export default function Notification(props) {
     };
 
     useEffect(() => {
-        if (props.type) { // Only trigger if props.type has a value
+        if (type) { // Only trigger if props.type has a value
             openNotificationWithIconSubmit();
         }
-    }, [props.type]); // Run when props.type changes
+    }, [type]); // Run when props.type changes
 
     return <>{contextHolder}</>;
 }
