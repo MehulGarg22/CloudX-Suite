@@ -40,6 +40,31 @@ export default function GuestUser(){
             key: 'annualfee',
             sorter: (a: Item, b: Item) => Number(a.annualfee) - Number(b.annualfee),
         },
+
+
+        {
+            title: 'Zomato',
+            dataIndex: 'zomato',
+            key: 'zomato',
+            sorter: (a: Item, b: Item) => Number(a.zomato) - Number(b.zomato),
+        },
+        {
+            title: 'Swiggy',
+            dataIndex: 'swiggy',
+            key: 'swiggy',
+            sorter: (a: Item, b: Item) => Number(a.swiggy) - Number(b.swiggy),
+        },
+        {
+            title: 'Big Basket',
+            dataIndex: 'bigbasket',
+            key: 'bigbasket',
+            sorter: (a: Item, b: Item) => Number(a.bigbasket) - Number(b.bigbasket),
+        },
+        {
+            title: 'Additional Details',
+            dataIndex: 'comments',
+            key: 'comments',
+        },
         {
           title: 'Rewards',
           key: 'features',

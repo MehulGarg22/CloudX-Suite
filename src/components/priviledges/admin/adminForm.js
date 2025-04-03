@@ -36,6 +36,10 @@ export default function AdminForm() {
                         name: item.name,
                         annualfee: item.annualfee,
                         joiningfee: item.joiningfee,
+                        swiggy: item.swiggy,
+                        zomato: item.zomato,
+                        bigbasket: item.bigbasket,
+                        comments: item.comments,
                         list: item.list || []
                     }))
                 });
@@ -157,6 +161,46 @@ export default function AdminForm() {
                                             <div style={{ display: 'flex' }}>
                                                 <Input defaultValue={cards[index]?.joiningfee} placeholder="Joining Fee" />
                                                 <Tooltip placement="top" title="Enter Joining Fee in INR which is charged at the time of joining the card">
+                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
+                                                        <IoMdInformationCircleOutline />
+                                                    </span>
+                                                </Tooltip>
+                                            </div>
+                                        </Form.Item>
+                                        <Form.Item label="Swiggy" name={[field.name, 'swiggy']} initialValue={cards[index]?.swiggy}>
+                                            <div style={{ display: 'flex' }}>
+                                                <Input defaultValue={cards[index]?.swiggy} placeholder="Swiggy Rewards" />
+                                                <Tooltip placement="top" title="Enter Swiggy Rewards">
+                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
+                                                        <IoMdInformationCircleOutline />
+                                                    </span>
+                                                </Tooltip>
+                                            </div>
+                                        </Form.Item>
+                                        <Form.Item label="Zomato" name={[field.name, 'zomato']} initialValue={cards[index]?.zomato}>
+                                            <div style={{ display: 'flex' }}>
+                                                <Input defaultValue={cards[index]?.zomato} placeholder="Zomato Rewards" />
+                                                <Tooltip placement="top" title="Enter Zomato Rewards">
+                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
+                                                        <IoMdInformationCircleOutline />
+                                                    </span>
+                                                </Tooltip>
+                                            </div>
+                                        </Form.Item>
+                                        <Form.Item label="Big Basket" name={[field.name, 'bigbasket']} initialValue={cards[index]?.bigbasket}>
+                                            <div style={{ display: 'flex' }}>
+                                                <Input defaultValue={cards[index]?.bigbasket} placeholder="Bigbasket Rewards" />
+                                                <Tooltip placement="top" title="Enter Bigbasket Rewards">
+                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
+                                                        <IoMdInformationCircleOutline />
+                                                    </span>
+                                                </Tooltip>
+                                            </div>
+                                        </Form.Item>
+                                        <Form.Item label="Comment" name={[field.name, 'comments']} initialValue={cards[index]?.comments}>
+                                            <div style={{ display: 'flex' }}>
+                                                <Input defaultValue={cards[index]?.comments} placeholder="Additional information" />
+                                                <Tooltip placement="top" title="Enter Additional Information">
                                                     <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
                                                         <IoMdInformationCircleOutline />
                                                     </span>
