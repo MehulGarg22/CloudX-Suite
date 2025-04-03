@@ -26,13 +26,13 @@ export default function AdminForm() {
             setCards(fetchedItems);
     
             console.log("cards:", fetchedItems); // Log fetchedItems instead of cards
-            console.log("cards[0]?.bank:", fetchedItems[0]?.bank); // Log fetchedItems instead of cards
+            console.log("cards[0]?.cardIssuer:", fetchedItems[0]?.cardIssuer); // Log fetchedItems instead of cards
     
             if (fetchedItems.length > 0) {
                 form.setFieldsValue({
                     items: fetchedItems.map(item => ({
                         id: item.id, 
-                        bank: item.bank,
+                        cardIssuer: item.cardIssuer,
                         name: item.name,
                         annualfee: item.annualfee,
                         joiningfee: item.joiningfee,
@@ -123,9 +123,9 @@ export default function AdminForm() {
                                         className="responsive-card"
                                         style={{ marginTop: '10px' }}
                                     >
-                                        <Form.Item label="Bank" name={[field.name, 'bank']} initialValue={cards[index]?.bank}>
+                                        <Form.Item label="Card Issuer Bank" name={[field.name, 'cardIssuer']} initialValue={cards[index]?.cardIssuer}>
                                             <div style={{ display: 'flex' }}>
-                                                <Input defaultValue={cards[index]?.bank} placeholder="Bank Name" />
+                                                <Input defaultValue={cards[index]?.cardIssuer} placeholder="Card Issuer Name" />
                                                 <Tooltip placement="top" title="Enter credit card issuing bank">
                                                     <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
                                                         <IoMdInformationCircleOutline />
@@ -163,7 +163,7 @@ export default function AdminForm() {
                                                 </Tooltip>
                                             </div>
                                         </Form.Item>
-                                        <Form.Item label="Feature">
+                                        <Form.Item label="Rewards">
                                             <Form.List name={[field.name, 'list']}>
                                             {(subFields, subOpt) => (
                                                 <div style={{ display: 'flex', flexDirection: 'column', rowGap: 16 }}>
@@ -183,6 +183,26 @@ export default function AdminForm() {
                                                         <div style={{display:'flex'}}>
                                                             <Input defaultValue={cards[index]?.list?.[subIndex]?.featureValue} placeholder="Feature value"/>
                                                             <Tooltip placement="top" title="Enter feature value" >
+                                                            <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
+                                                                <IoMdInformationCircleOutline/>
+                                                            </span>
+                                                            </Tooltip>
+                                                        </div>
+                                                    </Form.Item>
+                                                    <Form.Item noStyle name={[subField.name, 'rewardCapping']}>
+                                                        <div style={{display:'flex'}}>
+                                                            <Input defaultValue={cards[index]?.list?.[subIndex]?.rewardCapping} placeholder="Reward Capping"/>
+                                                            <Tooltip placement="top" title="Enter Reward Capping" >
+                                                            <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
+                                                                <IoMdInformationCircleOutline/>
+                                                            </span>
+                                                            </Tooltip>
+                                                        </div>
+                                                    </Form.Item>
+                                                    <Form.Item noStyle name={[subField.name, 'remarks']}>
+                                                        <div style={{display:'flex'}}>
+                                                            <Input defaultValue={cards[index]?.list?.[subIndex]?.remarks} placeholder="Additional comments"/>
+                                                            <Tooltip placement="top" title="Enter Additional Comments" >
                                                             <span style={{cursor:'pointer', marginLeft:'10px',fontSize:'20px'}}>
                                                                 <IoMdInformationCircleOutline/>
                                                             </span>
