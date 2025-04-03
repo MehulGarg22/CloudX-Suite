@@ -95,14 +95,16 @@ export default function GuestUser(){
         },
       ];
     return(
-        <Table
-            dataSource={data}
-            columns={columns}
-            loading={loading}
-            rowKey="id" // Add a unique key for each row
-            className="data-table"
-            style={{marginLeft:'20px', marginRight:'20px', marginBottom:'20px'}}
-            bordered
-        />
+        <div style={{ overflowX: 'hidden', width: '100%', backgroundColor: '#EBE8DB', height: '92vh' }}>
+            <Table
+                dataSource={data}
+                columns={columns}
+                loading={loading}
+                rowKey="id" // Add a unique key for each row
+                className="data-table"
+                style={{margin:'20px'}}
+                bordered
+            />
+        </div>
       );
 }
