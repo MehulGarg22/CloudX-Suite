@@ -41,24 +41,35 @@ export default function GuestUser(){
             sorter: (a: Item, b: Item) => Number(a.annualfee) - Number(b.annualfee),
         },
 
-
         {
             title: 'Zomato',
             dataIndex: 'zomato',
             key: 'zomato',
-            sorter: (a: Item, b: Item) => Number(a.zomato) - Number(b.zomato),
+            sorter: (a: Item, b: Item) => {
+                const zomatoA = a.zomato ? parseFloat(a.zomato.replace('%', '')) : 0;
+                const zomatoB = b.zomato ? parseFloat(b.zomato.replace('%', '')) : 0;
+                return zomatoA - zomatoB;
+            },
         },
         {
             title: 'Swiggy',
             dataIndex: 'swiggy',
             key: 'swiggy',
-            sorter: (a: Item, b: Item) => Number(a.swiggy) - Number(b.swiggy),
+            sorter: (a: Item, b: Item) => {
+                const swiggyA = a.swiggy ? parseFloat(a.swiggy.replace('%', '')) : 0;
+                const swiggyB = b.swiggy ? parseFloat(b.swiggy.replace('%', '')) : 0;
+                return swiggyA - swiggyB;
+            },
         },
         {
             title: 'Big Basket',
             dataIndex: 'bigbasket',
             key: 'bigbasket',
-            sorter: (a: Item, b: Item) => Number(a.bigbasket) - Number(b.bigbasket),
+            sorter: (a: Item, b: Item) => {
+                const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
+                const bigbasketB = b.bigbasket ? parseFloat(b.bigbasket.replace('%', '')) : 0;
+                return bigbasketA - bigbasketB;
+            },
         },
         {
             title: 'Additional Details',
