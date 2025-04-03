@@ -6,7 +6,7 @@ body{
 .loginNavbar{
     color: black;
     overflow: hidden;
-
+    z-index: 1;
     position: relative;
     top:0;
     display: flex;
