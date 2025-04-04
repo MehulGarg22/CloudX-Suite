@@ -21,22 +21,26 @@ export default function GuestUser(){
         {
           title: 'Card Name',
           dataIndex: 'name',
+          align: 'center',
           key: 'name',
         },
         {
           title: 'Card Issuer Bank',
           dataIndex: 'cardIssuer',
+          align: 'center',
           key: 'cardIssuer',
         },
         {
             title: 'Joining Fee',
             dataIndex: 'joiningfee',
+            align: 'center',
             key: 'joiningfee',
             sorter: (a, b) => Number(a.joiningfee) - Number(b.joiningfee),
         },
         {
             title: 'Annual Fee',
             dataIndex: 'annualfee',
+            align: 'center',
             key: 'annualfee',
             sorter: (a, b) => Number(a.annualfee) - Number(b.annualfee),
         },
@@ -44,6 +48,7 @@ export default function GuestUser(){
         {
             title: 'Zomato',
             dataIndex: 'zomato',
+            align: 'center',
             key: 'zomato',
             sorter: (a, b) => {
                 const zomatoA = a.zomato ? parseFloat(a.zomato.replace('%', '')) : 0;
@@ -53,6 +58,7 @@ export default function GuestUser(){
         },
         {
             title: 'Swiggy',
+            align: 'center',
             dataIndex: 'swiggy',
             key: 'swiggy',
             sorter: (a, b) => {
@@ -64,6 +70,7 @@ export default function GuestUser(){
         {
             title: 'Big Basket',
             dataIndex: 'bigbasket',
+            align: 'center',
             key: 'bigbasket',
             sorter: (a, b) => {
                 const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
@@ -71,27 +78,34 @@ export default function GuestUser(){
                 return bigbasketA - bigbasketB;
             },
         },
+
+        {
+          title: 'Rewards',
+          key: 'features',
+          align: 'center',
+          render: (text, record) => (
+            <div>            
+                <Table
+                  columns={[
+                    { title: "Spend", dataIndex: 'featureName', key: 'featureName' },
+                    { title: "Spend Benefit", dataIndex: 'featureValue', key: 'featureValue' },
+                    { title: "Reward Capping", dataIndex: 'rewardCapping', key: 'rewardCapping' },
+                    { title: "Information", dataIndex: 'remarks', key: 'remarks' },
+                  ]}
+                  dataSource={record.list}
+                  pagination={false} // Disable pagination for nested table
+                  size="small"
+                  bordered
+                />
+            </div>
+          ),
+        },
         {
             title: 'Additional Details',
             dataIndex: 'comments',
             key: 'comments',
-        },
-        {
-          title: 'Rewards',
-          key: 'features',
-          render: (text, record) => (
-            <Table
-              columns={[
-                {  dataIndex: 'featureName', key: 'featureName' },
-                {  dataIndex: 'featureValue', key: 'featureValue' },
-                {  dataIndex: 'rewardCapping', key: 'rewardCapping' },
-                {  dataIndex: 'remarks', key: 'remarks' },
-              ]}
-              dataSource={record.list}
-              pagination={false} // Disable pagination for nested table
-              size="small"
-            />
-          ),
+            align: 'center',
+            width:'10%'
         },
       ];
     return(
