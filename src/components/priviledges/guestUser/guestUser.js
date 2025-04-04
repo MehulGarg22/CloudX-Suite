@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react"
+import React, { useState, useContext, useEffect, Children } from "react"
 import axios from 'axios';
 import { Table } from 'antd';
 
@@ -31,53 +31,68 @@ export default function GuestUser(){
           key: 'cardIssuer',
         },
         {
-            title: 'Joining Fee',
-            dataIndex: 'joiningfee',
+            title: 'Fees',
             align: 'center',
-            key: 'joiningfee',
-            sorter: (a, b) => Number(a.joiningfee) - Number(b.joiningfee),
+            children:[
+
+                {
+                    title: 'Joining Fee',
+                    dataIndex: 'joiningfee',
+                    align: 'center',
+                    key: 'joiningfee',
+                    sorter: (a, b) => Number(a.joiningfee) - Number(b.joiningfee),
+                },
+                {
+                    title: 'Annual Fee',
+                    dataIndex: 'annualfee',
+                    align: 'center',
+                    key: 'annualfee',
+                    sorter: (a, b) => Number(a.annualfee) - Number(b.annualfee),
+                },
+            ]
         },
         {
-            title: 'Annual Fee',
-            dataIndex: 'annualfee',
+            title: 'Platform Spends',
             align: 'center',
-            key: 'annualfee',
-            sorter: (a, b) => Number(a.annualfee) - Number(b.annualfee),
+            children:[
+
+                {
+                    title: 'Zomato',
+                    dataIndex: 'zomato',
+                    align: 'center',
+                    key: 'zomato',
+                    sorter: (a, b) => {
+                        const zomatoA = a.zomato ? parseFloat(a.zomato.replace('%', '')) : 0;
+                        const zomatoB = b.zomato ? parseFloat(b.zomato.replace('%', '')) : 0;
+                        return zomatoA - zomatoB;
+                    },
+                },
+                {
+                    title: 'Swiggy',
+                    align: 'center',
+                    dataIndex: 'swiggy',
+                    key: 'swiggy',
+                    sorter: (a, b) => {
+                        const swiggyA = a.swiggy ? parseFloat(a.swiggy.replace('%', '')) : 0;
+                        const swiggyB = b.swiggy ? parseFloat(b.swiggy.replace('%', '')) : 0;
+                        return swiggyA - swiggyB;
+                    },
+                },
+                {
+                    title: 'Big Basket',
+                    dataIndex: 'bigbasket',
+                    align: 'center',
+                    key: 'bigbasket',
+                    sorter: (a, b) => {
+                        const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
+                        const bigbasketB = b.bigbasket ? parseFloat(b.bigbasket.replace('%', '')) : 0;
+                        return bigbasketA - bigbasketB;
+                    },
+                },
+            ]
         },
 
-        {
-            title: 'Zomato',
-            dataIndex: 'zomato',
-            align: 'center',
-            key: 'zomato',
-            sorter: (a, b) => {
-                const zomatoA = a.zomato ? parseFloat(a.zomato.replace('%', '')) : 0;
-                const zomatoB = b.zomato ? parseFloat(b.zomato.replace('%', '')) : 0;
-                return zomatoA - zomatoB;
-            },
-        },
-        {
-            title: 'Swiggy',
-            align: 'center',
-            dataIndex: 'swiggy',
-            key: 'swiggy',
-            sorter: (a, b) => {
-                const swiggyA = a.swiggy ? parseFloat(a.swiggy.replace('%', '')) : 0;
-                const swiggyB = b.swiggy ? parseFloat(b.swiggy.replace('%', '')) : 0;
-                return swiggyA - swiggyB;
-            },
-        },
-        {
-            title: 'Big Basket',
-            dataIndex: 'bigbasket',
-            align: 'center',
-            key: 'bigbasket',
-            sorter: (a, b) => {
-                const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
-                const bigbasketB = b.bigbasket ? parseFloat(b.bigbasket.replace('%', '')) : 0;
-                return bigbasketA - bigbasketB;
-            },
-        },
+
 
         {
           title: 'Rewards',
@@ -105,7 +120,7 @@ export default function GuestUser(){
             dataIndex: 'comments',
             key: 'comments',
             align: 'center',
-            width:'10%'
+            width:'10%',
         },
       ];
     return(
