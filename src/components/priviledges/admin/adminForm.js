@@ -39,6 +39,11 @@ export default function AdminForm() {
                         swiggy: item.swiggy,
                         zomato: item.zomato,
                         bigbasket: item.bigbasket,
+                        amazon: item.amazon,
+                        uber: item.uber,
+                        ola: item.ola,
+                        rapido: item.rapido,
+                        myntra: item.myntra,
                         comments: item.comments,
                         list: item.list || []
                     }))
@@ -52,7 +57,7 @@ export default function AdminForm() {
         console.log("inside delete function: ",index)
         axios.delete(cardDeleteAPI, {
             data:{
-                id: index+1           // In this case, we're sending a DELETE request to cardDeleteAPI with a request body containing { id: index }. The request body is included in the data property of the configuration object, which is the second argument passed to axios.delete().
+                id: index           // In this case, we're sending a DELETE request to cardDeleteAPI with a request body containing { id: index }. The request body is included in the data property of the configuration object, which is the second argument passed to axios.delete().
             }
         }).then((res)=>{
             console.log(res)
@@ -66,6 +71,18 @@ export default function AdminForm() {
             setType('error');
         })
     }
+
+    const rewardFields = [
+    { label: "Amazon", key: "amazon", placeholder: "Amazon Rewards" },
+    { label: "Big Basket", key: "bigbasket", placeholder: "Bigbasket Rewards" },
+    { label: "Flipkart", key: "flipkart", placeholder: "Flipkart Rewards" },
+    { label: "Myntra", key: "myntra", placeholder: "Myntra Rewards" },
+    { label: "Ola", key: "ola", placeholder: "Ola Rewards" },
+    { label: "Rapido", key: "rapido", placeholder: "Rapido Rewards" },
+    { label: "Swiggy", key: "swiggy", placeholder: "Swiggy Rewards" },
+    { label: "Uber", key: "uber", placeholder: "Uber Rewards" },
+    { label: "Zomato", key: "zomato", placeholder: "Zomato Rewards" },
+    ];
 
 
     const handleSubmit = () => {
@@ -118,9 +135,9 @@ export default function AdminForm() {
                                         extra={
                                             <CloseOutlined
                                                 onClick={() => {
-                                                    deleteCard(index)
+                                                    deleteCard(cards[field.key].id)
                                                     remove(index);
-                                                    console.log("close: ",field)
+                                                    console.log("close: ",cards[field.key])
                                                 }}
                                             />
                                         }
@@ -167,36 +184,21 @@ export default function AdminForm() {
                                                 </Tooltip>
                                             </div>
                                         </Form.Item>
-                                        <Form.Item label="Swiggy" name={[field.name, 'swiggy']} initialValue={cards[index]?.swiggy}>
+
+                                        {rewardFields.map(({ label, key, placeholder }) => (
+                                        <Form.Item key={key} label={label} name={[field.name, key]} initialValue={cards[index]?.[key]}>
                                             <div style={{ display: 'flex' }}>
-                                                <Input defaultValue={cards[index]?.swiggy} placeholder="Swiggy Rewards" />
-                                                <Tooltip placement="top" title="Enter Swiggy Rewards">
-                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
-                                                        <IoMdInformationCircleOutline />
-                                                    </span>
-                                                </Tooltip>
+                                            <Input defaultValue={cards[index]?.[key]} placeholder={placeholder} />
+                                            <Tooltip placement="top" title={`Enter ${label} Rewards`}>
+                                                <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
+                                                <IoMdInformationCircleOutline />
+                                                </span>
+                                            </Tooltip>
                                             </div>
                                         </Form.Item>
-                                        <Form.Item label="Zomato" name={[field.name, 'zomato']} initialValue={cards[index]?.zomato}>
-                                            <div style={{ display: 'flex' }}>
-                                                <Input defaultValue={cards[index]?.zomato} placeholder="Zomato Rewards" />
-                                                <Tooltip placement="top" title="Enter Zomato Rewards">
-                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
-                                                        <IoMdInformationCircleOutline />
-                                                    </span>
-                                                </Tooltip>
-                                            </div>
-                                        </Form.Item>
-                                        <Form.Item label="Big Basket" name={[field.name, 'bigbasket']} initialValue={cards[index]?.bigbasket}>
-                                            <div style={{ display: 'flex' }}>
-                                                <Input defaultValue={cards[index]?.bigbasket} placeholder="Bigbasket Rewards" />
-                                                <Tooltip placement="top" title="Enter Bigbasket Rewards">
-                                                    <span style={{ cursor: 'pointer', marginLeft: '10px', fontSize: '20px' }}>
-                                                        <IoMdInformationCircleOutline />
-                                                    </span>
-                                                </Tooltip>
-                                            </div>
-                                        </Form.Item>
+                                        ))}
+
+
                                         <Form.Item label="Comment" name={[field.name, 'comments']} initialValue={cards[index]?.comments}>
                                             <div style={{ display: 'flex' }}>
                                                 <Input defaultValue={cards[index]?.comments} placeholder="Additional information" />

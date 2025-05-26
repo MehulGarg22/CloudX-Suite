@@ -55,7 +55,95 @@ export default function GuestUser(){
             title: 'Platform Spends',
             align: 'center',
             children:[
+                {
+                    title: 'Amazon',
+                    dataIndex: 'amazon',
+                    align: 'center',
+                    key: 'amazon',
+                    sorter: (a, b) => {
+                        const amazonA = a.amazon ? parseFloat(a.amazon.replace('%', '')) : 0;
+                        const amazonB = b.amazon ? parseFloat(b.amazon.replace('%', '')) : 0;
+                        return amazonA - amazonB;
+                    },
+                },
 
+                {
+                    title: 'Bigbasket',
+                    dataIndex: 'bigbasket',
+                    align: 'center',
+                    key: 'bigbasket',
+                    sorter: (a, b) => {
+                        const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
+                        const bigbasketB = b.bigbasket ? parseFloat(b.bigbasket.replace('%', '')) : 0;
+                        return bigbasketA - bigbasketB;
+                    },
+                },
+                {
+                    title: 'Flipkart',
+                    align: 'center',
+                    dataIndex: 'flipkart',
+                    key: 'flipkart',
+                    sorter: (a, b) => {
+                        const flipkartA = a.flipkart ? parseFloat(a.flipkart.replace('%', '')) : 0;
+                        const flipkartB = b.flipkart ? parseFloat(b.flipkart.replace('%', '')) : 0;
+                        return flipkartA - flipkartB;
+                    },
+                },
+                {
+                    title: 'Myntra',
+                    dataIndex: 'myntra',
+                    align: 'center',
+                    key: 'myntra',
+                    sorter: (a, b) => {
+                        const myntraA = a.myntra ? parseFloat(a.myntra.replace('%', '')) : 0;
+                        const myntraB = b.myntra ? parseFloat(b.myntra.replace('%', '')) : 0;
+                        return myntraA - myntraB;
+                    },
+                },
+                {
+                    title: 'Ola',
+                    dataIndex: 'ola',
+                    align: 'center',
+                    key: 'ola',
+                    sorter: (a, b) => {
+                        const olaA = a.ola ? parseFloat(a.ola.replace('%', '')) : 0;
+                        const olaB = b.ola ? parseFloat(b.ola.replace('%', '')) : 0;
+                        return olaA - olaB;
+                    },
+                },
+                {
+                    title: 'Swiggy',
+                    dataIndex: 'swiggy',
+                    align: 'center',
+                    key: 'swiggy',
+                    sorter: (a, b) => {
+                        const swiggyA = a.swiggy ? parseFloat(a.swiggy.replace('%', '')) : 0;
+                        const swiggyB = b.swiggy ? parseFloat(b.swiggy.replace('%', '')) : 0;
+                        return swiggyA - swiggyB;
+                    },
+                },
+                {
+                    title: 'Rapido',
+                    dataIndex: 'rapido',
+                    align: 'center',
+                    key: 'rapido',
+                    sorter: (a, b) => {
+                        const rapidoA = a.rapido ? parseFloat(a.rapido.replace('%', '')) : 0;
+                        const rapidoB = b.rapido ? parseFloat(b.rapido.replace('%', '')) : 0;
+                        return rapidoA - rapidoB;
+                    },
+                },
+                {
+                    title: 'Uber',
+                    dataIndex: 'uber',
+                    align: 'center',
+                    key: 'uber',
+                    sorter: (a, b) => {
+                        const uberA = a.uber ? parseFloat(a.uber.replace('%', '')) : 0;
+                        const uberB = b.uber ? parseFloat(b.uber.replace('%', '')) : 0;
+                        return uberA - uberB;
+                    },
+                },
                 {
                     title: 'Zomato',
                     dataIndex: 'zomato',
@@ -65,28 +153,6 @@ export default function GuestUser(){
                         const zomatoA = a.zomato ? parseFloat(a.zomato.replace('%', '')) : 0;
                         const zomatoB = b.zomato ? parseFloat(b.zomato.replace('%', '')) : 0;
                         return zomatoA - zomatoB;
-                    },
-                },
-                {
-                    title: 'Swiggy',
-                    align: 'center',
-                    dataIndex: 'swiggy',
-                    key: 'swiggy',
-                    sorter: (a, b) => {
-                        const swiggyA = a.swiggy ? parseFloat(a.swiggy.replace('%', '')) : 0;
-                        const swiggyB = b.swiggy ? parseFloat(b.swiggy.replace('%', '')) : 0;
-                        return swiggyA - swiggyB;
-                    },
-                },
-                {
-                    title: 'Big Basket',
-                    dataIndex: 'bigbasket',
-                    align: 'center',
-                    key: 'bigbasket',
-                    sorter: (a, b) => {
-                        const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
-                        const bigbasketB = b.bigbasket ? parseFloat(b.bigbasket.replace('%', '')) : 0;
-                        return bigbasketA - bigbasketB;
                     },
                 },
             ]
@@ -133,6 +199,7 @@ export default function GuestUser(){
                 className="data-table"
                 style={{margin:'20px'}}
                 bordered
+                pagination={{ defaultPageSize: 2, showSizeChanger: true, pageSizeOptions: ['2', '4', '6']}}
             />
         </div>
       );
