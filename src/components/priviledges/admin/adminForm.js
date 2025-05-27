@@ -19,7 +19,8 @@ export default function AdminForm() {
     const cardPostAPI = "https://q08qqknh16.execute-api.us-east-1.amazonaws.com/credit-card-details/post";
     const cardDeleteAPI = "https://maqwhoyk0g.execute-api.us-east-1.amazonaws.com/credit-card-details/delete"
 
-    useEffect(() => {
+
+    const cardetailsFromDatabase=()=>{
         axios.get(cardGetAPI).then((resp) => {
             console.log("resp.data:", resp.data);
             const fetchedItems = resp.data.items || [];
@@ -51,6 +52,10 @@ export default function AdminForm() {
                 console.log("form.getFieldsValue():", form.getFieldsValue());
             }
         });
+    }
+
+    useEffect(() => {
+        cardetailsFromDatabase()
     }, []);
 
     const deleteCard=(index)=>{
@@ -61,6 +66,7 @@ export default function AdminForm() {
             }
         }).then((res)=>{
             console.log(res)
+            cardetailsFromDatabase()
             setMessage('Success!');
             setDescription('The card detail successfully deleted');
             setType('success');
@@ -92,10 +98,12 @@ export default function AdminForm() {
         axios.post(cardPostAPI, form.getFieldsValue().items).then((res) => {
             console.log("card details post response", res);
             setLoading(false);
+            cardetailsFromDatabase()
             setMessage('Success!');
             setDescription('The information you provided has been successfully saved.');
             setType('success');
         }).catch((err) => {
+            cardetailsFromDatabase()
             console.log(err);
             setLoading(false);
             setMessage('Oops! Something went wrong.');
