@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Menu, Divider } from "@aws-amplify/ui-react";
 import logo from '../../assets/cloudxsuite_logo.png'
+import { Button } from "antd";
 
 
 export default function Navbar() {
@@ -14,7 +15,7 @@ export default function Navbar() {
   return (
     <nav className="loginNavbar">
     {
-        location.pathname !=="/" && (
+        location.pathname !=="/" && location.pathname !=="/user" && (
         <div style={{display:'flex'}}>
             <div style={{display:'flex'}}>
                 <span>
@@ -26,31 +27,31 @@ export default function Navbar() {
             </div>
             <div style={{marginLeft:'75vw'}}>
                 <Menu
-                style={{
-                    cursor: 'pointer',
-                    marginTop: '5px',
-                    marginRight: '10px',
-                }}
-                trigger={
-                    <div
                     style={{
-                        color: 'black',
                         cursor: 'pointer',
-                        fontSize: '30px',
-                        marginLeft: '95%',
                         marginTop: '5px',
-                        marginBottom: '1px',
-                        backgroundColor: 'white', // Trigger background
-                        height: '50px',
-                        width: '50px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        marginRight: '10px',
                     }}
-                    >
-                    <UserOutlined />
-                    </div>
-                }
+                    trigger={
+                        <div
+                        style={{
+                            color: 'black',
+                            cursor: 'pointer',
+                            fontSize: '30px',
+                            marginLeft: '95%',
+                            marginTop: '5px',
+                            marginBottom: '1px',
+                            backgroundColor: 'white', // Trigger background
+                            height: '50px',
+                            width: '50px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                        >
+                        <UserOutlined />
+                        </div>
+                    }
                 >
                 <div style={{
                     backgroundColor: 'white', // Menu Content background
