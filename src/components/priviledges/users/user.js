@@ -83,6 +83,18 @@ export default function User(){
                                 width:'200px'
                             }}>
                                 <p
+                                    style={{
+                                        cursor: 'default',
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                        marginLeft: '10px',
+                                        marginTop: '2%',
+                                        fontSize: '15px',
+                                    }}
+                                >
+                                    {localStorage.getItem("name")}
+                                </p>
+                                <p
                                 style={{
                                     cursor: 'default',
                                     color: '#034C53',
@@ -92,20 +104,9 @@ export default function User(){
                                     fontSize: '19px',
                                 }}
                                 >
-                                {localStorage.getItem("role")}
+                                    {localStorage.getItem("role")}
                                 </p>
-                                <p
-                                style={{
-                                    cursor: 'default',
-                                    color: 'black',
-                                    fontWeight: 'bold',
-                                    marginLeft: '10px',
-                                    marginTop: '2%',
-                                    fontSize: '15px',
-                                }}
-                                >
-                                {localStorage.getItem("name")}
-                                </p>
+
                                 <Divider />
                                 <p
                                 style={{

@@ -44,6 +44,7 @@ export default function Navbar() {
                             backgroundColor: 'white', // Trigger background
                             height: '50px',
                             width: '50px',
+                            zIndex:1,
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',

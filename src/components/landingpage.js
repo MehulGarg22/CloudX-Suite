@@ -10,6 +10,7 @@ import { Tooltip, Input, Modal, Button, ConfigProvider, Form, } from "antd";
 import { FaUserPlus } from "react-icons/fa6";
 import logo from '../assets/cloudxsuite_logo.png'
 import Notification from "./features/notification";
+import axios from 'axios';
 
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
@@ -25,10 +26,15 @@ export default function LandingPage() {
   const [type, setType]=useState("")
   const [message, setMessage]=useState("")
   const [description, setDescription]=useState("")
+  const [file, setFile] = useState(null);
+  let S3=""
 
   const { user, signIn, signUp } = useContext(AuthContext);
 
   const [isValid, setIsValid] = useState(true);
+
+
+  const imageUploadAPI="https://ymjwbfifsa.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/images-upload"
 
   const passwordPolicy = {
     minLength: 8,
@@ -126,8 +132,37 @@ export default function LandingPage() {
     e.preventDefault()
   }
 
-  const handleSignupSubmit = async(e) => {
-    e.preventDefault();
+    const handleSignUpImages=()=>{
+    console.log("file name", file)
+    if(file!==null){
+      axios.post(imageUploadAPI,{
+        email: email,
+        filename: file.name,
+        contentType: "image/png"
+      }).then((res)=>{
+        console.log("Presigned url", res)
+        S3=res.data.presignedUrl
+        axios.put(S3, file, {
+          headers: {
+            "Content-Type": file.type,
+          },
+        }).then((res)=>{
+          console.log("Uploaded file", res.statusText)
+          console.log("Uploaded file details", res)
+        }).catch((err)=>{
+          console.log("error", err)
+        })
+        handleSignupSubmit(res.data.filePath)
+      }).catch((err)=>{
+        console.log("error", err)
+      })
+    }else{
+      handleSignupSubmit(null)
+    }
+  }
+
+  const handleSignupSubmit = async(filePath) => {
+    console.log("File Path: ", filePath)
     setType('');
     console.log("Signup", name, email, newPassword, confirmPassword)
     setLoading(true);
@@ -194,6 +229,16 @@ export default function LandingPage() {
   };
   
 
+  let formData=new FormData();
+  const onfileChange=(e)=>{
+      if(e.target && e.target.files[0]){
+          formData.append("File_Name", e.target.files[0])
+          console.log(formData)
+          setFile(e.target.files[0])
+      }
+  }
+
+
   return (
     <div>
 
@@ -255,7 +300,7 @@ export default function LandingPage() {
                   },
                 }}
               >
-                <Button type="primary" loading={loading} onClick={handleSignupSubmit}>
+                <Button type="primary" loading={loading} onClick={handleSignUpImages}>
                   Submit
                 </Button>
               </ConfigProvider>
@@ -376,6 +421,17 @@ export default function LandingPage() {
                       <IoMdInformationCircleOutline/>
                     </span>
                   </Tooltip>
+                </div>
+              </Form.Item>
+              <Form.Item name="blogimage" label="Profile Image">      
+                <div style={{display:'flex', marginTop:'5px'}}>
+                    <Tooltip style={{whiteSpace: 'pre-line', marginTop:'5px'}} placement="top" title="Upload profile picture in jpg/png format only" >
+                        <span style={{cursor:'pointer',  marginLeft:'10px',fontSize:'20px'}}>
+                        <IoMdInformationCircleOutline/>
+                        </span>
+                    </Tooltip>
+                    <input style={{marginLeft:"10px", marginTop:'5px'}} onChange={(e)=> onfileChange(e)} type="file" />
+
                 </div>
               </Form.Item>
 
