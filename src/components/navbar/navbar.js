@@ -71,7 +71,7 @@ export default function Navbar() {
                         fontSize: '19px',
                     }}
                     >
-                    {localStorage.getItem("role")}
+                    {sessionStorage.getItem("role")}
                     </p>
                     <p
                     style={{
@@ -83,7 +83,7 @@ export default function Navbar() {
                         fontSize: '15px',
                     }}
                     >
-                    {localStorage.getItem("name")}
+                    {sessionStorage.getItem("name")}
                     </p>
                     <Divider />
                     <p

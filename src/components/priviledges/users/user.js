@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Menu, Divider } from "@aws-amplify/ui-react";
@@ -6,12 +6,12 @@ import { Button } from "antd";
 import { AuthContext } from "../../loginAuth/authContext";
 import logo from '../../../assets/cloudxsuite_logo.png'
 import PlatformRewards from '../../features/creditCardPlatformRewards'
+import axios from "axios";
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
     
     const [switchToRewards, setSwitchToRewards]= useState(false)
-
 
     return(
         <div>
@@ -92,7 +92,7 @@ export default function User(){
                                         fontSize: '15px',
                                     }}
                                 >
-                                    {localStorage.getItem("name")}
+                                    {sessionStorage.getItem("name")}
                                 </p>
                                 <p
                                 style={{
@@ -104,7 +104,7 @@ export default function User(){
                                     fontSize: '19px',
                                 }}
                                 >
-                                    {localStorage.getItem("role")}
+                                    {sessionStorage.getItem("role")}
                                 </p>
 
                                 <Divider />
@@ -191,7 +191,7 @@ export default function User(){
                                     fontSize: '19px',
                                 }}
                                 >
-                                {localStorage.getItem("role")}
+                                {sessionStorage.getItem("name")}
                                 </p>
                                 <p
                                 style={{
@@ -203,7 +203,7 @@ export default function User(){
                                     fontSize: '15px',
                                 }}
                                 >
-                                {localStorage.getItem("name")}
+                                {sessionStorage.getItem("role")}
                                 </p>
                                 <Divider />
                                 <p

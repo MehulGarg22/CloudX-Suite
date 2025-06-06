@@ -34,7 +34,7 @@ export default function LandingPage() {
   const [isValid, setIsValid] = useState(true);
 
 
-  const imageUploadAPI="https://ymjwbfifsa.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/images-upload"
+  const imageUploadAPI="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/Profile-Image-PresignedURL"
 
   const passwordPolicy = {
     minLength: 8,
@@ -160,6 +160,23 @@ export default function LandingPage() {
       handleSignupSubmit(null)
     }
   }
+  
+  const profilepicturetoDb="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/save-profile-image-filePath-to-dynamodb"
+
+  const SavedProfilePathToDynamodb=(email, filePath)=>{
+
+    let payload={
+      email:email,
+      filePath: filePath
+    }
+
+    axios.post(profilepicturetoDb, payload).then((res)=>{
+      console.log("Successfully saved profile image to Dynamodb", res)
+    }).catch((error)=>{
+      console.log("error is", error)
+    })
+  }
+
 
   const handleSignupSubmit = async(filePath) => {
     console.log("File Path: ", filePath)
@@ -176,7 +193,8 @@ export default function LandingPage() {
     else{
       try {
         const result = await signUp(name, email, newPassword, 'User');
-        
+        SavedProfilePathToDynamodb(email, filePath)
+
         setMessage('Signup Successful!')
         setDescription('Welcome to CloudX Suite! You can now log in and explore.')
         setType('success')
@@ -186,10 +204,11 @@ export default function LandingPage() {
 
       } catch (error) {
         console.error('Signup error:', error);
+        SavedProfilePathToDynamodb(email, filePath)
+
         setMessage('Signup Failed')
         setDescription('An unexpected error occurred. Please try again later.')
         setType('error')
-
         setLoading(false);
       }
       setIsModalOpen(false);
@@ -198,10 +217,10 @@ export default function LandingPage() {
 
   if (user) {
     // Redirect to the profile page
-    if(localStorage.getItem("role")=="Administrator"){
+    if(sessionStorage.getItem("role")=="Administrator"){
       return <Navigate to="/admin/creditcard" />;
     }
-    else if(localStorage.getItem("role")=="Guest User"){
+    else if(sessionStorage.getItem("role")=="Guest User"){
       return <Navigate to="/guest" />;
     }
     else{

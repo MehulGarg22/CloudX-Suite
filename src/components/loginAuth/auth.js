@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
     CognitoUserPool,
     CognitoUser,
@@ -66,11 +67,22 @@ import {
             console.log("Results:", result)
             console.log("profile:", result.idToken.payload.profile)
             console.log("UserName:", result.idToken.payload['cognito:username'])
+            let payload={
+              email: result.idToken.payload.email
+            }
 
-            localStorage.setItem("role", result.idToken.payload.profile)
-            localStorage.setItem("name", result.idToken.payload.name)
-            localStorage.setItem("username", result.idToken.payload['cognito:username'])
-            localStorage.setItem("email", result.idToken.payload.email)
+            const profileImageFetchUrl="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+
+            axios.post(profileImageFetchUrl, payload).then((res)=>{
+                console.log("Filepath of image after login", res.data.filePath)
+                sessionStorage.setItem("filePath", res.data.filePath)
+            }).catch((err)=>{
+                console.log("filepath after login error",err)
+            })
+            sessionStorage.setItem("role", result.idToken.payload.profile)
+            sessionStorage.setItem("name", result.idToken.payload.name)
+            sessionStorage.setItem("username", result.idToken.payload['cognito:username'])
+            sessionStorage.setItem("email", result.idToken.payload.email)
           },
           onFailure: (err) => {
             reject(err)
