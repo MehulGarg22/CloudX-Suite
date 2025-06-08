@@ -96,6 +96,11 @@ import {
     console.log(cognitoUser)
     if (cognitoUser) {
       cognitoUser.signOut()
+      sessionStorage.removeItem("filePath")
+      sessionStorage.removeItem("role")
+      sessionStorage.removeItem("name")
+      sessionStorage.removeItem("username")
+      sessionStorage.removeItem("email")
     }
   }
   

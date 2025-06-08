@@ -29,6 +29,11 @@ function AuthProvider({ children }) {
     await getCurrentUser()
   }
   const signOut = async () => {
+    sessionStorage.removeItem("filePath")
+    sessionStorage.removeItem("role")
+    sessionStorage.removeItem("name")
+    sessionStorage.removeItem("username")
+    sessionStorage.removeItem("email")
     await auth.signOut()
     setUser(null)
   }

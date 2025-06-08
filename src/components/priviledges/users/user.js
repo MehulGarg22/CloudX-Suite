@@ -70,8 +70,15 @@ export default function User(){
                                     alignItems: 'center',
                                 }}
                                 >
-
-                                <UserOutlined />
+                                    {
+                                        sessionStorage.getItem("filePath")==="null" ? 
+                                            <div style={{fontSize:'30px'}}>
+                                                <UserOutlined />
+                                            </div>
+                                            :
+                                            <img src={sessionStorage.getItem("filePath")} style={{height:'40px'}}/>
+                                            
+                                    }
                                 </div>
                             }
                             >
@@ -169,8 +176,15 @@ export default function User(){
                                     alignItems: 'center',
                                 }}
                                 >
-
-                                <UserOutlined />
+                                    {
+                                        sessionStorage.getItem("filePath")==="null" ? 
+                                            <div style={{fontSize:'30px'}}>
+                                                <UserOutlined />
+                                            </div>
+                                            :
+                                            <img src={sessionStorage.getItem("filePath")} style={{height:'40px'}}/>
+                                            
+                                    }
                                 </div>
                             }
                             >

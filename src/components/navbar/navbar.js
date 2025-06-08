@@ -50,7 +50,16 @@ export default function Navbar() {
                             alignItems: 'center',
                         }}
                         >
-                        <UserOutlined />
+                            {console.log("Image", sessionStorage.getItem("filePath"))}
+                            {
+                                sessionStorage.getItem("filePath")==="null" ? 
+                                    <div style={{fontSize:'30px'}}>
+                                        <UserOutlined />
+                                    </div>
+                                    :
+                                    <img src={sessionStorage.getItem("filePath")} style={{height:'80%', width:'50%', borderRadius:'30px'}} />
+                                    
+                            }
                         </div>
                     }
                 >

@@ -167,7 +167,8 @@ export default function LandingPage() {
 
     let payload={
       email:email,
-      filePath: filePath
+      filePath: filePath,
+      filename: file.name
     }
 
     axios.post(profilepicturetoDb, payload).then((res)=>{
