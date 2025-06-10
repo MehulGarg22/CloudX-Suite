@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import './navbar.css';
 import { AuthContext } from "../loginAuth/authContext";
 import { useLocation } from "react-router-dom";
@@ -6,13 +6,30 @@ import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Menu, Divider } from "@aws-amplify/ui-react";
 import logo from '../../assets/cloudxsuite_logo.png'
 import { Button } from "antd";
-
+import axios from "axios";
 
 export default function Navbar() {
-  const { signOut } = useContext(AuthContext);
-  const location = useLocation();
+    const { signOut } = useContext(AuthContext);
+    const location = useLocation();
+    const [filePath, setFilePath]= useState("")
 
-  return (
+
+    useEffect(()=>{
+        let payload={
+            email: sessionStorage.getItem("email")
+        }
+
+        const profileImageFetchUrl="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+
+        axios.post(profileImageFetchUrl, payload).then((res)=>{
+            console.log("Filepath of image in useEffect", res.data.filePath)
+            setFilePath(res.data.filePath)
+        }).catch((err)=>{
+            console.log("filepath in useEffect",err)
+        })
+    },[])
+    
+    return (
     <nav className="loginNavbar">
     {
         location.pathname !=="/" && location.pathname !=="/user" && (
@@ -52,12 +69,12 @@ export default function Navbar() {
                         >
                             {console.log("Image", sessionStorage.getItem("filePath"))}
                             {
-                                sessionStorage.getItem("filePath")==="null" ? 
+                                !filePath ? 
                                     <div style={{fontSize:'30px'}}>
                                         <UserOutlined />
                                     </div>
                                     :
-                                    <img src={sessionStorage.getItem("filePath")} style={{height:'80%', width:'50%', borderRadius:'30px'}} />
+                                    <img src={filePath} style={{height:'40px', borderRadius:'100px'}}/>
                                     
                             }
                         </div>
@@ -116,5 +133,5 @@ export default function Navbar() {
         )
     }
     </nav>
-  );
+    );
 }

@@ -7,11 +7,35 @@ import { AuthContext } from "../../loginAuth/authContext";
 import logo from '../../../assets/cloudxsuite_logo.png'
 import PlatformRewards from '../../features/creditCardPlatformRewards'
 import axios from "axios";
+import Profile from "../../features/profile";
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
     
     const [switchToRewards, setSwitchToRewards]= useState(false)
+    const [filePath, setFilePath]= useState("")
+    const [changeProfile, setChangeProfile]= useState(false)
+
+
+    useEffect(()=>{
+        let payload={
+            email: sessionStorage.getItem("email")
+        }
+
+        const profileImageFetchUrl="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+
+        axios.post(profileImageFetchUrl, payload).then((res)=>{
+            console.log("Filepath of image in useEffect", res.data.filePath)
+            setFilePath(res.data.filePath)
+        }).catch((err)=>{
+            console.log("filepath in useEffect",err)
+        })
+    },[])
+
+    const handleProfile=()=>{
+        console.log("set")
+        setChangeProfile(true)
+    }
 
     return(
         <div>
@@ -24,6 +48,9 @@ export default function User(){
                     <span style={{marginLeft:'60px', marginTop:'6px', fontSize:'25px', fontWeight:'bold'}}>
                         CloudX Suite
                     </span>
+                    {
+                        changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
+                    }
                 </div>
                     {
                         switchToRewards ?
@@ -71,12 +98,12 @@ export default function User(){
                                 }}
                                 >
                                     {
-                                        sessionStorage.getItem("filePath")==="null" ? 
+                                        !filePath ? 
                                             <div style={{fontSize:'30px'}}>
                                                 <UserOutlined />
                                             </div>
                                             :
-                                            <img src={sessionStorage.getItem("filePath")} style={{height:'40px'}}/>
+                                            <img src={filePath} style={{height:'40px', borderRadius:'100px'}}/>
                                             
                                     }
                                 </div>
@@ -112,6 +139,20 @@ export default function User(){
                                 }}
                                 >
                                     {sessionStorage.getItem("role")}
+                                </p>
+                                <p
+                                    style={{
+                                        cursor: 'pointer',
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                        marginLeft: '10px',
+                                        marginTop: '2%',
+                                        fontSize: '15px',
+
+                                    }}
+                                    onClick={handleProfile}
+                                >
+                                    Profile
                                 </p>
 
                                 <Divider />
@@ -177,12 +218,12 @@ export default function User(){
                                 }}
                                 >
                                     {
-                                        sessionStorage.getItem("filePath")==="null" ? 
+                                        !filePath ? 
                                             <div style={{fontSize:'30px'}}>
                                                 <UserOutlined />
                                             </div>
                                             :
-                                            <img src={sessionStorage.getItem("filePath")} style={{height:'40px'}}/>
+                                            <img src={filePath} style={{height:'40px', borderRadius:'100px'}}/>
                                             
                                     }
                                 </div>
@@ -218,6 +259,20 @@ export default function User(){
                                 }}
                                 >
                                 {sessionStorage.getItem("role")}
+                                </p>
+                                <p
+                                    style={{
+                                        cursor: 'pointer',
+                                        color: 'black',
+                                        fontWeight: 'bold',
+                                        marginLeft: '10px',
+                                        marginTop: '2%',
+                                        fontSize: '15px',
+
+                                    }}
+                                    onClick={handleProfile}
+                                >
+                                    Profile
                                 </p>
                                 <Divider />
                                 <p

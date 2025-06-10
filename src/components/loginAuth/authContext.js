@@ -7,6 +7,7 @@ function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
+
   const getCurrentUser = async () => {
     try {
       const user = await auth.getCurrentUser()
@@ -22,6 +23,25 @@ function AuthProvider({ children }) {
     getCurrentUser()
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false))
+
+    // Auto logout on token expiry
+    const checkExpiry = () => {
+      const expiresAt = sessionStorage.getItem("expiresAt");
+      if (expiresAt && Date.now() > Number(expiresAt)) {
+        signOut();
+        console.log("Session expired, user logged out automatically.");
+        setUser(null);  
+        sessionStorage.removeItem("expiresAt");
+        sessionStorage.removeItem("role");
+        sessionStorage.removeItem("name");
+        sessionStorage.removeItem("username");
+        sessionStorage.removeItem("email");
+        
+      }
+    };
+    const interval = setInterval(checkExpiry, 1000 * 60); // check every minute
+    return () => clearInterval(interval);
+    
   }, [])
 
   const signIn = async (username, password) => {

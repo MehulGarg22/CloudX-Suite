@@ -79,10 +79,14 @@ import {
             }).catch((err)=>{
                 console.log("filepath after login error",err)
             })
+
+            const expiresAt = result.getAccessToken().getExpiration() * 1000; // ms
+            sessionStorage.setItem("expiresAt", expiresAt);
             sessionStorage.setItem("role", result.idToken.payload.profile)
             sessionStorage.setItem("name", result.idToken.payload.name)
             sessionStorage.setItem("username", result.idToken.payload['cognito:username'])
             sessionStorage.setItem("email", result.idToken.payload.email)
+            sessionStorage.setItem("accessToken", result.accessToken)
           },
           onFailure: (err) => {
             reject(err)
