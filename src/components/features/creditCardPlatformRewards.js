@@ -193,7 +193,7 @@ export default function PlatformRewards(){
 
 
     return(
-        <div style={{ overflowX: 'hidden', width: '100%', backgroundColor: '#EBE8DB', height: '92vh' }}>
+        <div style={{ overflowX: 'hidden', width: '100%', backgroundColor: '#EBE8DB', height: '90vh' }}>
             <Table
                 dataSource={data}
                 columns={columns}

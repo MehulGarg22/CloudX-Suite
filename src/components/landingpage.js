@@ -260,7 +260,7 @@ export default function LandingPage() {
 
 
   return (
-    <div  style={{ overflowX: "hidden", minHeight:'100vh', width: "100%", backgroundColor:'#EBE8DB' }}>
+    <div  style={{ overflowX: "hidden", minHeight:'80vh', width: "100%", backgroundColor:'#EBE8DB' }}>
 
       {/* Navbar and Signup */}
 
@@ -597,7 +597,7 @@ export default function LandingPage() {
         {/* Footer */}
 
 
-      <div style={{marginTop:'10%'}}>
+      <div style={{marginTop:'7.5%'}}>
         <Footer/>
       </div>
     </div>
