@@ -74,17 +74,20 @@ export default function User(){
                     src={logo}
                     className="h-16 w-auto"
                     />
+                    <span style={{marginLeft:'10px', marginTop:'1px', fontSize:'25px', color:'white' ,fontWeight:'bold'}}>
+                        CloudX Suite
+                    </span>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                     {
                         switchToRewards ?
                         <div className="flex space-x-4 ">
-                            <p style={{cursor:'pointer', marginTop:'12px'}} className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white','rounded-md px-3 py-2 text-sm font-medium')} onClick={()=> setSwitchToRewards(false)}>
+                            <p style={{cursor:'pointer', marginTop:'14px'}} className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white','rounded-md px-3 py-2 text-sm font-medium')} onClick={()=> setSwitchToRewards(false)}>
                                 Back
                             </p>
                         </div>:
                         <div className="flex space-x-4">
-                            <p style={{cursor:'pointer', marginTop:'12px'}} className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white','rounded-md px-3 py-2 text-sm font-medium')} onClick={()=> setSwitchToRewards(true)}>
+                            <p style={{cursor:'pointer', marginTop:'16px'}} className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white','rounded-md px-3 py-2 text-sm font-medium')} onClick={()=> setSwitchToRewards(true)}>
                                 Credit Card Platform Rewards
                             </p>
                         </div>
@@ -199,9 +202,9 @@ export default function User(){
 //                     <span>
 //                         <img src={logo} style={{height:'50px', width:'60px', marginLeft:'90%'}} />
 //                     </span>
-//                     <span style={{marginLeft:'60px', marginTop:'6px', fontSize:'25px', fontWeight:'bold'}}>
-//                         CloudX Suite
-//                     </span>
+                    // <span style={{marginLeft:'60px', marginTop:'6px', fontSize:'25px', fontWeight:'bold'}}>
+                    //     CloudX Suite
+                    // </span>
                     // {
                     //     changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
                     // }
