@@ -119,7 +119,7 @@ export default function AdminForm() {
     };
 
     return (
-        <div style={{ overflowX: 'hidden', width: '100%', backgroundColor: '#EBE8DB', height: '92vh' }}>
+        <div style={{ overflowX: 'hidden', width: '100%', backgroundColor: '#EBE8DB', height: '90vh' }}>
             {
                 initialLoad ? 
                     <div style={{margin:'50px'}}>

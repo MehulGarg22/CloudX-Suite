@@ -11,6 +11,7 @@ import { FaUserPlus } from "react-icons/fa6";
 import logo from '../assets/cloudxsuite_logo.png'
 import Notification from "./features/notification";
 import axios from 'axios';
+import { LinearGradient } from 'react-text-gradients'
 
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
@@ -274,7 +275,9 @@ export default function LandingPage() {
             <img src={logo} style={{height:'50px', width:'60px', marginLeft:'90%',}} />
           </span>
           <span style={{marginLeft:'60px', marginTop:'6px', fontSize:'25px', fontWeight:'bold'}}>
-            CloudX Suite
+            <LinearGradient gradient={['to left', '#DA5B9B ,#6B96F4']}>
+              CloudX Suite
+            </LinearGradient>
           </span>
         </div>
 
@@ -482,12 +485,16 @@ export default function LandingPage() {
             fontSize: "20px",
           }}
         >
-          <div style={{ fontWeight: "bold", color: "#a51d4a", marginBottom:'60px', fontSize:'40px' }}>  
-            CloudX Suite
+          <div style={{ fontWeight: "bold", marginBottom:'60px', fontSize:'40px' }}>  
+             <LinearGradient gradient={['to left', '#DA5B9B ,#6B96F4']}>
+              CloudX Suite
+             </LinearGradient>
           </div>
-          <span style={{ fontWeight: "bold", color: "#a51d4a" }}>
+          <span style={{ fontWeight: "bold"}}>
             {" "}
-            "Cloud-Powered Web Application with AWS & React"
+            <LinearGradient gradient={['to left', '#DA5B9B ,#6B96F4']}>
+              "Cloud-Powered Web Application with AWS & React"
+            </LinearGradient>
             
           </span>{" "}
         
@@ -508,7 +515,7 @@ export default function LandingPage() {
             onSubmit={handleSubmit}
           >
             <div className="input-container">
-              <span style={{ fontSize: "30px", marginRight:'1%', color:'#a51d4a' }}>
+              <span style={{ fontSize: "30px", marginRight:'1%', color:'#DA5B9B' }}>
                 <FaUserTie  />
               </span>
               <Input
@@ -531,7 +538,7 @@ export default function LandingPage() {
             </div>
             <br/>
             <div className="input-container">
-              <span style={{ fontSize: "30px", color:'#a51d4a' }}>
+              <span style={{ fontSize: "30px", color:'#DA5B9B' }}>
                 <TbPasswordUser  />
               </span>
               <Input.Password
@@ -556,7 +563,7 @@ export default function LandingPage() {
                 <ConfigProvider
                   theme={{                                                    // To change color of antd buttons
                     token: {
-                      colorPrimary: '#a51d4a',
+                      colorPrimary: '#DA5B9B',
                       borderRadius: 6,
                       colorBgContainer: 'white',
                     },

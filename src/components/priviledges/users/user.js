@@ -9,6 +9,8 @@ import Profile from "../../features/profile";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from "antd";
+import { LinearGradient } from 'react-text-gradients'
+
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
@@ -16,13 +18,6 @@ export default function User(){
     const [switchToRewards, setSwitchToRewards]= useState(false)
     const [filePath, setFilePath]= useState("")
     const [changeProfile, setChangeProfile]= useState(false)
-
-    const navigation = [
-        { name: 'Dashboard', href: '#', current: true },
-        { name: 'Team', href: '#', current: false },
-        { name: 'Projects', href: '#', current: false },
-        { name: 'Calendar', href: '#', current: false },
-    ]
 
     function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -75,7 +70,9 @@ export default function User(){
                                 className="h-16 w-auto"
                                 />
                                 <span style={{marginLeft:'10px', marginTop:'1px', fontSize:'20px', color:'white' ,fontWeight:'bold'}}>
-                                    CloudX Suite
+                                    <LinearGradient gradient={['to left', '#DA5B9B ,#6B96F4']}>
+                                        CloudX Suite
+                                    </LinearGradient>
                                 </span>
                             </div>
                             <div className="hidden sm:ml-6 sm:block">
@@ -128,7 +125,7 @@ export default function User(){
                             <MenuItem>
                                 <p
                                 href="#"
-                                className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                                className="block px-4 py-2 text-sm text-[#DA5B9B] data-focus:bg-gray-100 data-focus:outline-hidden"
                                 >
                                 {sessionStorage.getItem("name")}
                                 </p>
@@ -142,13 +139,14 @@ export default function User(){
                                 Your Profile
                                 </a>
                             </MenuItem>
+                            <hr class="border-gray-800 dark:border-white"></hr>
                             <MenuItem>
                                 <a
                                 href="#"
                                 className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                                 onClick={signOut}
                                 >
-                                Sign out
+                                Sign Out
                                 </a>
                             </MenuItem>
                             </MenuItems>
@@ -187,280 +185,3 @@ export default function User(){
         </div>
     );
 }
-
-
-
-
-
-
-
-
-// export default function Example() {
-//   return (
-
-//         <div>
-//             <div style={{display:'flex'}}>
-
-//                 <div style={{display:'flex'}}>
-//                     <span>
-//                         <img src={logo} style={{height:'50px', width:'60px', marginLeft:'90%'}} />
-//                     </span>
-                    // <span style={{marginLeft:'60px', marginTop:'6px', fontSize:'25px', fontWeight:'bold'}}>
-                    //     CloudX Suite
-                    // </span>
-                    // {
-                    //     changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
-                    // }
-//                 </div>
-//                     {
-//                         switchToRewards ?
-//                         <div style={{marginLeft:'61.7vw', display:'flex'}}>
-//                             <div style={{                        
-//                                     color: 'black',
-//                                     cursor: 'pointer',
-//                                     fontSize: '30px',
-//                                     marginRight:'20px',
-//                                     marginLeft: '90%',
-//                                     marginTop: '5px',
-//                                     marginBottom: '1px',
-//                                     backgroundColor: 'white', // Trigger background
-//                                     height: '50px',
-//                                     width: '50px',
-//                                     display: 'flex',
-//                                     justifyContent: 'center',
-//                                     alignItems: 'center'
-//                             }}>
-//                                 <Button onClick={()=> setSwitchToRewards(false)}>
-//                                     Back
-//                                 </Button>
-//                             </div>
-//                             <Menu
-//                             style={{
-//                                 cursor: 'pointer',
-//                                 marginTop: '5px',
-//                                 marginRight: '10px',
-//                             }}
-//                             trigger={
-//                                 <div
-//                                 style={{
-//                                     color: 'black',
-//                                     cursor: 'pointer',
-//                                     fontSize: '30px',
-//                                     marginLeft: '50%',
-//                                     marginTop: '5px',
-//                                     marginBottom: '1px',
-//                                     backgroundColor: 'white', // Trigger background
-//                                     height: '50px',
-//                                     width: '50px',
-//                                     display: 'flex',
-//                                     justifyContent: 'center',
-//                                     alignItems: 'center',
-//                                 }}
-//                                 >
-                                    // {
-                                    //     !filePath ? 
-                                    //         <div style={{fontSize:'30px'}}>
-                                    //             <UserOutlined />
-                                    //         </div>
-                                    //         :
-                                    //         <img src={filePath} style={{height:'40px', borderRadius:'100px'}}/>
-                                            
-                                    // }
-//                                 </div>
-//                             }
-//                             >
-//                             <div style={{
-//                                 backgroundColor: 'white', // Menu Content background
-//                                 border: '2px solid black', // Menu Content border
-//                                 borderRadius: '10px',
-//                                 padding: '10px',
-//                                 width:'200px'
-//                             }}>
-//                                 <p
-//                                     style={{
-//                                         cursor: 'default',
-//                                         color: 'black',
-//                                         fontWeight: 'bold',
-//                                         marginLeft: '10px',
-//                                         marginTop: '2%',
-//                                         fontSize: '15px',
-//                                     }}
-//                                 >
-//                                     {sessionStorage.getItem("name")}
-//                                 </p>
-//                                 <p
-//                                 style={{
-//                                     cursor: 'default',
-//                                     color: '#034C53',
-//                                     fontWeight: 'bold',
-//                                     marginLeft: '10px',
-//                                     marginTop: '2%',
-//                                     fontSize: '19px',
-//                                 }}
-//                                 >
-//                                     {sessionStorage.getItem("role")}
-//                                 </p>
-//                                 <p
-//                                     style={{
-//                                         cursor: 'pointer',
-//                                         color: 'black',
-//                                         fontWeight: 'bold',
-//                                         marginLeft: '10px',
-//                                         marginTop: '2%',
-//                                         fontSize: '15px',
-
-//                                     }}
-//                                     onClick={handleProfile}
-//                                 >
-//                                     Profile
-//                                 </p>
-
-//                                 <Divider />
-//                                 <p
-//                                 style={{
-//                                     cursor: 'pointer',
-//                                     color: 'black',
-//                                     fontWeight: 'bold',
-//                                     marginLeft: '10px',
-//                                     fontSize: '15px',
-//                                 }}
-//                                 onClick={signOut}
-//                                 >
-//                                 <LogoutOutlined style={{ fontWeight: 'bold' }} />
-//                                 {" "}
-//                                 Sign Out
-//                                 </p>
-//                             </div>
-//                             </Menu>
-//                         </div>
-//                         :
-//                         <div style={{marginLeft:'58vw', display:'flex'}}>
-//                             <div style={{                        
-//                                     color: 'black',
-//                                     cursor: 'pointer',
-//                                     fontSize: '30px',
-//                                     marginRight:'20px',
-//                                     marginLeft: '90%',
-//                                     marginTop: '5px',
-//                                     marginBottom: '1px',
-//                                     backgroundColor: 'white', // Trigger background
-//                                     height: '50px',
-//                                     width: '50px',
-//                                     display: 'flex',
-//                                     justifyContent: 'center',
-//                                     alignItems: 'center'
-//                             }}>
-//                                 <Button onClick={()=> setSwitchToRewards(true)}>
-//                                     Credit Card Platform Rewards
-//                                 </Button>
-//                             </div>
-//                             <Menu
-//                             style={{
-//                                 cursor: 'pointer',
-//                                 marginTop: '5px',
-//                                 marginRight: '10px',
-//                             }}
-//                             trigger={
-//                                 <div
-//                                 style={{
-//                                     color: 'black',
-//                                     cursor: 'pointer',
-//                                     fontSize: '30px',
-//                                     marginLeft: '95%',
-//                                     marginTop: '5px',
-//                                     marginBottom: '1px',
-//                                     backgroundColor: 'white', // Trigger background
-//                                     height: '50px',
-//                                     width: '50px',
-//                                     display: 'flex',
-//                                     justifyContent: 'center',
-//                                     alignItems: 'center',
-//                                 }}
-//                                 >
-//                                     {
-//                                         !filePath ? 
-//                                             <div style={{fontSize:'30px'}}>
-//                                                 <UserOutlined />
-//                                             </div>
-//                                             :
-//                                             <img src={filePath} style={{height:'40px', borderRadius:'100px'}}/>
-                                            
-//                                     }
-//                                 </div>
-//                             }
-//                             >
-//                             <div style={{
-//                                 backgroundColor: 'white', // Menu Content background
-//                                 border: '2px solid black', // Menu Content border
-//                                 borderRadius: '10px',
-//                                 padding: '10px',
-//                                 width:'200px'
-//                             }}>
-//                                 <p
-//                                 style={{
-//                                     cursor: 'default',
-//                                     color: '#034C53',
-//                                     fontWeight: 'bold',
-//                                     marginLeft: '10px',
-//                                     marginTop: '2%',
-//                                     fontSize: '19px',
-//                                 }}
-//                                 >
-//                                 {sessionStorage.getItem("name")}
-//                                 </p>
-//                                 <p
-//                                 style={{
-//                                     cursor: 'default',
-//                                     color: 'black',
-//                                     fontWeight: 'bold',
-//                                     marginLeft: '10px',
-//                                     marginTop: '2%',
-//                                     fontSize: '15px',
-//                                 }}
-//                                 >
-//                                 {sessionStorage.getItem("role")}
-//                                 </p>
-//                                 <p
-//                                     style={{
-//                                         cursor: 'pointer',
-//                                         color: 'black',
-//                                         fontWeight: 'bold',
-//                                         marginLeft: '10px',
-//                                         marginTop: '2%',
-//                                         fontSize: '15px',
-
-//                                     }}
-//                                     onClick={handleProfile}
-//                                 >
-//                                     Profile
-//                                 </p>
-//                                 <Divider />
-//                                 <p
-//                                 style={{
-//                                     cursor: 'pointer',
-//                                     color: 'black',
-//                                     fontWeight: 'bold',
-//                                     marginLeft: '10px',
-//                                     fontSize: '15px',
-//                                 }}
-//                                 onClick={signOut}
-//                                 >
-//                                 <LogoutOutlined style={{ fontWeight: 'bold' }} />
-//                                 {" "}
-//                                 Sign Out
-//                                 </p>
-//                             </div>
-//                             </Menu>
-//                         </div>
-
-//                     }
-//             </div>
-            // {
-            //     switchToRewards && (
-            //         <PlatformRewards/>
-            //     )
-            // }
-
-//         </div>
-//   )
-// }
