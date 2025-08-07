@@ -11,11 +11,14 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import CreditCardList from './creditCardList';
 import { useNavigate } from 'react-router-dom';
+import Profile from '../../features/profile'; // Add Profile import
+import './adminNavbar.css';
 
 export default function AdminNavbar() {
     const { signOut } = useContext(AuthContext);
     const location = useLocation();
-    const [filePath, setFilePath]= useState("")
+    const [filePath, setFilePath] = useState("")
+    const [changeProfile, setChangeProfile] = useState(false) // Add profile state
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
@@ -30,125 +33,163 @@ export default function AdminNavbar() {
         navigate('/admin/creditcardlist');
     }
 
-    useEffect(()=>{
-        let payload={
+    // Add profile handler
+    const handleProfile = () => {
+        console.log("set")
+        setChangeProfile(true)
+    }
+
+    useEffect(() => {
+        let payload = {
             email: sessionStorage.getItem("email")
         }
 
-        const profileImageFetchUrl="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+        const profileImageFetchUrl = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
 
-        axios.post(profileImageFetchUrl, payload).then((res)=>{
+        axios.post(profileImageFetchUrl, payload).then((res) => {
             console.log("Filepath of image in useEffect", res.data.filePath)
             setFilePath(res.data.filePath)
-        }).catch((err)=>{
-            console.log("filepath in useEffect",err)
+        }).catch((err) => {
+            console.log("filepath in useEffect", err)
         })
-    },[])
+    }, [])
 
-    
     return (
-        <div>
-            <Disclosure as="nav" className="bg-gray-800">
-                <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-                    <div className="relative flex h-16 items-center justify-between">
-                        <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                        {/* Mobile menu button*/}
-                            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset">
-                                <span className="absolute -inset-0.5" />
+        <div className="min-h-full">
+            <Disclosure as="nav" className="admin-navbar">
+                {/* Add Profile Component */}
+                {
+                    changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
+                }
+                <div className="admin-navbar-container">
+                    <div className="admin-navbar-content">
+                        <div className="mobile-menu-button">
+                            {/* Mobile menu button*/}
+                            <DisclosureButton className="mobile-menu-toggle">
                                 <span className="sr-only">Open main menu</span>
-                                <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
-                                <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
+                                <Bars3Icon aria-hidden="true" className="menu-icon menu-icon-open" />
+                                <XMarkIcon aria-hidden="true" className="menu-icon menu-icon-close" />
                             </DisclosureButton>
                         </div>
-                        <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                            <div className="flex shrink-0 items-center">
-                                <img
-                                alt="Cloudzxsuite Logo"
-                                src={logo}
-                                className="h-16 w-auto"
-                                />
-                                <span style={{marginLeft:'10px', marginTop:'1px', fontSize:'20px', color:'white' ,fontWeight:'bold'}}>
-                                    <LinearGradient gradient={['to left', '#DA5B9B ,#6B96F4']}>
-                                        CloudX Suite
-                                    </LinearGradient>
-                                </span>
-                            </div>
-                            <div className="hidden sm:ml-6 sm:block">
-                                <div className="flex space-x-4">
-                                    <p style={{cursor:'pointer', marginTop:'16px'}} className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white','rounded-md px-3 py-2 text-sm font-medium')} onClick={CreditCardReward}>
-                                        Credit Card Rewards Form
-                                    </p>
+                        
+                        <div className="admin-navbar-brand-section">
+                            <div className="admin-brand-container">
+                                <div className="admin-logo-container">
+                                    <img
+                                        alt="CloudX Suite Logo"
+                                        src={logo}
+                                        className="admin-brand-logo"
+                                    />
+                                </div>
+                                <div className="admin-brand-text">
+                                    <h1 className="admin-brand-title">
+                                        <LinearGradient gradient={['to right', '#DA5B9B', '#6B96F4']}>
+                                            CloudX Suite
+                                        </LinearGradient>
+                                    </h1>
+                                    <span className="admin-brand-subtitle">Admin Dashboard</span>
                                 </div>
                             </div>
-                            <div className="hidden sm:ml-6 sm:block">
-                                <div className="flex space-x-4">
-                                    <p style={{cursor:'pointer', marginTop:'16px'}} className={classNames('text-gray-300 hover:bg-gray-700 hover:text-white','rounded-md px-3 py-2 text-sm font-medium')} onClick={CreditCardList}>
-                                        Credit Card List
-                                    </p>
+                            
+                            <div className="admin-desktop-navigation">
+                                <div className="admin-nav-items">
+                                    <button 
+                                        className={`admin-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
+                                        onClick={CreditCardReward}
+                                    >
+                                        💳 Credit Card Rewards
+                                    </button>
+                                    <button 
+                                        className={`admin-nav-button ${location.pathname === '/admin/creditcardlist' ? 'active' : ''}`}
+                                        onClick={CreditCardList}
+                                    >
+                                        📋 Credit Card List
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        {/* <button
-                            type="button"
-                            className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
-                        >
-                            <BellIcon aria-hidden="true" className="size-6" />
-                        </button> */}
-
-                        {/* Profile dropdown */}
-                        <Menu as="div" className="relative ml-3">
-                            <div>
-                            <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
-                                <span className="absolute -inset-1.5" />
-                                <span className="sr-only">Open user menu</span>
-                                {
-                                    !filePath ? 
-                                        <div style={{fontSize:'30px', color: 'white'}}>
-                                            <UserOutlined style={{color: 'white'}}/>
-                                        </div>
-                                        :
-                                        <img src={filePath} style={{height:'40px', borderRadius:'100px'}}/>
-                                        
-                                }
-                            </MenuButton>
-                            </div>
-                            <MenuItems
-                            transition
-                            className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                        
+                        <div className="admin-navbar-actions">
+                            <button
+                                type="button"
+                                className="admin-notification-button"
                             >
-                            <MenuItem>
-                                <p
-                                href="#"
-                                className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                                >
-                                {sessionStorage.getItem("name")}
-                                </p>
-                            </MenuItem>
-                            <MenuItem>
-                                <a
-                                href="#"
-                                className="block px-4 py-2 text-sm text-[#DA5B9B] data-focus:bg-gray-100 data-focus:outline-hidden"
-                                
-                                >
-                                    {sessionStorage.getItem("role")}
-                                </a>
-                            </MenuItem>
-                            <hr class="border-gray-800 dark:border-white"></hr>
-                            <MenuItem>
-                                <a
-                                href="#"
-                                className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                                onClick={signOut}
-                                >
-                                Sign Out
-                                </a>
-                            </MenuItem>
-                            </MenuItems>
-                        </Menu>
+                                <span className="sr-only">View notifications</span>
+                                <BellIcon aria-hidden="true" className="notification-icon" />
+                                <span className="notification-badge"></span>
+                            </button>
+
+                            {/* Profile dropdown */}
+                            <Menu as="div" className="admin-profile-menu">
+                                <div>
+                                    <MenuButton className="admin-profile-button">
+                                        <span className="sr-only">Open user menu</span>
+                                        <div className="admin-profile-avatar">
+                                            {
+                                                !filePath ? 
+                                                    <div className="admin-default-avatar">
+                                                        <UserOutlined />
+                                                    </div>
+                                                    :
+                                                    <img src={filePath} className="admin-user-avatar" alt="Profile"/>
+                                            }
+                                        </div>
+                                    </MenuButton>
+                                </div>
+                                <MenuItems className="admin-profile-dropdown">
+                                    <MenuItem>
+                                        <div className="admin-profile-info">
+                                            <span className="admin-user-name">
+                                                {sessionStorage.getItem("name")}
+                                            </span>
+                                            <span className="admin-user-role">
+                                                {sessionStorage.getItem("role")}
+                                            </span>
+                                            <span className="admin-user-email">
+                                                {sessionStorage.getItem("email")}
+                                            </span>
+                                        </div>
+                                    </MenuItem>
+                                    <hr className="admin-dropdown-divider" />
+                                    {/* Add Your Profile Menu Item */}
+                                    <MenuItem>
+                                        <button
+                                            className="admin-dropdown-item"
+                                            onClick={handleProfile}
+                                        >
+                                            👤 Your Profile
+                                        </button>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <button
+                                            className="admin-dropdown-item logout-item"
+                                            onClick={signOut}
+                                        >
+                                            🚪 Sign Out
+                                        </button>
+                                    </MenuItem>
+                                </MenuItems>
+                            </Menu>
                         </div>
                     </div>
                 </div>
+                
+                <DisclosurePanel className="admin-mobile-panel">
+                    <div className="admin-mobile-nav-content">
+                        <button 
+                            className={`admin-mobile-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
+                            onClick={CreditCardReward}
+                        >
+                            💳 Credit Card Rewards
+                        </button>
+                        <button 
+                            className={`admin-mobile-nav-button ${location.pathname === '/admin/creditcardlist' ? 'active' : ''}`}
+                            onClick={CreditCardList}
+                        >
+                            📋 Credit Card List
+                        </button>
+                    </div>
+                </DisclosurePanel>
             </Disclosure>
         </div>
     );

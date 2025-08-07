@@ -1,0 +1,528 @@
+/* Modern Admin Navbar Styling - 2025 Design */
+:root {
+  --primary-color: #DA5B9B;
+  --secondary-color: #6B96F4;
+  --accent-color: #00D4AA;
+  --success-color: #06D6A0;
+  --warning-color: #FFD23F;
+  --error-color: #EF476F;
+  
+  --text-dark: #2D1B69;
+  --text-medium: #512B81;
+  --text-light: #8B7CB4;
+  --text-lighter: #B8AED8;
+  
+  --bg-white: #FFFFFF;
+  --bg-gray-50: #FAFAFB;
+  --bg-gray-100: #F5F3FF;
+  --bg-gray-200: #E9E5FF;
+  
+  --border-color: #D4C2FC;
+  --border-light: #E5DEFF;
+  --border-dark: #B19CD9;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(218, 91, 155, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(218, 91, 155, 0.15), 0 2px 4px -1px rgba(107, 150, 244, 0.10);
+  --shadow-lg: 0 10px 15px -3px rgba(218, 91, 155, 0.15), 0 4px 6px -2px rgba(107, 150, 244, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(218, 91, 155, 0.15), 0 10px 10px -5px rgba(107, 150, 244, 0.10);
+  
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modern Admin Navbar */
+.admin-navbar {
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.admin-navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.admin-navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+}
+
+/* Mobile Menu Button */
+.mobile-menu-button {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-menu-toggle {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  color: var(--text-light);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--bg-gray-100);
+  color: var(--primary-color);
+}
+
+.menu-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.menu-icon-open {
+  display: block;
+}
+
+.menu-icon-close {
+  display: none;
+}
+
+.mobile-menu-toggle[data-open] .menu-icon-open {
+  display: none;
+}
+
+.mobile-menu-toggle[data-open] .menu-icon-close {
+  display: block;
+}
+
+/* Admin Brand Section */
+.admin-navbar-brand-section {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-brand-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-logo-container {
+  position: relative;
+}
+
+.admin-brand-logo {
+  height: 2.5rem;
+  width: auto;
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+}
+
+.admin-brand-logo:hover {
+  transform: scale(1.05);
+}
+
+.admin-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.admin-brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* Desktop Navigation */
+.admin-desktop-navigation {
+  margin-left: 2rem;
+}
+
+.admin-nav-items {
+  display: flex;
+  gap: 1rem;
+}
+
+.admin-nav-button {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-medium);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-nav-button:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--bg-gray-50);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-nav-button.active {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.admin-nav-button.active:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  filter: brightness(1.05);
+}
+
+/* Admin Navbar Actions */
+.admin-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Notification Button */
+.admin-notification-button {
+  position: relative;
+  background: var(--bg-gray-50);
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  padding: 0.75rem;
+  color: var(--text-light);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.admin-notification-button:hover {
+  background: var(--bg-gray-100);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.notification-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--error-color);
+  border-radius: 50%;
+  border: 2px solid var(--bg-white);
+}
+
+/* Admin Profile Menu */
+.admin-profile-menu {
+  position: relative;
+}
+
+.admin-profile-button {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.admin-profile-button:hover {
+  transform: scale(1.05);
+}
+
+.admin-profile-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border-light);
+  transition: var(--transition);
+}
+
+.admin-profile-button:hover .admin-profile-avatar {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(218, 91, 155, 0.15);
+}
+
+.admin-default-avatar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.admin-user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Admin Profile Dropdown */
+.admin-profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  width: 18rem;
+  background: var(--bg-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  z-index: 50;
+  transform-origin: top right;
+  transition: var(--transition);
+}
+
+.admin-profile-dropdown[data-closed] {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.admin-profile-info {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+  background: linear-gradient(135deg, rgba(218, 91, 155, 0.05), rgba(107, 150, 244, 0.05));
+}
+
+.admin-user-name {
+  display: block;
+  font-weight: 700;
+  color: var(--text-dark);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.admin-user-role {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-lg);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.5rem;
+}
+
+.admin-user-email {
+  display: block;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.admin-dropdown-divider {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: 0;
+}
+
+.admin-dropdown-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0.875rem 1.25rem;
+  color: var(--text-medium);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.admin-dropdown-item:hover {
+  background: var(--bg-gray-50);
+  color: var(--primary-color);
+}
+
+.logout-item:hover {
+  background: rgba(239, 71, 111, 0.1);
+  color: var(--error-color);
+}
+
+/* Mobile Panel */
+.admin-mobile-panel {
+  background: var(--bg-white);
+  border-top: 1px solid var(--border-light);
+}
+
+.admin-mobile-nav-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-mobile-nav-button {
+  width: 100%;
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-medium);
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.admin-mobile-nav-button:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--bg-gray-50);
+}
+
+.admin-mobile-nav-button.active {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-color: transparent;
+}
+
+/* Responsive Design */
+@media (min-width: 640px) {
+  .mobile-menu-button {
+    display: none;
+  }
+  
+  .admin-navbar-brand-section {
+    justify-content: flex-start;
+  }
+  
+  .admin-desktop-navigation {
+    display: block;
+  }
+}
+
+@media (max-width: 639px) {
+  .admin-desktop-navigation {
+    display: none;
+  }
+  
+  .admin-brand-title {
+    font-size: 1.125rem;
+  }
+  
+  .admin-brand-subtitle {
+    font-size: 0.7rem;
+  }
+  
+  .admin-navbar-actions {
+    gap: 0.5rem;
+  }
+  
+  .admin-notification-button {
+    padding: 0.5rem;
+  }
+  
+  .admin-profile-avatar {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .admin-profile-dropdown {
+    width: 16rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-brand-title {
+    font-size: 1rem;
+  }
+  
+  .admin-navbar-container {
+    padding: 0 0.5rem;
+  }
+  
+  .admin-profile-dropdown {
+    width: 14rem;
+  }
+}
+
+/* Focus States for Accessibility */
+.mobile-menu-toggle:focus,
+.admin-notification-button:focus,
+.admin-profile-button:focus,
+.admin-nav-button:focus,
+.admin-dropdown-item:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Loading States */
+.admin-nav-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Smooth Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-profile-dropdown {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Enhanced Hover Effects */
+.admin-nav-button:not(.active):hover {
+  background: linear-gradient(135deg, rgba(218, 91, 155, 0.05), rgba(107, 150, 244, 0.05));
+}
+
+/* Active State Indicators */
+.admin-nav-button.active::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: var(--radius-sm);
+}
+
+.admin-nav-button {
+  position: relative;
+}
