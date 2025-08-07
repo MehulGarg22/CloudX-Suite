@@ -1,0 +1,65 @@
+/* Enhanced Footer Styling with Emerald-Gold Theme */
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+  background: var(--bg-white);
+  border-top: 1px solid var(--border-light);
+}
+
+.footer-wrapper {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.copyright-text {
+  margin: 0;
+  font-weight: 500;
+}
+
+.developer-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+
+.developer-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.25rem;
+  transition: var(--transition);
+  border-bottom: 1px solid transparent;
+}
+
+.developer-link:hover {
+  color: var(--secondary-color);
+  border-bottom-color: var(--secondary-color);
+}
+
+/* Mobile responsive footer */
+@media (max-width: 768px) {
+  .footer-wrapper {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: center;
+  }
+  
+  .footer-content {
+    padding: 0.5rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-wrapper {
+    font-size: 0.75rem;
+  }
+}
