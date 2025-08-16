@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
-import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar } from 'antd';
-import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined } from '@ant-design/icons';
+import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar,Button  } from 'antd';
+import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined,  DownOutlined, UpOutlined  } from '@ant-design/icons';
 import './creditCardPlatformRewards.css';
 import Footer from "../footer/footer";
 
@@ -12,7 +12,7 @@ export default function PlatformRewards(){
     
     const [data, setData] = useState()
     const [loading, setLoading] = useState(false)
-
+    const [expandedComments, setExpandedComments] = useState(new Set())
     useEffect(() => {
         setLoading(true)
         axios.get("https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get").then((resp) => {
@@ -70,6 +70,20 @@ export default function PlatformRewards(){
 
     const stats = getHeaderStats();
 
+    
+
+
+    const toggleCommentExpansion = (recordId) => {
+        setExpandedComments(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(recordId)) {
+                newSet.delete(recordId)
+            } else {
+                newSet.add(recordId)
+            }
+            return newSet
+        })
+    }
     // All columns code remains exactly the same
     const columns = [
         {
@@ -325,15 +339,38 @@ export default function PlatformRewards(){
             ),
             dataIndex: 'comments',
             key: 'comments',
-            width: 200,
-            render: (text) => (
+            width: 200, // Increased width slightly
+            fixed: 'right',
+            render: (text, record) => (
                 <div className="comments-cell">
                     {text ? (
-                        <Tooltip title={text} placement="topLeft">
-                            <Text className="comments-text" ellipsis>
-                                {text}
-                            </Text>
-                        </Tooltip>
+                        <div className="expandable-comment">
+                            <div className="comment-content">
+                                <Text 
+                                    className={`comments-text ${expandedComments.has(record.id) ? 'expanded' : 'collapsed'}`}
+                                >
+                                    {expandedComments.has(record.id) ? text : 
+                                     text.length > 30 ? `${text.substring(0, 30)}...` : text}
+                                </Text>
+                            </div>
+                            {text.length > 60 && (
+                                <Button
+                                    type="text"
+                                    size="small"
+                                    className={`expand-toggle-btn ${expandedComments.has(record.id) ? 'expanded' : ''}`}
+                                    icon={expandedComments.has(record.id) ? 
+                                        <UpOutlined className="toggle-icon" /> : 
+                                        <DownOutlined className="toggle-icon" />}
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        toggleCommentExpansion(record.id)
+                                    }}
+                                >
+                                    {expandedComments.has(record.id) ? 'Collapse' : 'Expand'}
+                                </Button>
+
+                            )}
+                        </div>
                     ) : (
                         <Text type="secondary" className="no-comments">No additional info</Text>
                     )}
