@@ -1,0 +1,440 @@
+/* Modern Admin Form Styles - 2024-2025 Design Standards */
+
+.admin-layout {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.admin-layout .main-content {
+    padding: 0;
+    height: calc(100vh - 64px);
+    overflow-x: hidden;
+    overflow-y: auto; /* FIXED: Added explicit vertical scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-layout .main-content .content-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 32px 24px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 0;
+    flex-shrink: 0; /* FIXED: Prevent header from shrinking */
+}
+
+.admin-layout .main-content .content-header .page-title {
+    margin: 0 !important;
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    font-size: 28px !important;
+}
+
+.admin-layout .main-content .loading-container {
+    padding: 48px 24px;
+    min-width: 1550px;
+    margin: 0 auto;
+    flex: 1;
+    overflow-y: auto; /* FIXED: Added scrolling to loading container */
+}
+
+.admin-layout .main-content .form-container {
+    padding: 24px;
+    min-width: 1550px;
+    margin: 0 auto;
+    flex: 1;
+    overflow-y: auto; /* FIXED: Ensured form container scrolls */
+    min-height: 0; /* FIXED: Allow container to shrink */
+}
+
+.modern-form {
+    width: 100%;
+    height: 100%;
+}
+
+.form-content {
+    margin-top: 24px;
+    padding-bottom: 120px; /* FIXED: Added bottom padding for sticky buttons */
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* Card Styling */
+.credit-card-form {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    overflow: hidden;
+}
+
+.credit-card-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    border-color: #cbd5e1 !important;
+}
+
+.credit-card-form .ant-card-head {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid #e5e7eb;
+    padding: 16px 24px;
+}
+
+.credit-card-form .ant-card-body {
+    padding: 24px;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1f2937;
+}
+
+.delete-button {
+    color: #ef4444 !important;
+    transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+    color: #dc2626 !important;
+    background-color: #fef2f2 !important;
+    transform: scale(1.1);
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    color: #374151 !important;
+    font-weight: 600 !important;
+    margin-bottom: 16px !important;
+    font-size: 16px !important;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 32px;
+    height: 2px;
+    background: linear-gradient(90deg, #1677ff, #69b7ff);
+    border-radius: 1px;
+}
+
+/* Input Styling */
+.input-with-tooltip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-with-tooltip .ant-input,
+.input-with-tooltip .ant-input-affix-wrapper {
+    flex: 1;
+    transition: all 0.2s ease;
+}
+
+.input-with-tooltip .ant-input:focus,
+.input-with-tooltip .ant-input-affix-wrapper:focus,
+.input-with-tooltip .ant-input-affix-wrapper-focused {
+    border-color: #1677ff !important;
+    box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.1) !important;
+}
+
+.info-icon {
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.info-icon:hover {
+    color: #1677ff;
+    transform: scale(1.1);
+}
+
+/* Fee Inputs */
+.fee-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Rewards Grid */
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+/* Custom Rewards Section */
+.custom-rewards-section {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+}
+
+.reward-item {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e5e7eb;
+    position: relative;
+}
+
+.reward-item:last-child {
+    margin-bottom: 0;
+}
+
+.reward-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.remove-reward-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #ef4444 !important;
+}
+
+.remove-reward-button:hover {
+    color: #dc2626 !important;
+    background-color: #fef2f2 !important;
+}
+
+.add-reward-button {
+    width: 100%;
+    border-color: #1677ff !important;
+    color: #1677ff !important;
+    font-weight: 500;
+}
+
+.add-reward-button:hover {
+    border-color: #4096ff !important;
+    color: #4096ff !important;
+    background-color: #f0f9ff !important;
+}
+
+/* Form Actions - FIXED */
+.form-actions {
+    position: fixed; /* FIXED: Changed from sticky to fixed */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, #ffffff 0%, rgba(255, 255, 255, 0.95) 100%);
+    padding: 24px 0;
+    border-top: 1px solid #e5e7eb;
+    z-index: 1000; /* FIXED: Increased z-index */
+    backdrop-filter: blur(4px); /* FIXED: Added backdrop filter for better visibility */
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.add-card-button {
+    min-width: 160px;
+    font-weight: 500;
+    border-color: #1677ff !important;
+    color: #1677ff !important;
+}
+
+.add-card-button:hover {
+    border-color: #4096ff !important;
+    color: #4096ff !important;
+    background-color: #f0f9ff !important;
+    transform: translateY(-1px);
+}
+
+.submit-button {
+    min-width: 160px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1677ff 0%, #4096ff 100%) !important;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(22, 119, 255, 0.2);
+}
+
+.submit-button:hover {
+    background: linear-gradient(135deg, #0958d9 0%, #1677ff 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(22, 119, 255, 0.3) !important;
+}
+
+/* Divider Styling */
+.ant-divider {
+    border-color: #e5e7eb !important;
+    margin: 20px 0 !important;
+}
+
+/* Form Labels */
+.ant-form-item-label > label {
+    font-weight: 500 !important;
+    color: #374151 !important;
+}
+
+.ant-form-item {
+    margin-bottom: 20px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-layout .main-content {
+        padding: 0;
+    }
+
+    .admin-layout .main-content .content-header {
+        padding: 24px 16px 20px;
+    }
+
+    .admin-layout .main-content .content-header .page-title {
+        font-size: 24px !important;
+    }
+
+    .admin-layout .main-content .form-container {
+        padding: 16px;
+        padding-bottom: 140px; /* FIXED: Increased bottom padding for mobile */
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .credit-card-form .ant-card-body {
+        padding: 16px;
+    }
+
+    .fee-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .rewards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reward-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        padding: 0 16px; /* FIXED: Added horizontal padding */
+    }
+
+    .add-card-button,
+    .submit-button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-layout .main-content .content-header {
+        padding: 20px 12px 16px;
+    }
+
+    .admin-layout .main-content .form-container {
+        padding: 12px;
+        padding-bottom: 160px; /* FIXED: Even more bottom padding for small screens */
+    }
+
+    .credit-card-form .ant-card-head {
+        padding: 12px 16px;
+    }
+
+    .credit-card-form .ant-card-body {
+        padding: 12px;
+    }
+
+    .form-actions {
+        padding: 16px 0;
+    }
+}
+
+/* Animation & Transitions */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.credit-card-form {
+    animation: slideInUp 0.3s ease-out;
+}
+
+/* Loading States */
+.loading-container .ant-skeleton {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Notification Positioning */
+.ant-notification {
+    z-index: 1000;
+}
+
+/* Accessibility Improvements */
+.credit-card-form:focus-within {
+    outline: 2px solid #1677ff;
+    outline-offset: 2px;
+}
+
+.info-icon:focus {
+    outline: 2px solid #1677ff;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .form-actions,
+    .delete-button,
+    .remove-reward-button,
+    .add-reward-button,
+    .add-card-button,
+    .submit-button {
+        display: none !important;
+    }
+
+    .credit-card-form {
+        break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+}

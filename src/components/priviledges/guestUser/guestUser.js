@@ -186,10 +186,10 @@ export default function User(){
                 </DisclosurePanel>
             </Disclosure>
             
+            <PlatformRewards/>
             {
                 switchToRewards && (
                     <div className="rewards-content">
-                        <PlatformRewards/>
                     </div>
                 )
             }
