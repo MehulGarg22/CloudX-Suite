@@ -12,6 +12,8 @@ import { Button } from "antd";
 import { LinearGradient } from 'react-text-gradients'
 import './guestUser.css'; // Add this CSS file
 import dummyImage from '../../../assets/avatar.png'; // Assuming you have a dummy image for profile
+import Footer from "../../footer/footer";
+
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
@@ -187,12 +189,14 @@ export default function User(){
             </Disclosure>
             
             <PlatformRewards/>
-            {
+      
+            {/* {
                 switchToRewards && (
                     <div className="rewards-content">
                     </div>
                 )
-            }
+            } */}
+      
         </div>
     );
 }

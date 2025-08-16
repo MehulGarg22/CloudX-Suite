@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar } from 'antd';
 import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined } from '@ant-design/icons';
 import './creditCardPlatformRewards.css';
+import Footer from "../footer/footer";
+
 
 const { Title, Text } = Typography;
 
@@ -516,8 +518,6 @@ export default function PlatformRewards(){
             </Card>
             <br/>
             <br/>
-            <br/>
-
         </div>
     );
 }
