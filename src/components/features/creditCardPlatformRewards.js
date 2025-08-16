@@ -83,6 +83,7 @@ export default function PlatformRewards(){
                     dataIndex: 'name',
                     key: 'name',
                     width: 200,
+                    fixed: 'left',
                     render: (text) => (
                         <div className="card-name-cell">
                             <Text strong className="card-name">{text}</Text>
@@ -94,6 +95,7 @@ export default function PlatformRewards(){
                     title: 'Issuer Bank',
                     dataIndex: 'cardIssuer',
                     key: 'cardIssuer',
+                    fixed: 'left',
                     width: 150,
                     render: (text) => (
                         <div className="bank-cell">
@@ -501,7 +503,7 @@ export default function PlatformRewards(){
                     className="modern-data-table"
                     bordered={false}
                     size="middle"
-                    scroll={{ x: 1300, y: 600 }}
+                    scroll={{ x: 1300, y: 410 }}
                     pagination={{ 
                         defaultPageSize: 15, 
                         showSizeChanger: true, 
