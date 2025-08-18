@@ -6,6 +6,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 import axios from 'axios';
 import Notification from '../../features/notification';
 import { Skeleton } from 'antd';
+import ModernSkeleton from "../../ModernSkeleton";
 import AdminNavbar from './adminNavbar';
 
 
@@ -125,14 +126,7 @@ export default function RawFile() {
             <div style={{ overflowX: 'hidden', width: '100%', backgroundColor: '#EBE8DB', height: '90vh' }}>
                 {
                     initialLoad ? 
-                        <div style={{margin:'50px'}}>
-                            <Skeleton.Button active small/> 
-                            <Skeleton active small /> 
-                            <Skeleton.Button active small /> 
-                            <Skeleton active small/> 
-                            <Skeleton.Button active small/> 
-                            <Skeleton active small /> 
-                        </div>
+                        <ModernSkeleton mode="section" />
                     :
                         <Form
                             labelCol={{ span: 6 }}

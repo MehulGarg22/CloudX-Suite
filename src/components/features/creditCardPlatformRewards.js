@@ -4,6 +4,7 @@ import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Stati
 import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined,  DownOutlined, UpOutlined  } from '@ant-design/icons';
 import './creditCardPlatformRewards.css';
 import Footer from "../footer/footer";
+import ModernSkeleton from "../ModernSkeleton";
 
 
 const { Title, Text } = Typography;
@@ -380,16 +381,7 @@ export default function PlatformRewards(){
     ];
 
     if (loading) {
-        return (
-            <div className="platform-rewards-container">
-                <Card className="header-card">
-                    <Skeleton active paragraph={{ rows: 1 }} />
-                </Card>
-                <Card className="table-card">
-                    <Skeleton active paragraph={{ rows: 8 }} />
-                </Card>
-            </div>
-        );
+        return <ModernSkeleton mode="page" />
     }
 
     return (

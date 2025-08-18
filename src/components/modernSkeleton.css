@@ -1,0 +1,74 @@
+/* Modern Skeleton (2025) */
+:root {
+	--ms-bg: #0f1226;
+	--ms-surface: rgba(255,255,255,0.06);
+	--ms-surface-strong: rgba(255,255,255,0.12);
+	--ms-border: rgba(255,255,255,0.14);
+	--ms-shimmer-from: rgba(255,255,255,0.08);
+	--ms-shimmer-to: rgba(255,255,255,0.18);
+	--ms-gradient-a: rgba(218, 91, 155, 0.25);
+	--ms-gradient-b: rgba(107, 150, 244, 0.25);
+	--ms-gradient-c: rgba(0, 212, 170, 0.25);
+}
+
+.ms-page {
+	position: fixed;
+	inset: 0;
+	background: radial-gradient(80% 100% at 50% 0%, #1a1f3a 0%, #0f1226 60%, #0b0e1d 100%);
+	z-index: 9999;
+	display: grid;
+	place-items: start center;
+	padding: 32px 20px;
+	color-scheme: dark;
+}
+
+.ms-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.ms-mesh { position: absolute; filter: blur(80px); border-radius: 50%; mix-blend-mode: screen; animation: msFloat 18s ease-in-out infinite; }
+.ms-a { width: 420px; height: 420px; background: radial-gradient(circle, var(--ms-gradient-a), transparent 70%); top: -10%; left: -10%; }
+.ms-b { width: 360px; height: 360px; background: radial-gradient(circle, var(--ms-gradient-b), transparent 70%); right: -8%; bottom: -12%; animation-delay: -6s; }
+.ms-c { width: 300px; height: 300px; background: radial-gradient(circle, var(--ms-gradient-c), transparent 70%); left: 50%; top: 45%; transform: translate(-50%, -50%); animation-delay: -12s; }
+
+@keyframes msFloat { 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(18px, -14px) } }
+
+.ms-header { width: min(1100px, 100%); background: rgba(255,255,255,0.04); border: 1px solid var(--ms-border); border-radius: 28px; padding: 24px; backdrop-filter: blur(18px); box-shadow: 0 20px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05); }
+
+.ms-badge-group { display: flex; gap: 10px; margin-bottom: 14px; }
+.ms-badge { height: 26px; width: 86px; border-radius: 999px; background: var(--ms-surface); border: 1px solid var(--ms-border); }
+
+.ms-avatar { width: 72px; height: 72px; border-radius: 18px; background: linear-gradient(135deg, #DA5B9B, #6B96F4); box-shadow: 0 12px 32px rgba(107,150,244,0.25); margin: 6px 0 18px; }
+
+.ms-title-group { display: grid; gap: 10px; margin-bottom: 18px; }
+.ms-title-lg { height: 28px; width: 60%; border-radius: 10px; }
+.ms-subtitle { height: 16px; width: 70%; border-radius: 10px; opacity: .85; }
+
+.ms-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 8px; }
+.ms-stat { height: 84px; border-radius: 18px; background: var(--ms-surface); border: 1px solid var(--ms-border); }
+
+.ms-section { display: grid; gap: 16px; padding: 10px 0; }
+.ms-row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.ms-card { height: 84px; border-radius: 16px; background: var(--ms-surface); border: 1px solid var(--ms-border); }
+
+.ms-table-card { width: min(1100px, 100%); margin-top: 18px; border-radius: 24px; background: rgba(255,255,255,0.04); border: 1px solid var(--ms-border); overflow: hidden; }
+.ms-table-head { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr; gap: 0; padding: 14px 16px; border-bottom: 1px solid var(--ms-border); background: rgba(255,255,255,0.03); }
+.ms-col { height: 16px; border-radius: 8px; }
+.ms-table-body { padding: 8px 16px 16px; display: grid; gap: 12px; }
+.ms-row-line { height: 18px; border-radius: 10px; background: var(--ms-surface); border: 1px solid var(--ms-border); }
+
+/* Shimmer */
+.ms-shimmer { position: relative; overflow: hidden; background: var(--ms-shimmer-from); }
+.ms-shimmer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--ms-shimmer-to), transparent); transform: translateX(-100%); animation: msShimmer 1.4s ease-in-out infinite; }
+@keyframes msShimmer { 0%{ transform: translateX(-100%) } 100%{ transform: translateX(100%) } }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) { .ms-mesh, .ms-shimmer::after { animation: none; } }
+
+/* Responsive */
+@media (max-width: 768px){
+	.ms-title-lg{ width: 80%; }
+	.ms-subtitle{ width: 90%; }
+	.ms-stats{ grid-template-columns: 1fr; }
+	.ms-row{ grid-template-columns: 1fr; }
+	.ms-table-head{ grid-template-columns: 1.5fr 1fr 1fr; }
+}
+
+

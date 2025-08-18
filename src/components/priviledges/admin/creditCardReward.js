@@ -6,6 +6,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 import axios from 'axios';
 import Notification from '../../features/notification';
 import { Skeleton } from 'antd';
+import ModernSkeleton from "../../ModernSkeleton";
 import AdminNavbar from './adminNavbar';
 
 const { Title } = Typography;
@@ -194,13 +195,7 @@ export default function CreditCardReward() {
                     </div>
 
                     {initialLoad ? (
-                        <div className="loading-container">
-                            <Space direction="vertical" style={{ width: '100%' }} size="large">
-                                <Skeleton active avatar paragraph={{ rows: 4 }} />
-                                <Skeleton active paragraph={{ rows: 3 }} />
-                                <Skeleton active paragraph={{ rows: 4 }} />
-                            </Space>
-                        </div>
+                        <ModernSkeleton mode="section" />
                     ) : (
                         <div className="form-container">
                             <Form

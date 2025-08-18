@@ -8,8 +8,7 @@ import GuestUser from "../priviledges/guestUser/guestUser";
 import User from "../priviledges/users/user";
 import CreditCardList from "../priviledges/admin/creditCardList";
 import CreditCardReward from "../priviledges/admin/creditCardReward";
-
-
+import CreditCard from "../priviledges/users/creditcards";
 
 export default function MyRoutes(){
     return(
@@ -35,9 +34,16 @@ export default function MyRoutes(){
                             </RouteGuard>
                         }
                     />
+                    
                     <Route path="/user" element={
                             <RouteGuard>
                                 <User/>
+                            </RouteGuard>
+                        }
+                    />
+                    <Route path="/user/creditcards" element={
+                            <RouteGuard>
+                                <CreditCard/>
                             </RouteGuard>
                         }
                     />
