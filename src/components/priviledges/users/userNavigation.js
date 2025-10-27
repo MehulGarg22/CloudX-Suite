@@ -8,19 +8,20 @@ import axios from "axios";
 import Profile from "../../features/profile";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Button } from "antd";
+import { Modal } from "antd";
 import { LinearGradient } from 'react-text-gradients'
 import './userNavbar.css'; // Add this CSS file
 import dummyImage from '../../../assets/avatar.png'; // Assuming you have a dummy image for profile
 import { useNavigate } from "react-router-dom";
+import CustomModal from "../../features/customModal";
 
-
-export default function UserNavigation(){
+export default function UserNavigation(props){
     const { signOut } = useContext(AuthContext);
-    
+    const { setSwitchToComparison, switchToComparison} = props;
     const [switchToRewards, setSwitchToRewards]= useState(false)
     const [filePath, setFilePath]= useState("")
     const [changeProfile, setChangeProfile]= useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     function classNames(...classes) {
@@ -45,13 +46,6 @@ export default function UserNavigation(){
     const handleProfile=()=>{
         console.log("set")
         setChangeProfile(true)
-    }
-
-    const creditcards = () => {
-        navigate('/user/creditcards');
-    }
-    const creditcardsRewards = () => {
-       navigate('/user');
     }
 
     return(
@@ -91,15 +85,24 @@ export default function UserNavigation(){
                         
                         <div className="desktop-navigation">
                             <div className="nav-items">
-                                <button 
-                                    className="nav-button rewards-button" 
-                                    onClick={creditcardsRewards}
-                                >
-                                    🎁 Credit Card Rewards
-                                </button>
+                                {
+                                    switchToComparison ?
+                                    <button 
+                                        className="mobile-nav-button back-button" 
+                                        onClick={()=> setSwitchToComparison(false)}
+                                    >
+                                        ← Back to Dashboard
+                                    </button>:
+                                    <button 
+                                        className="mobile-nav-button rewards-button" 
+                                        onClick={()=> setSwitchToComparison(true)}
+                                    >
+                                        🎁 Credit Card Comparison
+                                    </button>
+                                }
                             </div>
                         </div>
-                        <div className="desktop-navigation">
+                        {/* <div className="desktop-navigation">
                             <div className="nav-items">
                                 <button 
                                     className="nav-button rewards-button" 
@@ -108,11 +111,12 @@ export default function UserNavigation(){
                                     Credit Cards
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     
                     <div className="navbar-actions">
                         <button
+                            onClick={()=>setIsModalOpen(true)} 
                             type="button"
                             className="notification-button"
                         >
@@ -120,6 +124,8 @@ export default function UserNavigation(){
                             <BellIcon aria-hidden="true" className="notification-icon" />
                             <span className="notification-badge"></span>
                         </button>
+
+                        <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Notification"}  content={"Your Notication goes here!"} />
 
                         {/* Profile dropdown */}
                         <Menu as="div" className="profile-menu">

@@ -14,15 +14,22 @@ import './userNavbar.css'; // Add this CSS file
 import dummyImage from '../../../assets/avatar.png'; // Assuming you have a dummy image for profile
 import { useNavigate } from "react-router-dom";
 import UserNavigation from "./userNavigation";
+import CreditCardComparisonTable from "../../features/generalCardComparisonTable";
 
 export default function User(){
+    const [switchToComparison, setSwitchToComparison]= useState(false)
 
     return(
         <div className="min-h-full">
-            <UserNavigation/>
+            <UserNavigation setSwitchToComparison={setSwitchToComparison} switchToComparison={switchToComparison}/>
             
             <div className="rewards-content">
-                <PlatformRewards/>
+                {
+                    switchToComparison ? 
+                    <CreditCardComparisonTable />
+                    :
+                    <PlatformRewards/>
+                }
             </div>
         </div>
     );

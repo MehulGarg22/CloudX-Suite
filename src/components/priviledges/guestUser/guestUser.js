@@ -13,18 +13,16 @@ import { LinearGradient } from 'react-text-gradients'
 import './guestUser.css'; // Add this CSS file
 import dummyImage from '../../../assets/avatar.png'; // Assuming you have a dummy image for profile
 import Footer from "../../footer/footer";
-
+import CreditCardComparisonTable from "../../features/generalCardComparisonTable";
+import CustomModal from "../../features/customModal";
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
     
     const [switchToRewards, setSwitchToRewards]= useState(false)
     const [filePath, setFilePath]= useState("")
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [changeProfile, setChangeProfile]= useState(false)
-
-    function classNames(...classes) {
-        return classes.filter(Boolean).join(' ')
-    }
 
     useEffect(()=>{
         let payload={
@@ -98,22 +96,26 @@ export default function User(){
                                             className="nav-button rewards-button" 
                                             onClick={()=> setSwitchToRewards(true)}
                                         >
-                                            🎁 Credit Card Rewards
+                                            🎁 Credit Card Comparison 
                                         </button>
                                     </div>
                                 }
+
                             </div>
                         </div>
                         
                         <div className="navbar-actions">
-                            <button
-                                type="button"
-                                className="notification-button"
-                            >
-                                <span className="sr-only">View notifications</span>
-                                <BellIcon aria-hidden="true" className="notification-icon" />
-                                <span className="notification-badge"></span>
-                            </button>
+                        <button
+                            onClick={()=>setIsModalOpen(true)} 
+                            type="button"
+                            className="notification-button"
+                        >
+                            <span className="sr-only">View notifications</span>
+                            <BellIcon aria-hidden="true" className="notification-icon" />
+                            <span className="notification-badge"></span>
+                        </button>
+
+                        <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Guest Notification"} content={"Guest Notication goes here!"} />
 
                             {/* Profile dropdown */}
                             <Menu as="div" className="profile-menu">
@@ -181,14 +183,18 @@ export default function User(){
                                 className="mobile-nav-button rewards-button" 
                                 onClick={()=> setSwitchToRewards(true)}
                             >
-                                🎁 Credit Card Platform Rewards
+                                🎁 Credit Card Comparison
                             </button>
                         }
                     </div>
                 </DisclosurePanel>
             </Disclosure>
-            
-            <PlatformRewards/>
+            {
+                switchToRewards ? 
+                <CreditCardComparisonTable />
+                :
+                <PlatformRewards/>
+            }
       
             {/* {
                 switchToRewards && (
