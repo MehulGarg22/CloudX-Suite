@@ -38,7 +38,7 @@ import {
         attributeList.push(nameAttribute);
       }
   
-      userPool.signUp(email, password, attributeList, null, (result, err) => {
+      userPool.signUp(email, password, attributeList, null, (err, result) => {
         if (err) {
           reject(err);
           return;

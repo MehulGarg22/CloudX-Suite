@@ -82,6 +82,15 @@ export default function LandingPage() {
     </div>
   );
 
+  const resetAll = () => {
+    setName("")
+    setEmail("")
+    setNewPassword("")
+    setConfirmPassword("")
+    setFile(null)
+    setIsValid(true)
+  }
+
   const handleSignup = () => {
     setIsModalOpen(true);
   };
@@ -110,7 +119,7 @@ export default function LandingPage() {
       } catch (err) {
         console.log(err.message);
         setMessage('Login Failed')
-        setDescription(`The email or password you entered is incorrect. Please try again.`)
+        setDescription(err.message ? `${err.message}. Please wait until admin approves your account.` :`The email or password you entered is incorrect. Please try again.`)
         setType('error')
         setLoginLoading(false);
       }
@@ -159,7 +168,7 @@ export default function LandingPage() {
     let payload = {
       email: email,
       filePath: filePath,
-      filename: file.name
+      filename: file?.name
     }
 
     axios.post(profilepicturetoDb, payload).then((res) => {
@@ -185,7 +194,7 @@ export default function LandingPage() {
         setMessage('Signup Successful!')
         setDescription('Welcome to CloudX Suite! You can now log in and explore.')
         setType('success')
-
+        resetAll()
         console.log('Signup successful:', result);
         setLoading(false);
       } catch (error) {
