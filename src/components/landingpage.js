@@ -119,7 +119,7 @@ export default function LandingPage() {
       } catch (err) {
         console.log(err.message);
         setMessage('Login Failed')
-        setDescription(err.message ? `${err.message}. Please wait until admin approves your account.` :`The email or password you entered is incorrect. Please try again.`)
+        setDescription(err.message ? `${err.message}. Please wait until admin approves your account.` : `The email or password you entered is incorrect. Please try again.`)
         setType('error')
         setLoginLoading(false);
       }
@@ -190,19 +190,35 @@ export default function LandingPage() {
       try {
         const result = await signUp(name, email, newPassword, 'User');
         SavedProfilePathToDynamodb(email, filePath)
-
+        console.log('result', result)
         setMessage('Signup Successful!')
-        setDescription('Welcome to CloudX Suite! You can now log in and explore.')
+        setDescription(result.UserConfirmed ? 'Welcome to CloudX Suite! You can now log in and explore.' : 'Welcome to CloudX Suite! Please Please wait for admin to approve your account.')
         setType('success')
-        resetAll()
         console.log('Signup successful:', result);
+        axios.post(process.env.REACT_APP_SNS_NOTIFICATION, {
+          email: email,
+          name: name
+        }).then((res) => {
+          console.log("Notification sent successfully", res)
+        }).catch((err) => {
+          console.log("Notification error", err)
+        })
         setLoading(false);
+        resetAll()
+
       } catch (error) {
         console.error('Signup error:', error);
         SavedProfilePathToDynamodb(email, filePath)
-
+        axios.post(process.env.REACT_APP_SNS_NOTIFICATION, {
+          email: email,
+          name: name
+        }).then((res) => {
+          console.log("Notification sent successfully", res)
+        }).catch((err) => {
+          console.log("Notification error", err)
+        })
         setMessage('Signup Failed')
-        setDescription('An unexpected error occurred. Please try again later.')
+        setDescription(error.message ? `${error.message}. Please wait until admin approves your account.` : `The email or password you entered is incorrect. Please try again.`)
         setType('error')
         setLoading(false);
       }
@@ -257,7 +273,7 @@ export default function LandingPage() {
               <span className="brand-subtitle">Enterprise Cloud Platform</span>
             </div>
           </div>
-          
+
           <div className="header-nav">
             <button className="signup-button" onClick={handleSignup}>
               <HiSparkles className="button-icon" />
@@ -277,16 +293,16 @@ export default function LandingPage() {
                 <HiShieldCheck className="badge-icon" />
                 <span>Trusted by 10,000+ Organizations</span>
               </div> */}
-              
+
               <h2 className="primary-heading">
                 <LinearGradient gradient={['to right', '#DA5B9B', '#6B96F4']}>
                   {" "}Smart AI Cloud Solutions
                 </LinearGradient>
               </h2>
-              
+
               <p className="primary-description">
-                A comprehensive cloud platform integrating AWS services with modern React architecture. 
-                Experience secure authentication, intelligent automation, and seamless task management 
+                A comprehensive cloud platform integrating AWS services with modern React architecture.
+                Experience secure authentication, intelligent automation, and seamless task management
                 designed for enterprise-scale operations.
               </p>
 
@@ -410,7 +426,7 @@ export default function LandingPage() {
 
               <div className="auth-footer">
                 <p className="footer-text">
-                  New to CloudX Suite? 
+                  New to CloudX Suite?
                   <button className="footer-link" onClick={handleSignup}>
                     Create your free account
                   </button>
@@ -418,7 +434,7 @@ export default function LandingPage() {
               </div>
             </div>
           </section>
-          
+
         </div>
       </main>
 
@@ -569,8 +585,8 @@ export default function LandingPage() {
       </Modal>
 
       {/* Footer */}
-        <Footer />
-        
+      <Footer />
+
     </div>
   );
 }
