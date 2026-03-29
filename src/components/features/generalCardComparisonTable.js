@@ -36,6 +36,13 @@ export default function GeneralCardComparisonTable() {
         fetchData();
     }, [])
 
+    // Helper: safely parse reward value (handles both "1.5%" strings and 1.5 numbers)
+    const parseRewardValue = (val) => {
+        if (!val) return 0;
+        if (typeof val === 'number') return val;
+        return parseFloat(String(val).replace('%', '')) || 0;
+    };
+
     const formatFee = (fee) => {
         if (!fee || fee === '0' || fee === 0) {
             return <Tag color="green" className="fee-tag">FREE</Tag>;
@@ -44,10 +51,10 @@ export default function GeneralCardComparisonTable() {
     };
 
     const formatReward = (reward) => {
-        if (!reward || reward === '0%' || reward === '0') {
+        if (!reward || reward === '0%' || reward === '0' || reward === 0) {
             return <Text type="secondary" className="no-reward">No Reward</Text>;
         }
-        const value = parseFloat(reward.replace('%', ''));
+        const value = parseRewardValue(reward);
         let color = 'default';
         if (value >= 5) color = 'success';
         else if (value >= 2) color = 'processing';
@@ -88,7 +95,7 @@ export default function GeneralCardComparisonTable() {
                             <Text strong className="card-name">{text}</Text>
                         </div>
                     ),
-                    sorter: (a, b) => a.name.localeCompare(b.name),
+                    sorter: (a, b) => (a.name || '').localeCompare(b.name || ''),
                 },
                 {
                     title: 'Issuer Bank',
@@ -102,7 +109,7 @@ export default function GeneralCardComparisonTable() {
                             <Text className="bank-name">{text}</Text>
                         </div>
                     ),
-                    sorter: (a, b) => a.cardIssuer.localeCompare(b.cardIssuer),
+                    sorter: (a, b) => (a.cardIssuer || '').localeCompare(b.cardIssuer || ''),
                 },
             ]
         },
@@ -153,11 +160,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'amazon',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const amazonA = a.amazon ? parseFloat(a.amazon.replace('%', '')) : 0;
-                        const amazonB = b.amazon ? parseFloat(b.amazon.replace('%', '')) : 0;
-                        return amazonA - amazonB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.amazon) - parseRewardValue(b.amazon),
                 },
                 {
                     title: (
@@ -172,11 +175,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'bigbasket',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const bigbasketA = a.bigbasket ? parseFloat(a.bigbasket.replace('%', '')) : 0;
-                        const bigbasketB = b.bigbasket ? parseFloat(b.bigbasket.replace('%', '')) : 0;
-                        return bigbasketA - bigbasketB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.bigbasket) - parseRewardValue(b.bigbasket),
                 },
                 {
                     title: (
@@ -191,11 +190,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'flipkart',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const flipkartA = a.flipkart ? parseFloat(a.flipkart.replace('%', '')) : 0;
-                        const flipkartB = b.flipkart ? parseFloat(b.flipkart.replace('%', '')) : 0;
-                        return flipkartA - flipkartB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.flipkart) - parseRewardValue(b.flipkart),
                 },
                 {
                     title: (
@@ -210,11 +205,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'myntra',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const myntraA = a.myntra ? parseFloat(a.myntra.replace('%', '')) : 0;
-                        const myntraB = b.myntra ? parseFloat(b.myntra.replace('%', '')) : 0;
-                        return myntraA - myntraB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.myntra) - parseRewardValue(b.myntra),
                 },
                 {
                     title: (
@@ -229,11 +220,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'ola',
                     width: 80,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const olaA = a.ola ? parseFloat(a.ola.replace('%', '')) : 0;
-                        const olaB = b.ola ? parseFloat(b.ola.replace('%', '')) : 0;
-                        return olaA - olaB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.ola) - parseRewardValue(b.ola),
                 },
                 {
                     title: (
@@ -248,11 +235,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'swiggy',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const swiggyA = a.swiggy ? parseFloat(a.swiggy.replace('%', '')) : 0;
-                        const swiggyB = b.swiggy ? parseFloat(b.swiggy.replace('%', '')) : 0;
-                        return swiggyA - swiggyB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.swiggy) - parseRewardValue(b.swiggy),
                 },
                 {
                     title: (
@@ -267,11 +250,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'rapido',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const rapidoA = a.rapido ? parseFloat(a.rapido.replace('%', '')) : 0;
-                        const rapidoB = b.rapido ? parseFloat(b.rapido.replace('%', '')) : 0;
-                        return rapidoA - rapidoB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.rapido) - parseRewardValue(b.rapido),
                 },
                 {
                     title: (
@@ -286,11 +265,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'uber',
                     width: 80,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const uberA = a.uber ? parseFloat(a.uber.replace('%', '')) : 0;
-                        const uberB = b.uber ? parseFloat(b.uber.replace('%', '')) : 0;
-                        return uberA - uberB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.uber) - parseRewardValue(b.uber),
                 },
                 {
                     title: (
@@ -305,11 +280,7 @@ export default function GeneralCardComparisonTable() {
                     key: 'zomato',
                     width: 100,
                     render: formatReward,
-                    sorter: (a, b) => {
-                        const zomatoA = a.zomato ? parseFloat(a.zomato.replace('%', '')) : 0;
-                        const zomatoB = b.zomato ? parseFloat(b.zomato.replace('%', '')) : 0;
-                        return zomatoA - zomatoB;
-                    },
+                    sorter: (a, b) => parseRewardValue(a.zomato) - parseRewardValue(b.zomato),
                 },
             ]
         },
