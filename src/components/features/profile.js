@@ -14,6 +14,7 @@ import Notification from "./notification";
 import axios from 'axios';
 import { UserOutlined } from "@ant-design/icons";
 import dummyImage from '../../assets/avatar.png'; // Assuming you have a dummy image for profile
+import { getSession } from "../loginAuth/auth";
 
 
 export default function Profile(props) {
@@ -38,21 +39,30 @@ export default function Profile(props) {
   const [isValid, setIsValid] = useState(true);
 
   useEffect(() => {
-    let payload = {
-      email: sessionStorage.getItem("email")
-    }
+        const fetchProfileImage = async () => {
+            try {
+                const session = await getSession();
+                const token = session.getIdToken().getJwtToken();
 
-    const profileImageFetchUrl = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+                let payload = {
+                    email: sessionStorage.getItem("email")
+                }
 
-    axios.post(profileImageFetchUrl, payload).then((res) => {
-      console.log("Filepath of image in useEffect", res.data.filePath)
-      setFilePath(res.data.filePath)
-    }).catch((err) => {
-      console.log("filepath in useEffect", err)
-    })
+                const profileImageFetchUrl = process.env.REACT_APP_BASE_URL + process.env.REACT_APP_PROFILE_IMAGE_FETCH_URL
+
+                const res = await axios.post(profileImageFetchUrl, payload, {
+                    headers: {
+                        Authorization: token
+                    }
+                });
+                console.log("Filepath of image in useEffect", res.data.filePath)
+                setFilePath(res.data.filePath)
+            } catch (err) {
+                console.log("filepath in useEffect", err)
+            }
+        };
+        fetchProfileImage();
   }, [])
-
-  const imageUploadAPI = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/Profile-Image-PresignedURL"
 
   const handleOk = () => {
     props.setChangeProfile(false);
@@ -64,33 +74,40 @@ export default function Profile(props) {
     setPreviewImage(null);
   };
 
-  const handleSignUpImages = () => {
+  const handleSignUpImages = async () => {
     const email = sessionStorage.getItem("email")
     console.log("file name", file)
     if (file !== null) {
       setLoading(true);
-      axios.post(imageUploadAPI, {
-        email: email,
-        filename: file.name,
-        contentType: "image/png"
-      }).then((res) => {
+      try {
+        const session = await getSession();
+        const token = session.getIdToken().getJwtToken();
+
+        const res = await axios.post(
+          process.env.REACT_APP_BASE_URL + process.env.REACT_APP_GET_PRESIGNED_URL,
+          {
+            email: email,
+            filename: file.name,
+            contentType: "image/png"
+          },
+          { headers: { Authorization: token } }
+        );
         console.log("Presigned url", res)
-        S3 = res.data.presignedUrl
-        axios.put(S3, file, {
+        const responseBody = res.data.body || res.data;
+        S3 = responseBody.presignedUrl
+
+        await axios.put(S3, file, {
           headers: {
             "Content-Type": file.type,
           },
-        }).then((res) => {
-          console.log("Uploaded file", res.statusText)
-          console.log("Uploaded file details", res)
-        }).catch((err) => {
-          console.log("error", err)
-        })
-        SavedProfilePathToDynamodb(email, res.data.filePath)
-      }).catch((err) => {
+        });
+        console.log("Uploaded file successfully")
+
+        SavedProfilePathToDynamodb(email, responseBody.filePath)
+      } catch (err) {
         console.log("error", err)
         setLoading(false);
-      })
+      }
     } else {
       setMessage('No Image Selected')
       setDescription('Please select a profile picture to upload.')
@@ -98,16 +115,21 @@ export default function Profile(props) {
     }
   }
 
-  const profilepicturetoDb = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/save-profile-image-filePath-to-dynamodb"
-
-  const SavedProfilePathToDynamodb = (email, filePath) => {
+  const SavedProfilePathToDynamodb = async (email, filePath) => {
     let payload = {
       email: email,
       filePath: filePath,
       filename: file.name
     }
 
-    axios.post(profilepicturetoDb, payload).then((res) => {
+    try {
+      const session = await getSession();
+      const token = session.getIdToken().getJwtToken();
+      const res = await axios.post(
+        process.env.REACT_APP_BASE_URL + process.env.REACT_APP_SAVE_PROFILE_IMAGE,
+        payload,
+        { headers: { Authorization: token } }
+      );
       console.log("Successfully saved profile image to Dynamodb", res)
       setMessage('Profile Updated!')
       setDescription('Your profile picture has been updated successfully.')
@@ -118,10 +140,10 @@ export default function Profile(props) {
         setFile(null);
         setPreviewImage(null);
       }, 2000);
-    }).catch((error) => {
+    } catch (error) {
       console.log("error is", error)
       setLoading(false);
-    })
+    }
   }
 
   const formItemLayout = {

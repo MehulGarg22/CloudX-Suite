@@ -1,6 +1,7 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AuthContext } from "../../loginAuth/authContext";
+import { getSession } from "../../loginAuth/auth";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import logo from '../../../assets/cloudxsuite_logo.png'
 import PlatformRewards from '../../features/creditCardPlatformRewards'
@@ -15,12 +16,12 @@ import dummyImage from '../../../assets/avatar.png'; // Assuming you have a dumm
 import { useNavigate } from "react-router-dom";
 import CustomModal from "../../features/customModal";
 
-export default function UserNavigation(props){
-    const { signOut } = useContext(AuthContext);
-    const { setSwitchToComparison, switchToComparison} = props;
-    const [switchToRewards, setSwitchToRewards]= useState(false)
-    const [filePath, setFilePath]= useState("")
-    const [changeProfile, setChangeProfile]= useState(false)
+export default function UserNavigation(props) {
+    const { user, signOut } = useContext(AuthContext);
+    const { setSwitchToComparison, switchToComparison } = props;
+    const [switchToRewards, setSwitchToRewards] = useState(false)
+    const [filePath, setFilePath] = useState("")
+    const [changeProfile, setChangeProfile] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -28,27 +29,38 @@ export default function UserNavigation(props){
         return classes.filter(Boolean).join(' ')
     }
 
-    useEffect(()=>{
-        let payload={
-            email: sessionStorage.getItem("email")
-        }
+    useEffect(() => {
+        const fetchProfileImage = async () => {
+            try {
+                const session = await getSession();
+                const token = session.getIdToken().getJwtToken();
 
-        const profileImageFetchUrl="https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+                let payload = {
+                    email: sessionStorage.getItem("email")
+                }
 
-        axios.post(profileImageFetchUrl, payload).then((res)=>{
-            console.log("Filepath of image in useEffect", res.data.filePath)
-            setFilePath(res.data.filePath)
-        }).catch((err)=>{
-            console.log("filepath in useEffect",err)
-        })
-    },[])
+                const profileImageFetchUrl = process.env.REACT_APP_BASE_URL + process.env.REACT_APP_PROFILE_IMAGE_FETCH_URL
 
-    const handleProfile=()=>{
+                const res = await axios.post(profileImageFetchUrl, payload, {
+                    headers: {
+                        Authorization: token
+                    }
+                });
+                console.log("Filepath of image in useEffect", res.data.filePath)
+                setFilePath(res.data.filePath)
+            } catch (err) {
+                console.log("filepath in useEffect", err)
+            }
+        };
+        fetchProfileImage();
+    }, [])
+
+    const handleProfile = () => {
         console.log("set")
         setChangeProfile(true)
     }
 
-    return(
+    return (
         <Disclosure as="nav" className="modern-navbar">
             {
                 changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
@@ -63,7 +75,7 @@ export default function UserNavigation(props){
                             <XMarkIcon aria-hidden="true" className="menu-icon menu-icon-close" />
                         </DisclosureButton>
                     </div>
-                    
+
                     <div className="navbar-brand-section">
                         <div className="brand-container">
                             <div className="logo-container">
@@ -82,23 +94,23 @@ export default function UserNavigation(props){
                                 <span className="brand-subtitle">User Dashboard</span>
                             </div>
                         </div>
-                        
+
                         <div className="desktop-navigation">
                             <div className="nav-items">
                                 {
                                     switchToComparison ?
-                                    <button 
-                                        className="mobile-nav-button back-button" 
-                                        onClick={()=> setSwitchToComparison(false)}
-                                    >
-                                        ← Back to Dashboard
-                                    </button>:
-                                    <button 
-                                        className="mobile-nav-button rewards-button" 
-                                        onClick={()=> setSwitchToComparison(true)}
-                                    >
-                                        🎁 Credit Card Comparison
-                                    </button>
+                                        <button
+                                            className="mobile-nav-button back-button"
+                                            onClick={() => setSwitchToComparison(false)}
+                                        >
+                                            ← Back to Dashboard
+                                        </button> :
+                                        <button
+                                            className="mobile-nav-button rewards-button"
+                                            onClick={() => setSwitchToComparison(true)}
+                                        >
+                                            🎁 Credit Card Comparison
+                                        </button>
                                 }
                             </div>
                         </div>
@@ -113,10 +125,10 @@ export default function UserNavigation(props){
                             </div>
                         </div> */}
                     </div>
-                    
+
                     <div className="navbar-actions">
                         <button
-                            onClick={()=>setIsModalOpen(true)} 
+                            onClick={() => setIsModalOpen(true)}
                             type="button"
                             className="notification-button"
                         >
@@ -125,7 +137,7 @@ export default function UserNavigation(props){
                             <span className="notification-badge"></span>
                         </button>
 
-                        <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Notification"}  content={"Your Notication goes here!"} />
+                        <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Notification"} content={"Your Notication goes here!"} />
 
                         {/* Profile dropdown */}
                         <Menu as="div" className="profile-menu">
@@ -134,13 +146,13 @@ export default function UserNavigation(props){
                                     <span className="sr-only">Open user menu</span>
                                     <div className="profile-avatar">
                                         {
-                                            !filePath ? 
+                                            !filePath ?
                                                 <div className="default-avatar">
-                                                    <img src={dummyImage} className="user-avatar" alt="Profile"/>
+                                                    <img src={dummyImage} className="user-avatar" alt="Profile" />
 
                                                 </div>
                                                 :
-                                                <img src={filePath} className="user-avatar" alt="Profile"/>
+                                                <img src={filePath} className="user-avatar" alt="Profile" />
                                         }
                                     </div>
                                 </MenuButton>
@@ -178,23 +190,23 @@ export default function UserNavigation(props){
                     </div>
                 </div>
             </div>
-            
+
             <DisclosurePanel className="mobile-panel">
                 <div className="mobile-nav-content">
                     {
                         switchToRewards ?
-                        <button 
-                            className="mobile-nav-button back-button" 
-                            onClick={()=> setSwitchToRewards(false)}
-                        >
-                            ← Back to Dashboard
-                        </button>:
-                        <button 
-                            className="mobile-nav-button rewards-button" 
-                            onClick={()=> setSwitchToRewards(true)}
-                        >
-                            🎁 Credit Card Platform Rewards
-                        </button>
+                            <button
+                                className="mobile-nav-button back-button"
+                                onClick={() => setSwitchToRewards(false)}
+                            >
+                                ← Back to Dashboard
+                            </button> :
+                            <button
+                                className="mobile-nav-button rewards-button"
+                                onClick={() => setSwitchToRewards(true)}
+                            >
+                                🎁 Credit Card Platform Rewards
+                            </button>
                     }
                 </div>
             </DisclosurePanel>

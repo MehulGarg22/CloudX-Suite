@@ -1,30 +1,39 @@
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
-import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar,Button  } from 'antd';
-import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined,  DownOutlined, UpOutlined  } from '@ant-design/icons';
+import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar, Button } from 'antd';
+import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import './creditCardPlatformRewards.css';
 import Footer from "../footer/footer";
 import ModernSkeleton from "../ModernSkeleton";
-
+import { getSession } from "../loginAuth/auth";
 
 const { Title, Text } = Typography;
 
-export default function GeneralCardComparisonTable(){
-    
+export default function GeneralCardComparisonTable() {
+
     const [data, setData] = useState()
     const [loading, setLoading] = useState(false)
     const [expandedComments, setExpandedComments] = useState(new Set())
 
     useEffect(() => {
-        setLoading(true)
-        axios.get("https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get").then((resp) => {
-            console.log("resp", resp.data)
-            setData(resp.data.items)
-            setLoading(false)
-        }).catch((err) => {
-            console.log("Table error in GET call is: ", err)
-            setLoading(false)
-        })
+        const fetchData = async () => {
+            try {
+                setLoading(true)
+                const session = await getSession();
+                const token = session.getIdToken().getJwtToken();
+                const resp = await axios.get(
+                    process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_GET,
+                    { headers: { Authorization: token } }
+                );
+                console.log("resp", resp.data)
+                setData(resp.data.items)
+            } catch (err) {
+                console.log("Table error in GET call is: ", err)
+            } finally {
+                setLoading(false)
+            }
+        };
+        fetchData();
     }, [])
 
     const formatFee = (fee) => {
@@ -43,7 +52,7 @@ export default function GeneralCardComparisonTable(){
         if (value >= 5) color = 'success';
         else if (value >= 2) color = 'processing';
         else if (value >= 1) color = 'warning';
-        
+
         return <Tag color={color} className="reward-tag">{reward}</Tag>;
     };
 
@@ -320,11 +329,11 @@ export default function GeneralCardComparisonTable(){
                     {text ? (
                         <div className="expandable-comment">
                             <div className="comment-content">
-                                <Text 
+                                <Text
                                     className={`comments-text ${expandedComments.has(record.id) ? 'expanded' : 'collapsed'}`}
                                 >
-                                    {expandedComments.has(record.id) ? text : 
-                                     text.length > 30 ? `${text.substring(0, 30)}...` : text}
+                                    {expandedComments.has(record.id) ? text :
+                                        text.length > 30 ? `${text.substring(0, 30)}...` : text}
                                 </Text>
                             </div>
                             {text.length > 60 && (
@@ -332,8 +341,8 @@ export default function GeneralCardComparisonTable(){
                                     type="text"
                                     size="small"
                                     className={`expand-toggle-btn ${expandedComments.has(record.id) ? 'expanded' : ''}`}
-                                    icon={expandedComments.has(record.id) ? 
-                                        <UpOutlined className="toggle-icon" /> : 
+                                    icon={expandedComments.has(record.id) ?
+                                        <UpOutlined className="toggle-icon" /> :
                                         <DownOutlined className="toggle-icon" />}
                                     onClick={(e) => {
                                         e.stopPropagation()
@@ -365,11 +374,11 @@ export default function GeneralCardComparisonTable(){
                     bordered={false}
                     size="middle"
                     scroll={{ x: 1300, y: 410 }}
-                    pagination={{ 
-                        defaultPageSize: 15, 
-                        showSizeChanger: true, 
+                    pagination={{
+                        defaultPageSize: 15,
+                        showSizeChanger: true,
                         pageSizeOptions: ['20', '25', '30', '50'],
-                        showTotal: (total, range) => 
+                        showTotal: (total, range) =>
                             `${range[0]}-${range[1]} of ${total} credit cards`,
                         className: 'modern-pagination'
                     }}

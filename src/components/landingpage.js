@@ -34,7 +34,6 @@ export default function LandingPage() {
   const { user, signIn, signUp } = useContext(AuthContext);
   const [isValid, setIsValid] = useState(true);
 
-  const imageUploadAPI = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/Profile-Image-PresignedURL";
 
   const passwordPolicy = {
     minLength: 8,
@@ -138,7 +137,7 @@ export default function LandingPage() {
 
   const handleSignUpImages = () => {
     if (file !== null) {
-      axios.post(imageUploadAPI, {
+      axios.post(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_PROFILE_IMAGE_PRESIGNEDURL, {
         email: email,
         filename: file.name,
         contentType: "image/png"
@@ -162,7 +161,6 @@ export default function LandingPage() {
     }
   }
 
-  const profilepicturetoDb = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/save-profile-image-filePath-to-dynamodb"
 
   const SavedProfilePathToDynamodb = (email, filePath) => {
     let payload = {
@@ -171,7 +169,7 @@ export default function LandingPage() {
       filename: file?.name
     }
 
-    axios.post(profilepicturetoDb, payload).then((res) => {
+    axios.post(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_SAVE_PROFILE_IMAGE, payload).then((res) => {
       console.log("Successfully saved profile image to Dynamodb", res)
     }).catch((error) => {
       console.log("error is", error)
@@ -192,31 +190,31 @@ export default function LandingPage() {
         SavedProfilePathToDynamodb(email, filePath)
         console.log('result', result)
         setMessage('Signup Successful!')
-        setDescription(result.UserConfirmed ? 'Welcome to CloudX Suite! You can now log in and explore.' : 'Welcome to CloudX Suite! Please Please wait for admin to approve your account.')
+        setDescription(result.UserConfirmed ? 'Welcome to CloudX Suite! You can now log in and explore.' : 'Welcome to CloudX Suite! Please wait for admin to approve your account.')
         setType('success')
         console.log('Signup successful:', result);
-        axios.post(process.env.REACT_APP_SNS_NOTIFICATION, {
-          email: email,
-          name: name
-        }).then((res) => {
-          console.log("Notification sent successfully", res)
-        }).catch((err) => {
-          console.log("Notification error", err)
-        })
+        // axios.post(process.env.REACT_APP_SNS_NOTIFICATION, {
+        //   email: email,
+        //   name: name
+        // }).then((res) => {
+        //   console.log("Notification sent successfully", res)
+        // }).catch((err) => {
+        //   console.log("Notification error", err)
+        // })
         setLoading(false);
         resetAll()
 
       } catch (error) {
         console.error('Signup error:', error);
         SavedProfilePathToDynamodb(email, filePath)
-        axios.post(process.env.REACT_APP_SNS_NOTIFICATION, {
-          email: email,
-          name: name
-        }).then((res) => {
-          console.log("Notification sent successfully", res)
-        }).catch((err) => {
-          console.log("Notification error", err)
-        })
+        // axios.post(process.env.REACT_APP_SNS_NOTIFICATION, {
+        //   email: email,
+        //   name: name
+        // }).then((res) => {
+        //   console.log("Notification sent successfully", res)
+        // }).catch((err) => {
+        //   console.log("Notification error", err)
+        // })
         setMessage('Signup Failed')
         setDescription(error.message ? `${error.message}. Please wait until admin approves your account.` : `The email or password you entered is incorrect. Please try again.`)
         setType('error')

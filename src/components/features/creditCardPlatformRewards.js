@@ -1,37 +1,45 @@
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
-import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar,Button  } from 'antd';
-import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined,  DownOutlined, UpOutlined  } from '@ant-design/icons';
+import { Table, Card, Typography, Space, Tag, Tooltip, Skeleton, Row, Col, Statistic, Badge, Avatar, Button } from 'antd';
+import { CreditCardOutlined, BankOutlined, GiftOutlined, InfoCircleOutlined, TrophyOutlined, PercentageOutlined, DollarOutlined, StarOutlined, ThunderboltOutlined, RocketOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import './creditCardPlatformRewards.css';
 import Footer from "../footer/footer";
 import ModernSkeleton from "../ModernSkeleton";
 import GeneralCardComparisonTable from "./generalCardComparisonTable";
-
+import { getSession } from "../loginAuth/auth";
 
 const { Title, Text } = Typography;
 
-export default function PlatformRewards(){
-    
+export default function PlatformRewards() {
     const [data, setData] = useState()
     useEffect(() => {
-        axios.get("https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get").then((resp) => {
-            console.log("resp", resp.data)
-            setData(resp.data.items)
-        }).catch((err) => {
-            console.log("Table error in GET call is: ", err)
-        })
+        const fetchData = async () => {
+            try {
+                const session = await getSession();
+                const token = session.getIdToken().getJwtToken();
+                const resp = await axios.get(
+                    process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_GET,
+                    { headers: { Authorization: token } }
+                );
+                console.log("resp", resp.data)
+                setData(resp.data.items)
+            } catch (err) {
+                console.log("Table error in GET call is: ", err)
+            }
+        };
+        fetchData();
     }, [])
 
     // Calculate stats for header
     const getHeaderStats = () => {
         if (!data) return { totalCards: 0, freeFeeCards: 0, topReward: '0%' };
-        
+
         const totalCards = data.length;
-        const freeFeeCards = data.filter(card => 
-            (!card.annualfee || card.annualfee === '0') && 
+        const freeFeeCards = data.filter(card =>
+            (!card.annualfee || card.annualfee === '0') &&
             (!card.joiningfee || card.joiningfee === '0')
         ).length;
-        
+
         let maxReward = 0;
         data.forEach(card => {
             ['amazon', 'flipkart', 'swiggy', 'zomato', 'myntra', 'bigbasket', 'ola', 'uber', 'rapido'].forEach(platform => {
@@ -41,7 +49,7 @@ export default function PlatformRewards(){
                 }
             });
         });
-        
+
         return { totalCards, freeFeeCards, topReward: `${maxReward}%` };
     };
 
@@ -56,7 +64,7 @@ export default function PlatformRewards(){
                     <div className="mesh-gradient mesh-2"></div>
                     <div className="mesh-gradient mesh-3"></div>
                 </div>
-                
+
                 <div className="floating-particles">
                     <div className="particle particle-1"></div>
                     <div className="particle particle-2"></div>
@@ -81,8 +89,8 @@ export default function PlatformRewards(){
 
                     <div className="hero-section">
                         <div className="icon-container">
-                            <Avatar 
-                                size={80} 
+                            <Avatar
+                                size={80}
                                 className="main-avatar"
                                 icon={<CreditCardOutlined />}
                             />
@@ -99,10 +107,10 @@ export default function PlatformRewards(){
                                 <br />
                                 <span className="gradient-text">Rewards Analytics</span>
                             </Title>
-                            
+
                             <div className="subtitle-container">
                                 <Text className="modern-subtitle">
-                                    Powered by advanced algorithms to find your 
+                                    Powered by advanced algorithms to find your
                                     <span className="highlight-span"> perfect financial match</span>
                                 </Text>
                             </div>
@@ -119,7 +127,7 @@ export default function PlatformRewards(){
                                     <Statistic
                                         title="Total Cards Analyzed"
                                         value={stats.totalCards}
-                                        valueStyle={{ 
+                                        valueStyle={{
                                             background: 'linear-gradient(135deg, #DA5B9B, #6B96F4)',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
@@ -138,7 +146,7 @@ export default function PlatformRewards(){
                                     <Statistic
                                         title="Zero-Fee Options"
                                         value={stats.freeFeeCards}
-                                        valueStyle={{ 
+                                        valueStyle={{
                                             background: 'linear-gradient(135deg, #06D6A0, #00D4AA)',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
@@ -157,7 +165,7 @@ export default function PlatformRewards(){
                                     <Statistic
                                         title="Peak Reward Rate"
                                         value={stats.topReward}
-                                        valueStyle={{ 
+                                        valueStyle={{
                                             background: 'linear-gradient(135deg, #00D4AA, #FFD23F)',
                                             WebkitBackgroundClip: 'text',
                                             WebkitTextFillColor: 'transparent',
@@ -166,7 +174,7 @@ export default function PlatformRewards(){
                                         }}
                                     />
                                     <div className="stat-sparkle">🚀</div>
-                                </div> 
+                                </div>
                             </Col>
                         </Row>
                     </div>
@@ -186,8 +194,8 @@ export default function PlatformRewards(){
                     </div>
                 </div>
             </Card>
-            <br/>
-            <br/>
+            <br />
+            <br />
         </div>
     );
 }

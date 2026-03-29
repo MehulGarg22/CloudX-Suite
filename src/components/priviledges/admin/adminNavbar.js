@@ -13,6 +13,8 @@ import CreditCardList from './creditCardList';
 import { useNavigate } from 'react-router-dom';
 import Profile from '../../features/profile'; // Add Profile import
 import './adminNavbar.css';
+import { getSession } from '../../loginAuth/auth';
+
 
 export default function AdminNavbar() {
     const { signOut } = useContext(AuthContext);
@@ -40,18 +42,29 @@ export default function AdminNavbar() {
     }
 
     useEffect(() => {
-        let payload = {
-            email: sessionStorage.getItem("email")
-        }
+        const fetchProfileImage = async () => {
+            try {
+                const session = await getSession();
+                const token = session.getIdToken().getJwtToken();
 
-        const profileImageFetchUrl = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+                let payload = {
+                    email: sessionStorage.getItem("email")
+                }
 
-        axios.post(profileImageFetchUrl, payload).then((res) => {
-            console.log("Filepath of image in useEffect", res.data.filePath)
-            setFilePath(res.data.filePath)
-        }).catch((err) => {
-            console.log("filepath in useEffect", err)
-        })
+                const profileImageFetchUrl = process.env.REACT_APP_BASE_URL + process.env.REACT_APP_PROFILE_IMAGE_FETCH_URL
+
+                const res = await axios.post(profileImageFetchUrl, payload, {
+                    headers: {
+                        Authorization: token
+                    }
+                });
+                console.log("Filepath of image in useEffect", res.data.filePath)
+                setFilePath(res.data.filePath)
+            } catch (err) {
+                console.log("filepath in useEffect", err)
+            }
+        };
+        fetchProfileImage();
     }, [])
 
     return (

@@ -8,6 +8,7 @@ import Notification from '../../features/notification';
 import { Skeleton } from 'antd';
 import ModernSkeleton from "../../ModernSkeleton";
 import AdminNavbar from './adminNavbar';
+import { getSession } from "../../loginAuth/auth";
 
 const { Title } = Typography;
 
@@ -21,13 +22,15 @@ export default function CreditCardReward() {
     const [description, setDescription] = useState("");
     const [form] = Form.useForm();
 
-    const cardGetAPI = "https://4xhs80hti5.execute-api.us-east-1.amazonaws.com/credit-card-details/get";
-    const cardPostAPI = "https://q08qqknh16.execute-api.us-east-1.amazonaws.com/credit-card-details/post";
-    const cardDeleteAPI = "https://maqwhoyk0g.execute-api.us-east-1.amazonaws.com/credit-card-details/delete";
-
-    const cardetailsFromDatabase = () => {
+    const cardetailsFromDatabase = async () => {
         setInitialLoad(true);
-        axios.get(cardGetAPI).then((resp) => {
+        try {
+            const session = await getSession();
+            const token = session.getIdToken().getJwtToken();
+            const resp = await axios.get(
+                process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_GET,
+                { headers: { Authorization: token } }
+            );
             console.log("resp.data:", resp.data);
             const fetchedItems = resp.data.items || [];
             setCards(fetchedItems);
@@ -63,31 +66,38 @@ export default function CreditCardReward() {
                 console.log("form.getFieldsValue():", form.getFieldsValue());
                 setInitialLoad(false);
             }
-        }).catch((err) => console.log("Error is: ", err));
+        } catch (err) {
+            console.log("Error is: ", err);
+        }
     };
 
     useEffect(() => {
         cardetailsFromDatabase();
     }, []);
 
-    const deleteCard = (index) => {
+    const deleteCard = async (index) => {
         console.log("inside delete function: ", index);
-        axios.delete(cardDeleteAPI, {
-            data: {
-                id: index
-            }
-        }).then((res) => {
+        try {
+            const session = await getSession();
+            const token = session.getIdToken().getJwtToken();
+            const res = await axios.delete(
+                process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_DELETE,
+                {
+                    data: { id: index },
+                    headers: { Authorization: token }
+                }
+            );
             console.log(res);
             cardetailsFromDatabase();
             setMessage('Success!');
             setDescription('The card detail successfully deleted');
             setType('success');
-        }).catch((err) => {
+        } catch (err) {
             console.log(err);
             setMessage('Oops! Something went wrong.');
             setDescription('We were unable to delete the card detail. Please try again later.');
             setType('error');
-        });
+        }
     };
 
     const rewardFields = [
@@ -106,25 +116,32 @@ export default function CreditCardReward() {
         { label: "Zomato", key: "zomato", placeholder: "Zomato Rewards" },
     ];
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setType('');
         console.log(form.getFieldsValue());
         setLoading(true);
-        axios.post(cardPostAPI, form.getFieldsValue().items).then((res) => {
+        try {
+            const session = await getSession();
+            const token = session.getIdToken().getJwtToken();
+            const res = await axios.post(
+                process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_POST,
+                form.getFieldsValue().items,
+                { headers: { Authorization: token } }
+            );
             console.log("card details post response", res);
             setLoading(false);
             cardetailsFromDatabase();
             setMessage('Success!');
             setDescription('The information you provided has been successfully saved.');
             setType('success');
-        }).catch((err) => {
+        } catch (err) {
             cardetailsFromDatabase();
             console.log(err);
             setLoading(false);
             setMessage('Oops! Something went wrong.');
             setDescription('We were unable to save your changes. Please try again later.');
             setType('error');
-        });
+        }
     };
 
     // Modern ConfigProvider theme
@@ -206,7 +223,7 @@ export default function CreditCardReward() {
                                 className="modern-form"
                             >
                                 <Notification type={type} message={message} description={description} />
-                                
+
                                 <Form.List name="items">
                                     {(fields, { add, remove }) => (
                                         <div className="form-content">
@@ -237,16 +254,16 @@ export default function CreditCardReward() {
                                                         {/* Basic Information Section */}
                                                         <div className="form-section">
                                                             <Title level={5} className="section-title">Basic Information</Title>
-                                                            
-                                                            <Form.Item 
-                                                                label="Card Issuer Bank" 
-                                                                name={[field.name, 'cardIssuer']} 
+
+                                                            <Form.Item
+                                                                label="Card Issuer Bank"
+                                                                name={[field.name, 'cardIssuer']}
                                                                 initialValue={cards[index]?.cardIssuer}
                                                             >
                                                                 <div className="input-with-tooltip">
-                                                                    <Input 
-                                                                        defaultValue={cards[index]?.cardIssuer} 
-                                                                        placeholder="Card Issuer Name" 
+                                                                    <Input
+                                                                        defaultValue={cards[index]?.cardIssuer}
+                                                                        placeholder="Card Issuer Name"
                                                                         size="large"
                                                                     />
                                                                     <Tooltip placement="top" title="Enter credit card issuing bank">
@@ -257,15 +274,15 @@ export default function CreditCardReward() {
                                                                 </div>
                                                             </Form.Item>
 
-                                                            <Form.Item 
-                                                                label="Card Name" 
-                                                                name={[field.name, 'name']} 
+                                                            <Form.Item
+                                                                label="Card Name"
+                                                                name={[field.name, 'name']}
                                                                 initialValue={cards[index]?.name}
                                                             >
                                                                 <div className="input-with-tooltip">
-                                                                    <Input 
-                                                                        defaultValue={cards[index]?.name} 
-                                                                        placeholder="Credit Card Name" 
+                                                                    <Input
+                                                                        defaultValue={cards[index]?.name}
+                                                                        placeholder="Credit Card Name"
                                                                         size="large"
                                                                     />
                                                                     <Tooltip placement="top" title="Enter credit card name">
@@ -277,15 +294,15 @@ export default function CreditCardReward() {
                                                             </Form.Item>
 
                                                             <div className="fee-inputs">
-                                                                <Form.Item 
-                                                                    label="Annual Fee" 
-                                                                    name={[field.name, 'annualfee']} 
+                                                                <Form.Item
+                                                                    label="Annual Fee"
+                                                                    name={[field.name, 'annualfee']}
                                                                     initialValue={cards[index]?.annualfee}
                                                                 >
                                                                     <div className="input-with-tooltip">
-                                                                        <Input 
-                                                                            defaultValue={cards[index]?.annualfee} 
-                                                                            placeholder="Annual Fee" 
+                                                                        <Input
+                                                                            defaultValue={cards[index]?.annualfee}
+                                                                            placeholder="Annual Fee"
                                                                             size="large"
                                                                         />
                                                                         <Tooltip placement="top" title="Enter Annual Fee in INR which is charged every year">
@@ -296,15 +313,15 @@ export default function CreditCardReward() {
                                                                     </div>
                                                                 </Form.Item>
 
-                                                                <Form.Item 
-                                                                    label="Joining Fee" 
-                                                                    name={[field.name, 'joiningfee']} 
+                                                                <Form.Item
+                                                                    label="Joining Fee"
+                                                                    name={[field.name, 'joiningfee']}
                                                                     initialValue={cards[index]?.joiningfee}
                                                                 >
                                                                     <div className="input-with-tooltip">
-                                                                        <Input 
-                                                                            defaultValue={cards[index]?.joiningfee} 
-                                                                            placeholder="Joining Fee" 
+                                                                        <Input
+                                                                            defaultValue={cards[index]?.joiningfee}
+                                                                            placeholder="Joining Fee"
                                                                             size="large"
                                                                         />
                                                                         <Tooltip placement="top" title="Enter Joining Fee in INR which is charged at the time of joining the card">
@@ -322,18 +339,18 @@ export default function CreditCardReward() {
                                                         {/* Rewards Section */}
                                                         <div className="form-section">
                                                             <Title level={5} className="section-title">Rewards & Benefits</Title>
-                                                            
+
                                                             <div className="rewards-grid">
                                                                 {rewardFields.map(({ label, key, placeholder }) => (
-                                                                    <Form.Item 
-                                                                        key={key} 
-                                                                        label={label} 
-                                                                        name={[field.name, key]} 
+                                                                    <Form.Item
+                                                                        key={key}
+                                                                        label={label}
+                                                                        name={[field.name, key]}
                                                                         initialValue={cards[index]?.[key]}
                                                                     >
                                                                         <div className="input-with-tooltip">
-                                                                            <Input 
-                                                                                defaultValue={cards[index]?.[key]} 
+                                                                            <Input
+                                                                                defaultValue={cards[index]?.[key]}
                                                                                 placeholder={placeholder}
                                                                                 size="large"
                                                                             />
@@ -352,15 +369,15 @@ export default function CreditCardReward() {
 
                                                         {/* Additional Information */}
                                                         <div className="form-section">
-                                                            <Form.Item 
-                                                                label="Additional Comments" 
-                                                                name={[field.name, 'comments']} 
+                                                            <Form.Item
+                                                                label="Additional Comments"
+                                                                name={[field.name, 'comments']}
                                                                 initialValue={cards[index]?.comments}
                                                             >
                                                                 <div className="input-with-tooltip">
-                                                                    <Input.TextArea 
-                                                                        defaultValue={cards[index]?.comments} 
-                                                                        placeholder="Additional information" 
+                                                                    <Input.TextArea
+                                                                        defaultValue={cards[index]?.comments}
+                                                                        placeholder="Additional information"
                                                                         rows={3}
                                                                         size="large"
                                                                     />
@@ -381,8 +398,8 @@ export default function CreditCardReward() {
                                                                                     <div className="reward-inputs">
                                                                                         <Form.Item noStyle name={[subField.name, 'featureName']}>
                                                                                             <div className="input-with-tooltip">
-                                                                                                <Input 
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.featureName} 
+                                                                                                <Input
+                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.featureName}
                                                                                                     placeholder="Feature"
                                                                                                     size="large"
                                                                                                 />
@@ -393,11 +410,11 @@ export default function CreditCardReward() {
                                                                                                 </Tooltip>
                                                                                             </div>
                                                                                         </Form.Item>
-                                                                                        
+
                                                                                         <Form.Item noStyle name={[subField.name, 'featureValue']}>
                                                                                             <div className="input-with-tooltip">
-                                                                                                <Input 
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.featureValue} 
+                                                                                                <Input
+                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.featureValue}
                                                                                                     placeholder="Feature value"
                                                                                                     size="large"
                                                                                                 />
@@ -408,11 +425,11 @@ export default function CreditCardReward() {
                                                                                                 </Tooltip>
                                                                                             </div>
                                                                                         </Form.Item>
-                                                                                        
+
                                                                                         <Form.Item noStyle name={[subField.name, 'rewardCapping']}>
                                                                                             <div className="input-with-tooltip">
-                                                                                                <Input 
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.rewardCapping} 
+                                                                                                <Input
+                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.rewardCapping}
                                                                                                     placeholder="Reward Capping"
                                                                                                     size="large"
                                                                                                 />
@@ -423,11 +440,11 @@ export default function CreditCardReward() {
                                                                                                 </Tooltip>
                                                                                             </div>
                                                                                         </Form.Item>
-                                                                                        
+
                                                                                         <Form.Item noStyle name={[subField.name, 'remarks']}>
                                                                                             <div className="input-with-tooltip">
-                                                                                                <Input 
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.remarks} 
+                                                                                                <Input
+                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.remarks}
                                                                                                     placeholder="Additional comments"
                                                                                                     size="large"
                                                                                                 />
@@ -439,7 +456,7 @@ export default function CreditCardReward() {
                                                                                             </div>
                                                                                         </Form.Item>
                                                                                     </div>
-                                                                                    
+
                                                                                     <Button
                                                                                         type="text"
                                                                                         danger
@@ -449,10 +466,10 @@ export default function CreditCardReward() {
                                                                                     />
                                                                                 </div>
                                                                             ))}
-                                                                            
-                                                                            <Button 
-                                                                                type="dashed" 
-                                                                                onClick={() => subOpt.add()} 
+
+                                                                            <Button
+                                                                                type="dashed"
+                                                                                onClick={() => subOpt.add()}
                                                                                 className="add-reward-button"
                                                                                 size="large"
                                                                             >
@@ -470,17 +487,17 @@ export default function CreditCardReward() {
                                             {/* Action Buttons */}
                                             <div className="form-actions">
                                                 <Space size="middle" className="action-buttons">
-                                                    <Button 
-                                                        type="dashed" 
-                                                        onClick={() => add()} 
+                                                    <Button
+                                                        type="dashed"
+                                                        onClick={() => add()}
                                                         size="large"
                                                         className="add-card-button"
                                                     >
                                                         + Add New Card
                                                     </Button>
-                                                    <Button 
-                                                        type="primary" 
-                                                        onClick={handleSubmit} 
+                                                    <Button
+                                                        type="primary"
+                                                        onClick={handleSubmit}
                                                         loading={loading}
                                                         size="large"
                                                         className="submit-button"

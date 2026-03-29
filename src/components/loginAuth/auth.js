@@ -71,9 +71,14 @@ export function signIn(username, password) {
           email: result.idToken.payload.email
         }
 
-        const profileImageFetchUrl = "https://tb98og2ree.execute-api.us-east-1.amazonaws.com/cloudxsuite-profile/fetch-profile-image-filePath-to-dynamodb"
+        const profileImageFetchUrl = process.env.REACT_APP_BASE_URL + process.env.REACT_APP_PROFILE_IMAGE_FETCH_URL
+        const token = result.getIdToken().getJwtToken();
 
-        axios.post(profileImageFetchUrl, payload).then((res) => {
+        axios.post(profileImageFetchUrl, payload, {
+          headers: {
+            Authorization: token
+          }
+        }).then((res) => {
           console.log("Filepath of image after login", res.data.filePath)
           sessionStorage.setItem("filePath", res.data.filePath)
         }).catch((err) => {
