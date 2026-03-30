@@ -41,11 +41,15 @@
 }
 
 html, body {
-  height: 100vh;
-  overflow: hidden;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
   color: var(--text-dark);
+}
+
+/* Lock scrolling ONLY when the landing page is displayed */
+body:has(.landing-container) {
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Single Page Container - No Scrollbar */
@@ -813,8 +817,8 @@ html, body {
   opacity: 0.8;
 }
 
-/* Ensure no body scroll */
-body {
+/* Ensure no body scroll on landing page only */
+body:has(.landing-container) {
   position: fixed;
   width: 100%;
 }

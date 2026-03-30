@@ -266,7 +266,7 @@ export default function Dashboard() {
             {renderNavbar()}
 
             <ConfigProvider theme={suiteTheme}>
-                <div className="dashboardContainer">
+                <div className="dashboardContainer" >
                     <Notification type={type} message={message} description={notificationDescription} />
 
                     {/* ── Create Modal ──────────────── */}
@@ -481,11 +481,8 @@ export default function Dashboard() {
                                                     <h3 className="blog-card-title">{blog.title}</h3>
                                                 </div>
 
-                                                <p className="blog-card-description">
-                                                    {isExpanded || !shouldTruncate
-                                                        ? blog.description
-                                                        : `${blog.description.slice(0, 150)}...`
-                                                    }
+                                                <p className={`blog-card-description${!isExpanded && shouldTruncate ? ' clamped' : ''}`}>
+                                                    {blog.description}
                                                 </p>
 
                                                 {shouldTruncate && (
