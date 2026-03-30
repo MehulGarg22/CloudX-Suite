@@ -118,6 +118,12 @@ export default function AdminNavbar() {
                                     >
                                         📋 Credit Card List
                                     </button>
+                                    <button 
+                                        className={`admin-nav-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                                        onClick={() => navigate('/blogs')}
+                                    >
+                                        📝 Blogs
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -200,6 +206,12 @@ export default function AdminNavbar() {
                             onClick={CreditCardList}
                         >
                             📋 Credit Card List
+                        </button>
+                        <button 
+                            className={`admin-mobile-nav-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                            onClick={() => navigate('/blogs')}
+                        >
+                            📝 Blogs
                         </button>
                     </div>
                 </DisclosurePanel>

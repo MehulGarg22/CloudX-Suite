@@ -112,6 +112,12 @@ export default function UserNavigation(props) {
                                             🎁 Credit Card Comparison
                                         </button>
                                 }
+                                <button
+                                    className="mobile-nav-button rewards-button"
+                                    onClick={() => navigate('/blogs')}
+                                >
+                                    📝 Blogs
+                                </button>
                             </div>
                         </div>
                         {/* <div className="desktop-navigation">
@@ -208,6 +214,12 @@ export default function UserNavigation(props) {
                                 🎁 Credit Card Platform Rewards
                             </button>
                     }
+                    <button
+                        className="mobile-nav-button rewards-button"
+                        onClick={() => navigate('/blogs')}
+                    >
+                        📝 Blogs
+                    </button>
                 </div>
             </DisclosurePanel>
         </Disclosure>

@@ -16,10 +16,12 @@ import Footer from "../../footer/footer";
 import CreditCardComparisonTable from "../../features/generalCardComparisonTable";
 import CustomModal from "../../features/customModal";
 import {getSession} from "../../loginAuth/auth";
+import { useNavigate } from "react-router-dom";
 
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
+    const navigate = useNavigate();
     
     const [switchToRewards, setSwitchToRewards]= useState(false)
     const [filePath, setFilePath]= useState("")
@@ -111,6 +113,12 @@ export default function User(){
                                         >
                                             🎁 Credit Card Comparison 
                                         </button>
+                                        <button 
+                                            className="nav-button rewards-button" 
+                                            onClick={() => navigate('/blogs')}
+                                        >
+                                            📝 Blogs
+                                        </button>
                                     </div>
                                 }
 
@@ -199,6 +207,12 @@ export default function User(){
                                 🎁 Credit Card Comparison
                             </button>
                         }
+                        <button 
+                            className="mobile-nav-button rewards-button" 
+                            onClick={() => navigate('/blogs')}
+                        >
+                            📝 Blogs
+                        </button>
                     </div>
                 </DisclosurePanel>
             </Disclosure>

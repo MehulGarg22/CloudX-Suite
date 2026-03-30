@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import {AuthProvider} from '../loginAuth/authContext';
+import { AuthProvider } from '../loginAuth/authContext';
 import LandingPage from "../landingpage";
 import RouteGuard from "../loginAuth/RouteGuard";
 import AdminDashboard from "../priviledges/admin/adminNavbar";
@@ -9,44 +9,50 @@ import User from "../priviledges/users/user";
 import CreditCardList from "../priviledges/admin/creditCardList";
 import CreditCardReward from "../priviledges/admin/creditCardReward";
 import CreditCard from "../priviledges/users/creditcards";
+import Dashboard from "../blog/dashboard/dashboard";
 
-export default function MyRoutes(){
-    return(
+export default function MyRoutes() {
+    return (
         <AuthProvider>
             <div>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/admin/creditcard" element={
-                            <RouteGuard>
-                                <CreditCardReward/>
-                            </RouteGuard>
-                        }
+                        <RouteGuard>
+                            <CreditCardReward />
+                        </RouteGuard>
+                    }
                     />
                     <Route path="/admin/creditcardlist" element={
-                            <RouteGuard>
-                                <CreditCardList/>
-                            </RouteGuard>
-                        }
+                        <RouteGuard>
+                            <CreditCardList />
+                        </RouteGuard>
+                    }
                     />
                     <Route path="/guest" element={
-                            <RouteGuard>
-                                <GuestUser/>
-                            </RouteGuard>
-                        }
+                        <RouteGuard>
+                            <GuestUser />
+                        </RouteGuard>
+                    }
                     />
-                    
+
                     <Route path="/user" element={
-                            <RouteGuard>
-                                <User/>
-                            </RouteGuard>
-                        }
+                        <RouteGuard>
+                            <User />
+                        </RouteGuard>
+                    }
                     />
                     <Route path="/user/creditcards" element={
-                            <RouteGuard>
-                                <CreditCard/>
-                            </RouteGuard>
-                        }
+                        <RouteGuard>
+                            <CreditCard />
+                        </RouteGuard>
+                    }
                     />
+                    <Route path="/blogs" element={
+                        <RouteGuard>
+                            <Dashboard />
+                        </RouteGuard>
+                    } />
                 </Routes>
             </div>
         </AuthProvider>
