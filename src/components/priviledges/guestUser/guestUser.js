@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../loginAuth/authContext";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import logo from '../../../assets/cloudxsuite_logo.png'
@@ -10,20 +10,23 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from "antd";
 import { LinearGradient } from 'react-text-gradients'
-import './guestUser.css'; // Add this CSS file
-import dummyImage from '../../../assets/avatar.png'; // Assuming you have a dummy image for profile
+import './guestUser.css';
+import dummyImage from '../../../assets/avatar.png';
 import Footer from "../../footer/footer";
 import CreditCardComparisonTable from "../../features/generalCardComparisonTable";
 import CustomModal from "../../features/customModal";
 import {getSession} from "../../loginAuth/auth";
-import { useNavigate } from "react-router-dom";
 
 
 export default function User(){
     const { signOut } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
     
-    const [switchToRewards, setSwitchToRewards]= useState(false)
+    // Determine if we're on a sub-page (navbar-only mode)
+    const isGuestHome = location.pathname === '/guest';
+    const isSubPage = !isGuestHome;
+    const [activeView, setActiveView] = useState(location.state?.activeView || 'home'); // 'home' | 'comparison'
     const [filePath, setFilePath]= useState("")
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [changeProfile, setChangeProfile]= useState(false)
@@ -59,6 +62,18 @@ export default function User(){
         setChangeProfile(true)
     }
 
+    const handleNavClick = (view) => {
+        if (view === 'blogs') {
+            navigate('/blogs');
+        } else {
+            if (isSubPage) {
+                navigate('/guest', { state: { activeView: view } });
+            } else {
+                setActiveView(view);
+            }
+        }
+    };
+
     return(
         <div className="min-h-full">
             <Disclosure as="nav" className="modern-navbar">
@@ -91,37 +106,31 @@ export default function User(){
                                             CloudX Suite
                                         </LinearGradient>
                                     </h1>
-                                    <span className="brand-subtitle">User Dashboard</span>
+                                    <span className="brand-subtitle">Guest Dashboard</span>
                                 </div>
                             </div>
                             
                             <div className="desktop-navigation">
-                                {
-                                    switchToRewards ?
-                                    <div className="nav-items">
-                                        <button 
-                                            className="nav-button back-button" 
-                                            onClick={()=> setSwitchToRewards(false)}
-                                        >
-                                            ← Back to Dashboard
-                                        </button>
-                                    </div>:
-                                    <div className="nav-items">
-                                        <button 
-                                            className="nav-button rewards-button" 
-                                            onClick={()=> setSwitchToRewards(true)}
-                                        >
-                                            🎁 Credit Card Comparison 
-                                        </button>
-                                        <button 
-                                            className="nav-button rewards-button" 
-                                            onClick={() => navigate('/blogs')}
-                                        >
-                                            📝 Blogs
-                                        </button>
-                                    </div>
-                                }
-
+                                <div className="nav-items">
+                                    <button 
+                                        className={`nav-button rewards-button ${isGuestHome && activeView === 'home' ? 'active' : ''}`}
+                                        onClick={() => handleNavClick('home')}
+                                    >
+                                        🏠 Home
+                                    </button>
+                                    <button 
+                                        className={`nav-button rewards-button ${location.pathname === '/comparisontable' || (isGuestHome && activeView === 'comparison') ? 'active' : ''}`}
+                                        onClick={() => handleNavClick('comparison')}
+                                    >
+                                        💳 Credit Card Comparison
+                                    </button>
+                                    <button 
+                                        className={`nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                                        onClick={() => handleNavClick('blogs')}
+                                    >
+                                        📝 Blogs
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
@@ -192,24 +201,21 @@ export default function User(){
                 
                 <DisclosurePanel className="mobile-panel">
                     <div className="mobile-nav-content">
-                        {
-                            switchToRewards ?
-                            <button 
-                                className="mobile-nav-button back-button" 
-                                onClick={()=> setSwitchToRewards(false)}
-                            >
-                                ← Back to Dashboard
-                            </button>:
-                            <button 
-                                className="mobile-nav-button rewards-button" 
-                                onClick={()=> setSwitchToRewards(true)}
-                            >
-                                🎁 Credit Card Comparison
-                            </button>
-                        }
                         <button 
-                            className="mobile-nav-button rewards-button" 
-                            onClick={() => navigate('/blogs')}
+                            className={`mobile-nav-button rewards-button ${isGuestHome && activeView === 'home' ? 'active' : ''}`}
+                            onClick={() => handleNavClick('home')}
+                        >
+                            🏠 Home
+                        </button>
+                        <button 
+                            className={`mobile-nav-button rewards-button ${location.pathname === '/comparisontable' || (isGuestHome && activeView === 'comparison') ? 'active' : ''}`}
+                            onClick={() => handleNavClick('comparison')}
+                        >
+                            💳 Credit Card Comparison
+                        </button>
+                        <button 
+                            className={`mobile-nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                            onClick={() => handleNavClick('blogs')}
                         >
                             📝 Blogs
                         </button>
@@ -217,18 +223,13 @@ export default function User(){
                 </DisclosurePanel>
             </Disclosure>
             {
-                switchToRewards ? 
-                <CreditCardComparisonTable />
-                :
-                <PlatformRewards/>
-            }
-      
-            {/* {
-                switchToRewards && (
-                    <div className="rewards-content">
-                    </div>
+                !isSubPage && (
+                    activeView === 'comparison' ? 
+                    <CreditCardComparisonTable />
+                    :
+                    <PlatformRewards/>
                 )
-            } */}
+            }
       
         </div>
     );

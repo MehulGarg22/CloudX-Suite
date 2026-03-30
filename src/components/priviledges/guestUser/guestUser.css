@@ -179,15 +179,22 @@
   background: var(--bg-gray-50);
 }
 
-.rewards-button {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-}
-
-.rewards-button:hover {
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+.nav-button.active {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.rewards-button {
+  border-color: var(--border-color);
+  color: var(--text-medium);
+}
+
+.rewards-button:hover:not(.active) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--bg-gray-50);
 }
 
 .back-button {
@@ -388,10 +395,21 @@
   gap: 0.5rem;
 }
 
-.mobile-nav-button:hover {
+.mobile-nav-button:hover:not(.active) {
   border-color: var(--primary-color);
   color: var(--primary-color);
   background: var(--bg-gray-50);
+}
+
+.mobile-nav-button.active {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.mobile-nav-button + .mobile-nav-button {
+  margin-top: 0.5rem;
 }
 
 /* Rewards Content */

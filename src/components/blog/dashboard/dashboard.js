@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Tooltip, Modal, Button, ConfigProvider, Form, Input, Popconfirm } from "antd";
-import { FileSyncOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import { FileSyncOutlined, DeleteOutlined, SearchOutlined, PlusOutlined, GlobalOutlined, UserOutlined } from '@ant-design/icons';
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { MdCloudUpload } from "react-icons/md";
 import { HiDocumentText } from "react-icons/hi";
@@ -55,25 +55,35 @@ export default function Dashboard() {
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [title, setTitle] = useState("");
     const [blogData, setBlogData] = useState("");
+    const [allBlogsData, setAllBlogsData] = useState([]);
     const [updateBlogId, setUpdateBlogId] = useState("");
     const [updateTitle, setUpdateTitle] = useState("");
     const [updateDescription, setUpdateDescription] = useState("");
     const [description, setDescription] = useState("");
     const [file, setFile] = useState();
     const [tableLoading, setTableLoading] = useState(false);
+    const [allBlogsLoading, setAllBlogsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState("");
     const [message, setMessage] = useState("");
     const [notificationDescription, setNotificationDescription] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [allBlogsPage, setAllBlogsPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
+    const [allBlogsSearch, setAllBlogsSearch] = useState("");
     const [expandedCards, setExpandedCards] = useState({});
+    const [activeTab, setActiveTab] = useState("my-blogs");
 
     const { TextArea } = Input;
 
-    const blogUpdateApi = "https://6bx93syy1g.execute-api.us-east-1.amazonaws.com/blog/update";
-    const blogPostApi = "https://6bx93syy1g.execute-api.us-east-1.amazonaws.com/blog/post";
-    const blogDeleteApi = "https://6bx93syy1g.execute-api.us-east-1.amazonaws.com/blog/delete";
+    // ── Role Detection ──────────────────────
+    const role = sessionStorage.getItem("role");
+    const isGuest = role === 'Guest User';
+
+    // Force "All Blogs" tab for guests
+    useEffect(() => {
+        if (isGuest) setActiveTab("all-blogs");
+    }, [isGuest]);
 
     // ── Handlers ────────────────────────────
     const handleNewBlog = () => setIsModalOpen(true);
@@ -112,7 +122,26 @@ export default function Dashboard() {
         }
     };
 
-    useEffect(() => { getBlogs(); }, []);
+    const getAllBlogs = async () => {
+        setAllBlogsLoading(true);
+        try {
+            const session = await getSession();
+            const token = session.getIdToken().getJwtToken();
+            const res = await axios.get(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_COMMUNITY_BLOGS_FETCH, {
+                headers: { Authorization: token }
+            });
+            setAllBlogsData(res.data.body.items);
+            setAllBlogsLoading(false);
+        } catch (err) {
+            console.log(err);
+            setAllBlogsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!isGuest) getBlogs();
+        getAllBlogs();
+    }, []);
 
     const handleNewBlogSubmit = async () => {
         setLoading(true);
@@ -188,7 +217,7 @@ export default function Dashboard() {
         }
     };
 
-    // ── Search & Pagination ─────────────────
+    // ── My Blogs — Search & Pagination ──────
     const filteredBlogs = useMemo(() => {
         if (!blogData || !Array.isArray(blogData)) return [];
         if (!searchQuery.trim()) return blogData;
@@ -204,15 +233,31 @@ export default function Dashboard() {
         currentPage * CARDS_PER_PAGE
     );
 
-    // Reset to page 1 when search changes
     useEffect(() => { setCurrentPage(1); }, [searchQuery]);
+
+    // ── All Blogs — Search & Pagination ─────
+    const filteredAllBlogs = useMemo(() => {
+        if (!allBlogsData || !Array.isArray(allBlogsData)) return [];
+        if (!allBlogsSearch.trim()) return allBlogsData;
+        const q = allBlogsSearch.toLowerCase();
+        return allBlogsData.filter(
+            blog => blog.title?.toLowerCase().includes(q) || blog.description?.toLowerCase().includes(q)
+        );
+    }, [allBlogsData, allBlogsSearch]);
+
+    const allBlogsTotalPages = Math.max(1, Math.ceil(filteredAllBlogs.length / CARDS_PER_PAGE));
+    const paginatedAllBlogs = filteredAllBlogs.slice(
+        (allBlogsPage - 1) * CARDS_PER_PAGE,
+        allBlogsPage * CARDS_PER_PAGE
+    );
+
+    useEffect(() => { setAllBlogsPage(1); }, [allBlogsSearch]);
 
     const toggleExpand = (blogId) => {
         setExpandedCards(prev => ({ ...prev, [blogId]: !prev[blogId] }));
     };
 
     // ── Navbar by Role ──────────────────────
-    const role = sessionStorage.getItem("role");
     const renderNavbar = () => {
         switch (role) {
             case 'Administrator': return <AdminNavbar />;
@@ -239,19 +284,28 @@ export default function Dashboard() {
     );
 
     // ── Empty State ─────────────────────────
-    const renderEmptyState = () => (
+    const renderEmptyState = (isAllBlogs = false) => (
         <div className="blog-empty-state">
-            <span className="blog-empty-icon">📝</span>
+            <span className="blog-empty-icon">{isAllBlogs ? '🌐' : '📝'}</span>
             <h3 className="blog-empty-title">
-                {searchQuery ? "No blogs match your search" : "No blogs yet"}
+                {isAllBlogs
+                    ? (allBlogsSearch ? "No blogs match your search" : "No community blogs yet")
+                    : (searchQuery ? "No blogs match your search" : "No blogs yet")
+                }
             </h3>
             <p className="blog-empty-subtitle">
-                {searchQuery
-                    ? `We couldn't find any blogs matching "${searchQuery}". Try a different search term.`
-                    : "Your blog journey starts here! Create your first blog post and share your ideas with the world."
+                {isAllBlogs
+                    ? (allBlogsSearch
+                        ? `We couldn't find any blogs matching "${allBlogsSearch}". Try a different search term.`
+                        : "Community blogs will appear here once the API is connected. Stay tuned!"
+                    )
+                    : (searchQuery
+                        ? `We couldn't find any blogs matching "${searchQuery}". Try a different search term.`
+                        : "Your blog journey starts here! Create your first blog post and share your ideas with the world."
+                    )
                 }
             </p>
-            {!searchQuery && (
+            {!isAllBlogs && !searchQuery && (
                 <button className="blog-create-btn" onClick={handleNewBlog}>
                     <span className="blog-create-btn-icon"><PlusOutlined /></span>
                     Create Your First Blog
@@ -259,6 +313,115 @@ export default function Dashboard() {
             )}
         </div>
     );
+
+    // ── Card Renderer (shared) ──────────────
+    const renderBlogCard = (blog, index, pageNum, showActions = true) => {
+        const isExpanded = expandedCards[blog.blogId];
+        const shouldTruncate = blog.description && blog.description.length > 150;
+
+        return (
+            <div className="blog-card" key={blog.blogId}>
+                <div className="blog-card-accent" />
+                <div className="blog-card-body">
+                    <div className="blog-card-header">
+                        <span className="blog-card-number">
+                            {(pageNum - 1) * CARDS_PER_PAGE + index + 1}
+                        </span>
+                        <h3 className="blog-card-title">{blog.title}</h3>
+                    </div>
+
+                    <p className={`blog-card-description${!isExpanded && shouldTruncate ? ' clamped' : ''}`}>
+                        {blog.description}
+                    </p>
+
+                    {shouldTruncate && (
+                        <button
+                            className="blog-read-more-btn"
+                            onClick={() => toggleExpand(blog.blogId)}
+                        >
+                            {isExpanded ? '← Show less' : 'Read more →'}
+                        </button>
+                    )}
+
+                    {showActions ? (
+                        <div className="blog-card-footer">
+                            <Tooltip title="Edit Blog">
+                                <button
+                                    className="blog-action-btn edit-btn"
+                                    onClick={() => handleUpdateBlog(blog.blogId)}
+                                    aria-label="Edit blog"
+                                >
+                                    <FileSyncOutlined />
+                                </button>
+                            </Tooltip>
+                            <Popconfirm
+                                title="Delete this blog?"
+                                description="This action cannot be undone."
+                                onConfirm={() => handleBlogDelete(blog.blogId)}
+                                okText="Delete"
+                                cancelText="Cancel"
+                                overlayClassName="blog-popconfirm"
+                            >
+                                <Tooltip title="Delete Blog">
+                                    <button
+                                        className="blog-action-btn delete-btn"
+                                        aria-label="Delete blog"
+                                    >
+                                        <DeleteOutlined />
+                                    </button>
+                                </Tooltip>
+                            </Popconfirm>
+                        </div>
+                    ) : (
+                        <div className="blog-card-footer blog-card-footer-readonly">
+                            <span className="blog-card-author-tag">
+                                <UserOutlined /> {blog.email || 'Community'}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    // ── Pagination Renderer (shared) ────────
+    const renderPagination = (filtered, page, setPage, totalPg) => {
+        if (filtered.length <= CARDS_PER_PAGE) return null;
+        return (
+            <div className="blog-pagination-wrapper">
+                <span className="blog-pagination-info">
+                    Showing {(page - 1) * CARDS_PER_PAGE + 1}–
+                    {Math.min(page * CARDS_PER_PAGE, filtered.length)} of{' '}
+                    {filtered.length} blogs
+                </span>
+                <div className="blog-pagination-controls">
+                    <button
+                        className="blog-page-btn"
+                        disabled={page === 1}
+                        onClick={() => setPage(p => p - 1)}
+                    >
+                        ←
+                    </button>
+                    {Array.from({ length: totalPg }, (_, i) => i + 1).map(pg => (
+                        <button
+                            key={pg}
+                            className={`blog-page-btn ${pg === page ? 'active' : ''}`}
+                            onClick={() => setPage(pg)}
+                        >
+                            {pg}
+                        </button>
+                    ))}
+                    <button
+                        className="blog-page-btn"
+                        disabled={page === totalPg}
+                        onClick={() => setPage(p => p + 1)}
+                    >
+                        →
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     // ── Render ──────────────────────────────
     return (
@@ -412,158 +575,160 @@ export default function Dashboard() {
                         <div className="blog-hero-content">
                             <h1 className="blog-hero-title">
                                 <LinearGradient gradient={['to right', '#DA5B9B', '#6B96F4']}>
-                                    Published Blogs
+                                    {isGuest ? 'Community Blogs' : 'Blog Dashboard'}
                                 </LinearGradient>
                             </h1>
                             <p className="blog-hero-subtitle">
-                                Manage, create, and share your blog posts with the community
+                                {isGuest
+                                    ? 'Explore blogs written by the community'
+                                    : 'Manage, create, and share your blog posts with the community'
+                                }
                             </p>
                         </div>
                     </div>
 
-                    {/* ── Stats Bar ────────────────── */}
-                    {!tableLoading && blogData && Array.isArray(blogData) && (
-                        <div className="blog-stats-bar">
-                            <div className="blog-stat-chip">
-                                <span className="blog-stat-icon"><HiDocumentText /></span>
-                                <span className="blog-stat-value">{blogData.length}</span>
-                                <span>{blogData.length === 1 ? 'Blog' : 'Blogs'}</span>
-                            </div>
-                            {searchQuery && (
-                                <div className="blog-stat-chip">
-                                    <span className="blog-stat-icon"><SearchOutlined /></span>
-                                    <span className="blog-stat-value">{filteredBlogs.length}</span>
-                                    <span>{filteredBlogs.length === 1 ? 'Result' : 'Results'}</span>
+                    {/* ── Tab Switcher (Admin & User only) ── */}
+                    {!isGuest && (
+                        <div className="blog-tab-switcher">
+                            <button
+                                className={`blog-tab-btn ${activeTab === 'my-blogs' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('my-blogs')}
+                                id="tab-my-blogs"
+                            >
+                                <UserOutlined />
+                                <span>My Blogs</span>
+                                {blogData && Array.isArray(blogData) && (
+                                    <span className="blog-tab-count">{blogData.length}</span>
+                                )}
+                            </button>
+                            <button
+                                className={`blog-tab-btn ${activeTab === 'all-blogs' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('all-blogs')}
+                                id="tab-all-blogs"
+                            >
+                                <GlobalOutlined />
+                                <span>All Blogs</span>
+                                {allBlogsData && Array.isArray(allBlogsData) && allBlogsData.length > 0 && (
+                                    <span className="blog-tab-count">{allBlogsData.length}</span>
+                                )}
+                            </button>
+                        </div>
+                    )}
+
+                    {/* ════════════════════════════════════════ */}
+                    {/* ══ MY BLOGS SECTION ════════════════════ */}
+                    {/* ════════════════════════════════════════ */}
+                    {activeTab === 'my-blogs' && !isGuest && (
+                        <div className="blog-section blog-section-mine">
+                            {/* Stats */}
+                            {!tableLoading && blogData && Array.isArray(blogData) && (
+                                <div className="blog-stats-bar">
+                                    <div className="blog-stat-chip">
+                                        <span className="blog-stat-icon"><HiDocumentText /></span>
+                                        <span className="blog-stat-value">{blogData.length}</span>
+                                        <span>{blogData.length === 1 ? 'Blog' : 'Blogs'}</span>
+                                    </div>
+                                    {searchQuery && (
+                                        <div className="blog-stat-chip">
+                                            <span className="blog-stat-icon"><SearchOutlined /></span>
+                                            <span className="blog-stat-value">{filteredBlogs.length}</span>
+                                            <span>{filteredBlogs.length === 1 ? 'Result' : 'Results'}</span>
+                                        </div>
+                                    )}
                                 </div>
+                            )}
+
+                            {/* Toolbar */}
+                            <div className="blog-toolbar">
+                                <div className="blog-search-wrapper">
+                                    <SearchOutlined className="blog-search-icon" />
+                                    <input
+                                        type="text"
+                                        className="blog-search-input"
+                                        placeholder="Search your blogs by title or description..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        id="blog-search"
+                                    />
+                                </div>
+                                <button className="blog-create-btn" onClick={handleNewBlog} id="create-blog-btn">
+                                    <span className="blog-create-btn-icon"><PlusOutlined /></span>
+                                    Create New Blog
+                                </button>
+                            </div>
+
+                            {/* Content */}
+                            {tableLoading ? (
+                                renderSkeleton()
+                            ) : !filteredBlogs.length ? (
+                                renderEmptyState(false)
+                            ) : (
+                                <>
+                                    <div className="blog-card-grid">
+                                        {paginatedBlogs.map((blog, index) =>
+                                            renderBlogCard(blog, index, currentPage, true)
+                                        )}
+                                    </div>
+                                    {renderPagination(filteredBlogs, currentPage, setCurrentPage, totalPages)}
+                                </>
                             )}
                         </div>
                     )}
 
-                    {/* ── Toolbar ──────────────────── */}
-                    <div className="blog-toolbar">
-                        <div className="blog-search-wrapper">
-                            <SearchOutlined className="blog-search-icon" />
-                            <input
-                                type="text"
-                                className="blog-search-input"
-                                placeholder="Search blogs by title or description..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                id="blog-search"
-                            />
-                        </div>
-                        <button className="blog-create-btn" onClick={handleNewBlog} id="create-blog-btn">
-                            <span className="blog-create-btn-icon"><PlusOutlined /></span>
-                            Create New Blog
-                        </button>
-                    </div>
-
-                    {/* ── Content ──────────────────── */}
-                    {tableLoading ? (
-                        renderSkeleton()
-                    ) : !filteredBlogs.length ? (
-                        renderEmptyState()
-                    ) : (
-                        <>
-                            <div className="blog-card-grid">
-                                {paginatedBlogs.map((blog, index) => {
-                                    const isExpanded = expandedCards[blog.blogId];
-                                    const shouldTruncate = blog.description && blog.description.length > 150;
-
-                                    return (
-                                        <div className="blog-card" key={blog.blogId}>
-                                            <div className="blog-card-accent" />
-                                            <div className="blog-card-body">
-                                                <div className="blog-card-header">
-                                                    <span className="blog-card-number">
-                                                        {(currentPage - 1) * CARDS_PER_PAGE + index + 1}
-                                                    </span>
-                                                    <h3 className="blog-card-title">{blog.title}</h3>
-                                                </div>
-
-                                                <p className={`blog-card-description${!isExpanded && shouldTruncate ? ' clamped' : ''}`}>
-                                                    {blog.description}
-                                                </p>
-
-                                                {shouldTruncate && (
-                                                    <button
-                                                        className="blog-read-more-btn"
-                                                        onClick={() => toggleExpand(blog.blogId)}
-                                                    >
-                                                        {isExpanded ? '← Show less' : 'Read more →'}
-                                                    </button>
-                                                )}
-
-                                                <div className="blog-card-footer">
-                                                    <Tooltip title="Edit Blog">
-                                                        <button
-                                                            className="blog-action-btn edit-btn"
-                                                            onClick={() => handleUpdateBlog(blog.blogId)}
-                                                            aria-label="Edit blog"
-                                                        >
-                                                            <FileSyncOutlined />
-                                                        </button>
-                                                    </Tooltip>
-                                                    <Popconfirm
-                                                        title="Delete this blog?"
-                                                        description="This action cannot be undone."
-                                                        onConfirm={() => handleBlogDelete(blog.blogId)}
-                                                        okText="Delete"
-                                                        cancelText="Cancel"
-                                                        overlayClassName="blog-popconfirm"
-                                                    >
-                                                        <Tooltip title="Delete Blog">
-                                                            <button
-                                                                className="blog-action-btn delete-btn"
-                                                                aria-label="Delete blog"
-                                                            >
-                                                                <DeleteOutlined />
-                                                            </button>
-                                                        </Tooltip>
-                                                    </Popconfirm>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            {/* ── Pagination ──────────── */}
-                            {filteredBlogs.length > CARDS_PER_PAGE && (
-                                <div className="blog-pagination-wrapper">
-                                    <span className="blog-pagination-info">
-                                        Showing {(currentPage - 1) * CARDS_PER_PAGE + 1}–
-                                        {Math.min(currentPage * CARDS_PER_PAGE, filteredBlogs.length)} of{' '}
-                                        {filteredBlogs.length} blogs
-                                    </span>
-                                    <div className="blog-pagination-controls">
-                                        <button
-                                            className="blog-page-btn"
-                                            disabled={currentPage === 1}
-                                            onClick={() => setCurrentPage(p => p - 1)}
-                                        >
-                                            ←
-                                        </button>
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                            <button
-                                                key={page}
-                                                className={`blog-page-btn ${page === currentPage ? 'active' : ''}`}
-                                                onClick={() => setCurrentPage(page)}
-                                            >
-                                                {page}
-                                            </button>
-                                        ))}
-                                        <button
-                                            className="blog-page-btn"
-                                            disabled={currentPage === totalPages}
-                                            onClick={() => setCurrentPage(p => p + 1)}
-                                        >
-                                            →
-                                        </button>
+                    {/* ════════════════════════════════════════ */}
+                    {/* ══ ALL BLOGS SECTION ═══════════════════ */}
+                    {/* ════════════════════════════════════════ */}
+                    {activeTab === 'all-blogs' && (
+                        <div className="blog-section blog-section-all">
+                            {/* Stats */}
+                            {!allBlogsLoading && allBlogsData && Array.isArray(allBlogsData) && allBlogsData.length > 0 && (
+                                <div className="blog-stats-bar">
+                                    <div className="blog-stat-chip">
+                                        <span className="blog-stat-icon"><GlobalOutlined /></span>
+                                        <span className="blog-stat-value">{allBlogsData.length}</span>
+                                        <span>{allBlogsData.length === 1 ? 'Blog' : 'Blogs'}</span>
                                     </div>
+                                    {allBlogsSearch && (
+                                        <div className="blog-stat-chip">
+                                            <span className="blog-stat-icon"><SearchOutlined /></span>
+                                            <span className="blog-stat-value">{filteredAllBlogs.length}</span>
+                                            <span>{filteredAllBlogs.length === 1 ? 'Result' : 'Results'}</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
-                        </>
+
+                            {/* Toolbar (read-only — no Create button) */}
+                            <div className="blog-toolbar">
+                                <div className="blog-search-wrapper blog-search-wrapper-full">
+                                    <SearchOutlined className="blog-search-icon" />
+                                    <input
+                                        type="text"
+                                        className="blog-search-input"
+                                        placeholder="Search all community blogs..."
+                                        value={allBlogsSearch}
+                                        onChange={(e) => setAllBlogsSearch(e.target.value)}
+                                        id="all-blog-search"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            {allBlogsLoading ? (
+                                renderSkeleton()
+                            ) : !filteredAllBlogs.length ? (
+                                renderEmptyState(true)
+                            ) : (
+                                <>
+                                    <div className="blog-card-grid">
+                                        {paginatedAllBlogs.map((blog, index) =>
+                                            renderBlogCard(blog, index, allBlogsPage, false)
+                                        )}
+                                    </div>
+                                    {renderPagination(filteredAllBlogs, allBlogsPage, setAllBlogsPage, allBlogsTotalPages)}
+                                </>
+                            )}
+                        </div>
                     )}
 
                 </div>

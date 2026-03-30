@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CreditCardReward from './creditCardReward';
 import { AuthContext } from "../../loginAuth/authContext";
 import { useLocation } from "react-router-dom";
@@ -84,7 +84,7 @@ export default function AdminNavbar() {
                                 <XMarkIcon aria-hidden="true" className="menu-icon menu-icon-close" />
                             </DisclosureButton>
                         </div>
-                        
+
                         <div className="admin-navbar-brand-section">
                             <div className="admin-brand-container">
                                 <div className="admin-logo-container">
@@ -103,22 +103,22 @@ export default function AdminNavbar() {
                                     <span className="admin-brand-subtitle">Admin Dashboard</span>
                                 </div>
                             </div>
-                            
+
                             <div className="admin-desktop-navigation">
                                 <div className="admin-nav-items">
-                                    <button 
+                                    <button
                                         className={`admin-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
                                         onClick={CreditCardReward}
                                     >
-                                        💳 Credit Card Rewards
+                                        💳 Credit Card Management
                                     </button>
-                                    <button 
+                                    <button
                                         className={`admin-nav-button ${location.pathname === '/admin/creditcardlist' ? 'active' : ''}`}
-                                        onClick={CreditCardList}
+                                        onClick={() => navigate('/comparisontable')}
                                     >
-                                        📋 Credit Card List
+                                        📋 Credit Card Comparison
                                     </button>
-                                    <button 
+                                    <button
                                         className={`admin-nav-button ${location.pathname === '/blogs' ? 'active' : ''}`}
                                         onClick={() => navigate('/blogs')}
                                     >
@@ -127,7 +127,7 @@ export default function AdminNavbar() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="admin-navbar-actions">
                             <button
                                 type="button"
@@ -145,12 +145,12 @@ export default function AdminNavbar() {
                                         <span className="sr-only">Open user menu</span>
                                         <div className="admin-profile-avatar">
                                             {
-                                                !filePath ? 
+                                                !filePath ?
                                                     <div className="admin-default-avatar">
                                                         <UserOutlined />
                                                     </div>
                                                     :
-                                                    <img src={filePath} className="admin-user-avatar" alt="Profile"/>
+                                                    <img src={filePath} className="admin-user-avatar" alt="Profile" />
                                             }
                                         </div>
                                     </MenuButton>
@@ -192,22 +192,22 @@ export default function AdminNavbar() {
                         </div>
                     </div>
                 </div>
-                
+
                 <DisclosurePanel className="admin-mobile-panel">
                     <div className="admin-mobile-nav-content">
-                        <button 
+                        <button
                             className={`admin-mobile-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
                             onClick={CreditCardReward}
                         >
                             💳 Credit Card Rewards
                         </button>
-                        <button 
+                        <button
                             className={`admin-mobile-nav-button ${location.pathname === '/admin/creditcardlist' ? 'active' : ''}`}
                             onClick={CreditCardList}
                         >
                             📋 Credit Card List
                         </button>
-                        <button 
+                        <button
                             className={`admin-mobile-nav-button ${location.pathname === '/blogs' ? 'active' : ''}`}
                             onClick={() => navigate('/blogs')}
                         >
