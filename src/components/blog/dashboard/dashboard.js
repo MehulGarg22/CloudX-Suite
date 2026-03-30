@@ -171,6 +171,17 @@ export default function Dashboard() {
         setDescription("");
     };
 
+    function usersOnlyFeature() {
+        setMessage('Ready to Share Your Thoughts?')
+        setNotificationDescription('You are currently exploring CloudX Suite as a guest. To create, publish, and manage your own blogs, please sign in or register for a free User account.')
+        setType('warning')
+        setTimeout(() => {
+            setMessage('')
+            setNotificationDescription('')
+            setType('')
+        }, 4500);
+    }
+
     const handleUpdateBlogSubmit = async () => {
         let email = sessionStorage.getItem("email");
         const params = { email, blogId: updateBlogId, title: updateTitle, description: updateDescription };
@@ -217,7 +228,6 @@ export default function Dashboard() {
         }
     };
 
-    // ── My Blogs — Search & Pagination ──────
     const filteredBlogs = useMemo(() => {
         if (!blogData || !Array.isArray(blogData)) return [];
         if (!searchQuery.trim()) return blogData;
@@ -615,9 +625,7 @@ export default function Dashboard() {
                         </div>
                     )}
 
-                    {/* ════════════════════════════════════════ */}
-                    {/* ══ MY BLOGS SECTION ════════════════════ */}
-                    {/* ════════════════════════════════════════ */}
+
                     {activeTab === 'my-blogs' && !isGuest && (
                         <div className="blog-section blog-section-mine">
                             {/* Stats */}
@@ -688,6 +696,15 @@ export default function Dashboard() {
                                         <span className="blog-stat-value">{allBlogsData.length}</span>
                                         <span>{allBlogsData.length === 1 ? 'Blog' : 'Blogs'}</span>
                                     </div>
+                                    {
+                                        isGuest &&
+                                        <button className="blog-create-btn"
+                                            onClick={usersOnlyFeature}
+                                            id="create-blog-btn">
+                                            <span className="blog-create-btn-icon"><PlusOutlined /></span>
+                                            Create New Blog
+                                        </button>
+                                    }
                                     {allBlogsSearch && (
                                         <div className="blog-stat-chip">
                                             <span className="blog-stat-icon"><SearchOutlined /></span>
