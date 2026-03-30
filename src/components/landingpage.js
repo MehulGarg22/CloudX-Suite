@@ -13,6 +13,7 @@ import logo from '../assets/cloudxsuite_logo.png'
 import Notification from "./features/notification";
 import axios from 'axios';
 import { LinearGradient } from 'react-text-gradients'
+import { getSession } from "./loginAuth/auth";
 
 export default function LandingPage() {
   const [loading, setLoading] = useState(false);
@@ -135,45 +136,89 @@ export default function LandingPage() {
     e.preventDefault()
   }
 
-  const handleSignUpImages = () => {
+  // const handleSignUpImages = () => {
+  //   if (file !== null) {
+  //     axios.post(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_GET_PRESIGNED_URL, {
+  //       email: email,
+  //       filename: file.name,
+  //       contentType: "image/png"
+  //     }).then((res) => {
+  //       S3 = res.data.presignedUrl
+  //       axios.put(S3, file, {
+  //         headers: {
+  //           "Content-Type": file.type,
+  //         },
+  //       }).then((res) => {
+  //         console.log("Uploaded file", res.statusText)
+  //       }).catch((err) => {
+  //         console.log("error", err)
+  //       })
+  //       handleSignupSubmit(res.data.filePath)
+  //     }).catch((err) => {
+  //       console.log("error", err)
+  //     })
+  //   } else {
+  //     handleSignupSubmit(null)
+  //   }
+  // }
+
+
+  const handleSignUpImages = async () => {
+    console.log("file name", file)
     if (file !== null) {
-      axios.post(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_PROFILE_IMAGE_PRESIGNEDURL, {
-        email: email,
-        filename: file.name,
-        contentType: "image/png"
-      }).then((res) => {
-        S3 = res.data.presignedUrl
-        axios.put(S3, file, {
+      setLoading(true);
+      try {
+
+        const res = await axios.post(
+          process.env.REACT_APP_BASE_URL + process.env.REACT_APP_GET_PRESIGNED_URL,
+          {
+            email: email,
+            filename: file?.name,
+            contentType: "image/png"
+          }
+        );
+        console.log("Presigned url", res)
+        const responseBody = res.data.body || res.data;
+        S3 = responseBody.presignedUrl
+
+        await axios.put(S3, file, {
           headers: {
             "Content-Type": file.type,
           },
-        }).then((res) => {
-          console.log("Uploaded file", res.statusText)
-        }).catch((err) => {
-          console.log("error", err)
-        })
+        });
+        console.log("Uploaded file successfully")
+
         handleSignupSubmit(res.data.filePath)
-      }).catch((err) => {
+      } catch (err) {
         console.log("error", err)
-      })
+        setLoading(false);
+      }
     } else {
       handleSignupSubmit(null)
     }
   }
 
 
-  const SavedProfilePathToDynamodb = (email, filePath) => {
+  const SavedProfilePathToDynamodb = async (email, filePath) => {
     let payload = {
       email: email,
       filePath: filePath,
-      filename: file?.name
+      filename: file.name
     }
 
-    axios.post(process.env.REACT_APP_BASE_URL + process.env.REACT_APP_SAVE_PROFILE_IMAGE, payload).then((res) => {
+    try {
+      const session = await getSession();
+      const token = session.getIdToken().getJwtToken();
+      const res = await axios.post(
+        process.env.REACT_APP_BASE_URL + process.env.REACT_APP_SAVE_PROFILE_IMAGE,
+        payload,
+        { headers: { Authorization: token } }
+      );
       console.log("Successfully saved profile image to Dynamodb", res)
-    }).catch((error) => {
+    } catch (error) {
       console.log("error is", error)
-    })
+      setLoading(false);
+    }
   }
 
   const handleSignupSubmit = async (filePath) => {
