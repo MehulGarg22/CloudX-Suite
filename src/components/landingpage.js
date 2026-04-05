@@ -487,32 +487,14 @@ export default function LandingPage() {
         open={isModalOpen}
         onCancel={handleCancel}
         className="signup-modal"
-        width={650}
+        width={720}
         centered
-        footer={[
-          <ConfigProvider
-            key="submit"
-            theme={{
-              token: {
-                colorPrimary: '#4F46E5',
-                borderRadius: 8,
-              },
-            }}
-          >
-            <Button
-              type="primary"
-              size="large"
-              loading={loading}
-              onClick={handleSignUpImages}
-              className="modal-submit-btn"
-            >
-              Create Your Account
-            </Button>
-          </ConfigProvider>
-        ]}
+        footer={null}
       >
         <div className="modal-body">
+          {/* Gradient Header */}
           <div className="modal-header">
+            <div className="modal-header-badge">✨ Free Account</div>
             <h2>Join CloudX Suite</h2>
             <p>Create your account and unlock powerful cloud features</p>
           </div>
@@ -523,106 +505,170 @@ export default function LandingPage() {
             className="modal-form"
             layout="vertical"
           >
-            <Form.Item
-              name="name"
-              label="Full Name"
-              rules={[{ required: true, message: 'Please enter your full name' }]}
-            >
-              <div className="modal-input-group">
-                <Input
-                  size="large"
-                  placeholder="Enter your complete name"
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <Tooltip title="Enter your full name as it should appear on your profile">
-                  <IoMdInformationCircleOutline className="modal-tooltip" />
-                </Tooltip>
+            {/* Step 1: Identity */}
+            <div className="modal-step-section">
+              <div className="modal-step-indicator">
+                <span className="step-number">1</span>
+                <span className="step-label">Your Identity</span>
               </div>
-            </Form.Item>
+              <div className="modal-step-fields">
+                <Form.Item
+                  name="name"
+                  label="Full Name"
+                  rules={[{ required: true, message: 'Please enter your full name' }]}
+                >
+                  <div className="modal-input-group">
+                    <FaUserPlus className="modal-field-icon" />
+                    <Input
+                      size="large"
+                      placeholder="Enter your complete name"
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <Tooltip title="Enter your full name as it should appear on your profile">
+                      <IoMdInformationCircleOutline className="modal-tooltip" />
+                    </Tooltip>
+                  </div>
+                </Form.Item>
 
-            <Form.Item
-              name="email"
-              label="Email Address"
-              rules={[
-                { type: 'email', message: 'Please enter a valid email address' },
-                { required: true, message: 'Email address is required' }
-              ]}
-            >
-              <div className="modal-input-group">
-                <Input
-                  size="large"
-                  placeholder="Enter your email address"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <Tooltip title="Use a valid email address for account verification">
-                  <IoMdInformationCircleOutline className="modal-tooltip" />
-                </Tooltip>
+                <Form.Item
+                  name="email"
+                  label="Email Address"
+                  rules={[
+                    { type: 'email', message: 'Please enter a valid email address' },
+                    { required: true, message: 'Email address is required' }
+                  ]}
+                >
+                  <div className="modal-input-group">
+                    <FaUserTie className="modal-field-icon" />
+                    <Input
+                      size="large"
+                      placeholder="Enter your email address"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Tooltip title="Use a valid email address for account verification">
+                      <IoMdInformationCircleOutline className="modal-tooltip" />
+                    </Tooltip>
+                  </div>
+                </Form.Item>
               </div>
-            </Form.Item>
+            </div>
 
-            <Form.Item
-              name="password"
-              label="Create Password"
-              rules={[
-                { required: true, message: 'Password is required' },
-                { validator: validatePassword }
-              ]}
-              hasFeedback
-            >
-              <div className="modal-input-group">
-                <Input.Password
-                  size="large"
-                  placeholder="Create a strong password"
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <Tooltip title={tooltipContent}>
-                  <IoMdInformationCircleOutline className="modal-tooltip" />
-                </Tooltip>
+            {/* Step 2: Security */}
+            <div className="modal-step-section">
+              <div className="modal-step-indicator">
+                <span className="step-number">2</span>
+                <span className="step-label">Secure Your Account</span>
               </div>
-            </Form.Item>
+              <div className="modal-step-fields modal-password-row">
+                <Form.Item
+                  name="password"
+                  label="Create Password"
+                  rules={[
+                    { required: true, message: 'Password is required' },
+                    { validator: validatePassword }
+                  ]}
+                  hasFeedback
+                >
+                  <div className="modal-input-group">
+                    <TbPasswordUser className="modal-field-icon" />
+                    <Input.Password
+                      size="large"
+                      placeholder="Create a strong password"
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    <Tooltip title={tooltipContent}>
+                      <IoMdInformationCircleOutline className="modal-tooltip" />
+                    </Tooltip>
+                  </div>
+                </Form.Item>
 
-            <Form.Item
-              name="confirmPassword"
-              label="Confirm Password"
-              dependencies={['password']}
-              rules={[
-                { required: true, message: 'Please confirm your password' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject('Passwords do not match');
+                <Form.Item
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  dependencies={['password']}
+                  rules={[
+                    { required: true, message: 'Please confirm your password' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject('Passwords do not match');
+                      },
+                    })
+                  ]}
+                  hasFeedback
+                >
+                  <div className="modal-input-group">
+                    <TbPasswordUser className="modal-field-icon" />
+                    <Input.Password
+                      size="large"
+                      placeholder="Confirm your password"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <Tooltip title="Re-enter your password to confirm">
+                      <IoMdInformationCircleOutline className="modal-tooltip" />
+                    </Tooltip>
+                  </div>
+                </Form.Item>
+              </div>
+            </div>
+
+            {/* Step 3: Profile */}
+            <div className="modal-step-section">
+              <div className="modal-step-indicator">
+                <span className="step-number">3</span>
+                <span className="step-label">Personalize</span>
+              </div>
+              <div className="modal-step-fields">
+                <Form.Item name="profileImage" label="Profile Picture (Optional)">
+                  <div className="file-upload-area">
+                    <div className="file-upload-zone">
+                      <div className="file-upload-icon">📷</div>
+                      <div className="file-upload-text">
+                        <span className="file-upload-title">Upload your photo</span>
+                        <span className="file-upload-hint">JPG, PNG up to 5MB</span>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={onfileChange}
+                        className="file-upload-input"
+                      />
+                    </div>
+                    <Tooltip title="Upload a profile picture in JPG or PNG format">
+                      <IoMdInformationCircleOutline className="modal-tooltip" />
+                    </Tooltip>
+                  </div>
+                </Form.Item>
+              </div>
+            </div>
+
+            {/* Submit Section */}
+            <div className="modal-submit-section">
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: '#4F46E5',
+                    borderRadius: 8,
                   },
-                })
-              ]}
-              hasFeedback
-            >
-              <div className="modal-input-group">
-                <Input.Password
+                }}
+              >
+                <Button
+                  type="primary"
                   size="large"
-                  placeholder="Confirm your password"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                <Tooltip title="Re-enter your password to confirm">
-                  <IoMdInformationCircleOutline className="modal-tooltip" />
-                </Tooltip>
-              </div>
-            </Form.Item>
-
-            <Form.Item name="profileImage" label="Profile Picture (Optional)">
-              <div className="file-upload-area">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={onfileChange}
-                  className="file-upload-input"
-                />
-                <Tooltip title="Upload a profile picture in JPG or PNG format">
-                  <IoMdInformationCircleOutline className="modal-tooltip" />
-                </Tooltip>
-              </div>
-            </Form.Item>
+                  loading={loading}
+                  onClick={handleSignUpImages}
+                  className="modal-submit-btn"
+                  block
+                >
+                  🚀 Create Your Account
+                </Button>
+              </ConfigProvider>
+              <p className="modal-terms-text">
+                By creating an account, you agree to CloudX Suite's terms of service
+              </p>
+            </div>
           </Form>
         </div>
       </Modal>

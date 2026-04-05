@@ -12,6 +12,17 @@ import CreditCard from "../priviledges/users/creditcards";
 import Dashboard from "../blog/dashboard/dashboard";
 import GeneralCardComparisonTable from '../features/generalCardComparisonTable'
 import Cards from "../Cards/Cards";
+import Footer from "../footer/footer";
+
+// Layout wrapper that adds Footer to every page
+function PageLayout({ children }) {
+    return (
+        <div className="page-layout-with-footer">
+            <div className="page-layout-content">{children}</div>
+            <Footer />
+        </div>
+    );
+}
 
 
 function ComparisonTablePage() {
@@ -19,10 +30,10 @@ function ComparisonTablePage() {
     const NavComponent = role === 'Administrator' ? AdminDashboard :
         role === 'Guest User' ? GuestUser : null;
     return (
-        <>
+        <PageLayout>
             {NavComponent && <NavComponent />}
             <GeneralCardComparisonTable />
-        </>
+        </PageLayout>
     );
 }
 
@@ -32,10 +43,10 @@ function CardsPage() {
         role === 'Guest User' ? GuestUser :
         role === 'User' ? User : null;
     return (
-        <>
+        <PageLayout>
             {NavComponent && <NavComponent />}
             <Cards />
-        </>
+        </PageLayout>
     );
 }
 
@@ -47,13 +58,13 @@ export default function MyRoutes() {
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/admin/creditcard" element={
                         <RouteGuard>
-                            <CreditCardReward />
+                            <PageLayout><CreditCardReward /></PageLayout>
                         </RouteGuard>
                     }
                     />
                     <Route path="/admin/creditcardlist" element={
                         <RouteGuard>
-                            <CreditCardList />
+                            <PageLayout><CreditCardList /></PageLayout>
                         </RouteGuard>
                     }
                     />
@@ -64,7 +75,7 @@ export default function MyRoutes() {
                     } />
                     <Route path="/guest" element={
                         <RouteGuard>
-                            <GuestUser />
+                            <PageLayout><GuestUser /></PageLayout>
                         </RouteGuard>
                     }
                     />
@@ -78,19 +89,19 @@ export default function MyRoutes() {
 
                     <Route path="/user" element={
                         <RouteGuard>
-                            <User />
+                            <PageLayout><User /></PageLayout>
                         </RouteGuard>
                     }
                     />
                     <Route path="/user/creditcards" element={
                         <RouteGuard>
-                            <CreditCard />
+                            <PageLayout><CreditCard /></PageLayout>
                         </RouteGuard>
                     }
                     />
                     <Route path="/blogs" element={
                         <RouteGuard>
-                            <Dashboard />
+                            <PageLayout><Dashboard /></PageLayout>
                         </RouteGuard>
                     } />
                 </Routes>
