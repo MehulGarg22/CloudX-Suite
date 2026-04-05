@@ -97,18 +97,28 @@ function CardTile({ card }) {
     const joiningFee = formatFee(card.joiningfee);
     const annualFee = formatFee(card.annualfee);
 
+    // Safely extract string from DynamoDB {S: "value"} or plain string
+    const safeStr = (val) => {
+        if (!val) return "";
+        if (typeof val === "string") return val;
+        if (typeof val === "object" && val.S !== undefined) return val.S;
+        if (typeof val === "object") return JSON.stringify(val);
+        return String(val);
+    };
+
     // Parse features list from DynamoDB format
     const parseFeatures = () => {
         try {
             if (!card.list || card.list === "[]") return [];
             const parsed = typeof card.list === "string" ? JSON.parse(card.list) : card.list;
+            if (!Array.isArray(parsed)) return [];
             return parsed.map(item => {
                 const m = item.M || item;
                 return {
-                    name: m.featureName?.S || m.featureName || "",
-                    value: m.featureValue?.S || m.featureValue || "",
-                    capping: m.rewardCapping?.S || m.rewardCapping || "",
-                    remarks: m.remarks?.S || m.remarks || "",
+                    name: safeStr(m.featureName),
+                    value: safeStr(m.featureValue),
+                    capping: safeStr(m.rewardCapping),
+                    remarks: safeStr(m.remarks),
                 };
             });
         } catch {
