@@ -1,26 +1,53 @@
 import React, { useEffect, useState } from 'react';
-import { CloseOutlined } from '@ant-design/icons';
-import { Button, Tooltip, Card, Form, Input, Space, ConfigProvider, Typography, Divider } from 'antd';
+import { CloseOutlined, EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CreditCardOutlined, SaveOutlined, StarFilled } from '@ant-design/icons';
+import { Button, Tooltip, Card, Form, Input, Space, ConfigProvider, Typography, Divider, Drawer, Table, Select, Tag, Popconfirm, Badge, InputNumber } from 'antd';
 import './creditCardReward.css';
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import axios from 'axios';
 import Notification from '../../features/notification';
-import { Skeleton } from 'antd';
 import ModernSkeleton from "../../ModernSkeleton";
 import AdminNavbar from './adminNavbar';
 import { getSession } from "../../loginAuth/auth";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
+const CATEGORY_OPTIONS = [
+    { label: '💎 PREMIUM', value: 'PREMIUM' },
+    { label: '✈️ TRAVEL', value: 'TRAVEL' },
+    { label: '🛋️ LOUNGE ACCESS', value: 'LOUNGE ACCESS' },
+    { label: '🛍️ SHOPPING', value: 'SHOPPING' },
+    { label: '🍕 FOOD DELIVERY', value: 'FOOD DELIVERY' },
+    { label: '🍽️ DINING', value: 'DINING' },
+    { label: '💰 CASHBACK', value: 'CASHBACK' },
+    { label: '🌟 LIFESTYLE', value: 'LIFESTYLE' },
+    { label: '📱 TELECOM', value: 'TELECOM' },
+];
+
+const CATEGORY_COLORS = {
+    'PREMIUM': 'gold',
+    'TRAVEL': 'blue',
+    'LOUNGE ACCESS': 'purple',
+    'SHOPPING': 'orange',
+    'FOOD DELIVERY': 'green',
+    'DINING': 'lime',
+    'CASHBACK': 'cyan',
+    'LIFESTYLE': 'magenta',
+    'TELECOM': 'geekblue',
+};
 
 export default function CreditCardReward() {
-    const [initialValue, setInitialValue] = useState({ items: [{}] });
-    const [cards, setCards] = useState([{}]);
+    const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(false);
     const [initialLoad, setInitialLoad] = useState(false);
+    const [saving, setSaving] = useState(false);
     const [type, setType] = useState("");
     const [message, setMessage] = useState("");
     const [description, setDescription] = useState("");
-    const [form] = Form.useForm();
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [editingIndex, setEditingIndex] = useState(null); // null = add, number = edit index
+    const [searchText, setSearchText] = useState("");
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const [drawerForm] = Form.useForm();
 
     const cardetailsFromDatabase = async () => {
         setInitialLoad(true);
@@ -31,43 +58,13 @@ export default function CreditCardReward() {
                 process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_GET,
                 { headers: { Authorization: token } }
             );
-            console.log("resp.data:", resp.data);
             const fetchedItems = resp.data.items || [];
             setCards(fetchedItems);
-
-            console.log("cards:", fetchedItems);
-            console.log("cards[0]?.cardIssuer:", fetchedItems?.cardIssuer);
-
-            if (fetchedItems.length > 0) {
-                form.setFieldsValue({
-                    items: fetchedItems.map(item => ({
-                        id: item.id,
-                        cardIssuer: item.cardIssuer,
-                        name: item.name,
-                        annualfee: item.annualfee,
-                        joiningfee: item.joiningfee,
-                        annualFeeWaiver: item.annualFeeWaiver,
-                        domesticLoungeAccess: item.domesticLoungeAccess,
-                        internationalLoungeAccess: item.internationalLoungeAccess,
-                        fuelDiscount: item.fuelDiscount,
-                        flipkart: item.flipkart,
-                        swiggy: item.swiggy,
-                        zomato: item.zomato,
-                        bigbasket: item.bigbasket,
-                        amazon: item.amazon,
-                        uber: item.uber,
-                        ola: item.ola,
-                        rapido: item.rapido,
-                        myntra: item.myntra,
-                        comments: item.comments,
-                        list: item.list || []
-                    }))
-                });
-                console.log("form.getFieldsValue():", form.getFieldsValue());
-                setInitialLoad(false);
-            }
+            setHasUnsavedChanges(false);
         } catch (err) {
             console.log("Error is: ", err);
+        } finally {
+            setInitialLoad(false);
         }
     };
 
@@ -75,20 +72,20 @@ export default function CreditCardReward() {
         cardetailsFromDatabase();
     }, []);
 
-    const deleteCard = async (index) => {
-        console.log("inside delete function: ", index);
+    const deleteCard = async (cardId, index) => {
         try {
             const session = await getSession();
             const token = session.getIdToken().getJwtToken();
-            const res = await axios.delete(
+            await axios.delete(
                 process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_DELETE,
                 {
-                    data: { id: index },
+                    data: { id: cardId },
                     headers: { Authorization: token }
                 }
             );
-            console.log(res);
-            cardetailsFromDatabase();
+            const newCards = [...cards];
+            newCards.splice(index, 1);
+            setCards(newCards);
             setMessage('Success!');
             setDescription('The card detail successfully deleted');
             setType('success');
@@ -100,49 +97,251 @@ export default function CreditCardReward() {
         }
     };
 
-    const rewardFields = [
-        { label: "Annual Fee Waiver", key: "annualFeeWaiver", placeholder: "Annual Fee Waiver" },
-        { label: "Domestic Lounge", key: "domesticLoungeAccess", placeholder: "Domestic Lounge Access" },
-        { label: "International Lounge", key: "internationalLoungeAccess", placeholder: "International Lounge Access" },
-        { label: "Fuel Discount", key: "fuelDiscount", placeholder: "Fuel Discount" },
-        { label: "Amazon", key: "amazon", placeholder: "Amazon Rewards" },
-        { label: "Big Basket", key: "bigbasket", placeholder: "Bigbasket Rewards" },
-        { label: "Flipkart", key: "flipkart", placeholder: "Flipkart Rewards" },
-        { label: "Myntra", key: "myntra", placeholder: "Myntra Rewards" },
-        { label: "Ola", key: "ola", placeholder: "Ola Rewards" },
-        { label: "Rapido", key: "rapido", placeholder: "Rapido Rewards" },
-        { label: "Swiggy", key: "swiggy", placeholder: "Swiggy Rewards" },
-        { label: "Uber", key: "uber", placeholder: "Uber Rewards" },
-        { label: "Zomato", key: "zomato", placeholder: "Zomato Rewards" },
-    ];
-
-    const handleSubmit = async () => {
+    const handleSaveAll = async () => {
         setType('');
-        console.log(form.getFieldsValue());
-        setLoading(true);
+        setSaving(true);
         try {
             const session = await getSession();
             const token = session.getIdToken().getJwtToken();
-            const res = await axios.post(
+            // Transform cards to match the expected API format
+            const payload = cards.map(card => ({
+                ...card,
+                list: card.list || []
+            }));
+            await axios.post(
                 process.env.REACT_APP_BASE_URL + process.env.REACT_APP_CREDIT_CARD_DETAILS_POST,
-                form.getFieldsValue().items,
+                payload,
                 { headers: { Authorization: token } }
             );
-            console.log("card details post response", res);
-            setLoading(false);
+            setSaving(false);
+            setHasUnsavedChanges(false);
             cardetailsFromDatabase();
             setMessage('Success!');
             setDescription('The information you provided has been successfully saved.');
             setType('success');
         } catch (err) {
-            cardetailsFromDatabase();
             console.log(err);
-            setLoading(false);
+            setSaving(false);
+            cardetailsFromDatabase();
             setMessage('Oops! Something went wrong.');
             setDescription('We were unable to save your changes. Please try again later.');
             setType('error');
         }
     };
+
+    // Open drawer to add new card
+    const handleAddCard = () => {
+        setEditingIndex(null);
+        drawerForm.resetFields();
+        drawerForm.setFieldsValue({
+            cardIssuer: '',
+            name: '',
+            annualfee: '',
+            joiningfee: '',
+            categories: [],
+            introOffer: '',
+            rewardRate: '',
+            rating: '',
+            cardImageUrl: '',
+            annualFeeWaiver: '',
+            domesticLoungeAccess: '',
+            internationalLoungeAccess: '',
+            fuelDiscount: '',
+            amazon: '',
+            bigbasket: '',
+            flipkart: '',
+            myntra: '',
+            ola: '',
+            rapido: '',
+            swiggy: '',
+            uber: '',
+            zomato: '',
+            comments: '',
+            list: []
+        });
+        setDrawerOpen(true);
+    };
+
+    // Open drawer to edit existing card
+    const handleEditCard = (index) => {
+        const card = cards[index];
+        setEditingIndex(index);
+        const categoriesArr = card.categories
+            ? card.categories.split('|').map(c => c.trim()).filter(Boolean)
+            : [];
+        drawerForm.setFieldsValue({
+            ...card,
+            categories: categoriesArr,
+            list: card.list || []
+        });
+        setDrawerOpen(true);
+    };
+
+    // Save from drawer (update local state)
+    const handleDrawerSave = () => {
+        drawerForm.validateFields().then(values => {
+            const categoriesStr = Array.isArray(values.categories)
+                ? values.categories.join('|')
+                : (values.categories || '');
+
+            const cardData = {
+                ...values,
+                categories: categoriesStr,
+                list: values.list || []
+            };
+
+            const newCards = [...cards];
+            if (editingIndex !== null) {
+                // Edit existing — preserve the ID
+                cardData.id = cards[editingIndex].id;
+                newCards[editingIndex] = cardData;
+            } else {
+                // Add new — no id (backend will assign)
+                newCards.push(cardData);
+            }
+            setCards(newCards);
+            setHasUnsavedChanges(true);
+            setDrawerOpen(false);
+            setMessage('Card updated locally');
+            setDescription('Click "Save All Changes" to persist to database.');
+            setType('info');
+        }).catch(err => {
+            console.log('Validation failed:', err);
+        });
+    };
+
+    // Parse categories for table display
+    const parseCategories = (str) => {
+        if (!str) return [];
+        return str.split('|').map(c => c.trim()).filter(Boolean);
+    };
+
+    // Filter cards by search
+    const filteredCards = cards.filter(card => {
+        if (!searchText) return true;
+        const q = searchText.toLowerCase();
+        return (
+            (card.name || '').toLowerCase().includes(q) ||
+            (card.cardIssuer || '').toLowerCase().includes(q) ||
+            (card.categories || '').toLowerCase().includes(q)
+        );
+    });
+
+    // Table columns
+    const tableColumns = [
+        {
+            title: '#',
+            width: 50,
+            render: (_, __, index) => (
+                <Text className="row-number">{index + 1}</Text>
+            ),
+        },
+        {
+            title: 'Card Name',
+            dataIndex: 'name',
+            key: 'name',
+            sorter: (a, b) => (a.name || '').localeCompare(b.name || ''),
+            render: (text, record) => (
+                <div className="card-name-cell-admin">
+                    <Text strong className="card-name-text">{text || '-'}</Text>
+                    <Text type="secondary" className="card-bank-text">{record.cardIssuer}</Text>
+                </div>
+            ),
+        },
+        {
+            title: 'Categories',
+            dataIndex: 'categories',
+            key: 'categories',
+            width: 260,
+            render: (text) => {
+                const cats = parseCategories(text);
+                return cats.length > 0 ? (
+                    <div className="categories-cell">
+                        {cats.map((cat, i) => (
+                            <Tag key={i} color={CATEGORY_COLORS[cat] || 'default'} className="category-mini-tag">
+                                {cat}
+                            </Tag>
+                        ))}
+                    </div>
+                ) : <Text type="secondary">—</Text>;
+            },
+        },
+        {
+            title: 'Annual Fee',
+            dataIndex: 'annualfee',
+            key: 'annualfee',
+            width: 110,
+            sorter: (a, b) => Number(a.annualfee || 0) - Number(b.annualfee || 0),
+            render: (fee) => (
+                (!fee || fee === '0' || fee === 0)
+                    ? <Tag color="green">FREE</Tag>
+                    : <Text>₹{fee}</Text>
+            ),
+        },
+        {
+            title: 'Joining Fee',
+            dataIndex: 'joiningfee',
+            key: 'joiningfee',
+            width: 110,
+            sorter: (a, b) => Number(a.joiningfee || 0) - Number(b.joiningfee || 0),
+            render: (fee) => (
+                (!fee || fee === '0' || fee === 0)
+                    ? <Tag color="green">FREE</Tag>
+                    : <Text>₹{fee}</Text>
+            ),
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            key: 'rating',
+            width: 90,
+            sorter: (a, b) => Number(a.rating || 0) - Number(b.rating || 0),
+            render: (rating) => rating ? (
+                <span className="rating-cell">
+                    {rating} <StarFilled style={{ color: '#faad14', fontSize: 12 }} />
+                </span>
+            ) : <Text type="secondary">—</Text>,
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            width: 120,
+            fixed: 'right',
+            render: (_, record, index) => {
+                // Find actual index in full cards array
+                const actualIndex = cards.findIndex(c => c === record);
+                return (
+                    <Space>
+                        <Tooltip title="Edit Card">
+                            <Button
+                                type="text"
+                                icon={<EditOutlined />}
+                                className="edit-action-btn"
+                                onClick={() => handleEditCard(actualIndex)}
+                            />
+                        </Tooltip>
+                        <Popconfirm
+                            title="Delete this card?"
+                            description="This action cannot be undone."
+                            onConfirm={() => deleteCard(record.id, actualIndex)}
+                            okText="Delete"
+                            cancelText="Cancel"
+                            okButtonProps={{ danger: true }}
+                        >
+                            <Tooltip title="Delete Card">
+                                <Button
+                                    type="text"
+                                    danger
+                                    icon={<DeleteOutlined />}
+                                    className="delete-action-btn"
+                                />
+                            </Tooltip>
+                        </Popconfirm>
+                    </Space>
+                );
+            },
+        },
+    ];
 
     // Modern ConfigProvider theme
     const modernTheme = {
@@ -164,355 +363,365 @@ export default function CreditCardReward() {
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
             boxShadowSecondary: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
             fontSize: 14,
-            fontSizeHeading1: 32,
-            fontSizeHeading2: 24,
-            fontSizeHeading3: 20,
             lineHeight: 1.5,
         },
         components: {
-            Button: {
-                borderRadius: 8,
-                controlHeight: 40,
-                fontWeight: 500,
-                primaryShadow: '0 2px 4px rgba(22, 119, 255, 0.2)',
-            },
-            Card: {
-                borderRadiusLG: 12,
-                paddingLG: 24,
-                boxShadowTertiary: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
-            },
-            Input: {
-                borderRadius: 8,
-                controlHeight: 40,
-                colorBgContainer: '#f9fafb',
-                activeBorderColor: '#1677ff',
-                hoverBorderColor: '#4096ff',
-            },
-            Form: {
-                labelFontSize: 14,
-                labelColor: '#374151',
-                labelFontWeight: 500,
-            },
-            Typography: {
-                titleMarginBottom: '0.5em',
-                titleMarginTop: '1.2em',
-            }
+            Button: { borderRadius: 8, controlHeight: 40, fontWeight: 500 },
+            Card: { borderRadiusLG: 12, paddingLG: 24 },
+            Input: { borderRadius: 8, controlHeight: 40, colorBgContainer: '#f9fafb' },
+            Form: { labelFontSize: 14, labelColor: '#374151', labelFontWeight: 500 },
+            Table: { borderRadius: 12, headerBg: '#f8fafc', rowHoverBg: '#f0f7ff' },
+            Drawer: { borderRadius: 0 },
         },
     };
+
+    // Reward fields for the drawer form
+    const platformRewardFields = [
+        { label: "Amazon", key: "amazon", icon: "🛒" },
+        { label: "Flipkart", key: "flipkart", icon: "🛍️" },
+        { label: "Swiggy", key: "swiggy", icon: "🍔" },
+        { label: "Zomato", key: "zomato", icon: "🍕" },
+        { label: "Myntra", key: "myntra", icon: "👗" },
+        { label: "BigBasket", key: "bigbasket", icon: "🥬" },
+        { label: "Ola", key: "ola", icon: "🚗" },
+        { label: "Uber", key: "uber", icon: "🚕" },
+        { label: "Rapido", key: "rapido", icon: "🏍️" },
+    ];
+
+    const additionalRewardFields = [
+        { label: "Annual Fee Waiver", key: "annualFeeWaiver", placeholder: "e.g., On ₹2L annual spend" },
+        { label: "Domestic Lounge", key: "domesticLoungeAccess", placeholder: "e.g., 4 per quarter" },
+        { label: "International Lounge", key: "internationalLoungeAccess", placeholder: "e.g., 2 per quarter" },
+        { label: "Fuel Discount", key: "fuelDiscount", placeholder: "e.g., 1% fuel surcharge waiver" },
+    ];
 
     return (
         <ConfigProvider theme={modernTheme}>
             <div className="admin-layout">
                 <AdminNavbar />
                 <div className="main-content">
-                    <div className="content-header">
-                        <Title level={2} className="page-title">
-                            Credit Card Management
-                        </Title>
+                    {/* Header */}
+                    <div className="content-header ccm-header">
+                        <div className="ccm-header-top">
+                            <div className="ccm-header-left">
+                                <Title level={2} className="page-title">
+                                    Credit Card Management
+                                </Title>
+                                <Text type="secondary" className="ccm-subtitle">
+                                    Manage all credit card details, rewards, and categories
+                                </Text>
+                            </div>
+                            <div className="ccm-header-right">
+                                <Badge count={cards.length} showZero color="#1677ff" overflowCount={999}>
+                                    <Tag className="ccm-count-tag"><CreditCardOutlined /> Total Cards</Tag>
+                                </Badge>
+                            </div>
+                        </div>
+
+                        <div className="ccm-toolbar">
+                            <Input
+                                placeholder="Search by card name, bank, or category..."
+                                prefix={<SearchOutlined style={{ color: '#9ca3af' }} />}
+                                value={searchText}
+                                onChange={e => setSearchText(e.target.value)}
+                                className="ccm-search-input"
+                                allowClear
+                                size="large"
+                            />
+                            <Space>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    size="large"
+                                    onClick={handleAddCard}
+                                    className="ccm-add-btn"
+                                >
+                                    Add Card
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    icon={<SaveOutlined />}
+                                    size="large"
+                                    onClick={handleSaveAll}
+                                    loading={saving}
+                                    className="ccm-save-btn"
+                                    disabled={!hasUnsavedChanges}
+                                >
+                                    Save All Changes
+                                </Button>
+                            </Space>
+                        </div>
                     </div>
 
+                    {/* Notification */}
+                    <Notification type={type} message={message} description={description} />
+
+                    {/* Unsaved changes banner */}
+                    {hasUnsavedChanges && (
+                        <div className="ccm-unsaved-banner">
+                            <Text>⚠️ You have unsaved changes. Click <strong>"Save All Changes"</strong> to persist to database.</Text>
+                        </div>
+                    )}
+
+                    {/* Main Table */}
                     {initialLoad ? (
-                        <ModernSkeleton mode="section" />
+                        <div className="ccm-loading">
+                            <ModernSkeleton mode="section" />
+                        </div>
                     ) : (
-                        <div className="form-container">
-                            <Form
-                                form={form}
-                                name="credit-card-form"
-                                layout="vertical"
-                                autoComplete="off"
-                                className="modern-form"
-                            >
-                                <Notification type={type} message={message} description={description} />
-
-                                <Form.List name="items">
-                                    {(fields, { add, remove }) => (
-                                        <div className="form-content">
-                                            <div className="cards-grid">
-                                                {fields.map((field, index) => (
-                                                    <Card
-                                                        key={field.key}
-                                                        className="credit-card-form"
-                                                        title={
-                                                            <span className="card-title">
-                                                                Credit Card {field.name + 1}
-                                                            </span>
-                                                        }
-                                                        extra={
-                                                            <Button
-                                                                type="text"
-                                                                danger
-                                                                icon={<CloseOutlined />}
-                                                                onClick={() => {
-                                                                    remove(index);
-                                                                    deleteCard(cards[field?.key]?.id);
-                                                                    console.log("close: ", cards[field?.key]);
-                                                                }}
-                                                                className="delete-button"
-                                                            />
-                                                        }
-                                                    >
-                                                        {/* Basic Information Section */}
-                                                        <div className="form-section">
-                                                            <Title level={5} className="section-title">Basic Information</Title>
-
-                                                            <Form.Item
-                                                                label="Card Issuer Bank"
-                                                                name={[field.name, 'cardIssuer']}
-                                                                initialValue={cards[index]?.cardIssuer}
-                                                            >
-                                                                <div className="input-with-tooltip">
-                                                                    <Input
-                                                                        defaultValue={cards[index]?.cardIssuer}
-                                                                        placeholder="Card Issuer Name"
-                                                                        size="large"
-                                                                    />
-                                                                    <Tooltip placement="top" title="Enter credit card issuing bank">
-                                                                        <span className="info-icon">
-                                                                            <IoMdInformationCircleOutline />
-                                                                        </span>
-                                                                    </Tooltip>
-                                                                </div>
-                                                            </Form.Item>
-
-                                                            <Form.Item
-                                                                label="Card Name"
-                                                                name={[field.name, 'name']}
-                                                                initialValue={cards[index]?.name}
-                                                            >
-                                                                <div className="input-with-tooltip">
-                                                                    <Input
-                                                                        defaultValue={cards[index]?.name}
-                                                                        placeholder="Credit Card Name"
-                                                                        size="large"
-                                                                    />
-                                                                    <Tooltip placement="top" title="Enter credit card name">
-                                                                        <span className="info-icon">
-                                                                            <IoMdInformationCircleOutline />
-                                                                        </span>
-                                                                    </Tooltip>
-                                                                </div>
-                                                            </Form.Item>
-
-                                                            <div className="fee-inputs">
-                                                                <Form.Item
-                                                                    label="Annual Fee"
-                                                                    name={[field.name, 'annualfee']}
-                                                                    initialValue={cards[index]?.annualfee}
-                                                                >
-                                                                    <div className="input-with-tooltip">
-                                                                        <Input
-                                                                            defaultValue={cards[index]?.annualfee}
-                                                                            placeholder="Annual Fee"
-                                                                            size="large"
-                                                                        />
-                                                                        <Tooltip placement="top" title="Enter Annual Fee in INR which is charged every year">
-                                                                            <span className="info-icon">
-                                                                                <IoMdInformationCircleOutline />
-                                                                            </span>
-                                                                        </Tooltip>
-                                                                    </div>
-                                                                </Form.Item>
-
-                                                                <Form.Item
-                                                                    label="Joining Fee"
-                                                                    name={[field.name, 'joiningfee']}
-                                                                    initialValue={cards[index]?.joiningfee}
-                                                                >
-                                                                    <div className="input-with-tooltip">
-                                                                        <Input
-                                                                            defaultValue={cards[index]?.joiningfee}
-                                                                            placeholder="Joining Fee"
-                                                                            size="large"
-                                                                        />
-                                                                        <Tooltip placement="top" title="Enter Joining Fee in INR which is charged at the time of joining the card">
-                                                                            <span className="info-icon">
-                                                                                <IoMdInformationCircleOutline />
-                                                                            </span>
-                                                                        </Tooltip>
-                                                                    </div>
-                                                                </Form.Item>
-                                                            </div>
-                                                        </div>
-
-                                                        <Divider />
-
-                                                        {/* Rewards Section */}
-                                                        <div className="form-section">
-                                                            <Title level={5} className="section-title">Rewards & Benefits</Title>
-
-                                                            <div className="rewards-grid">
-                                                                {rewardFields.map(({ label, key, placeholder }) => (
-                                                                    <Form.Item
-                                                                        key={key}
-                                                                        label={label}
-                                                                        name={[field.name, key]}
-                                                                        initialValue={cards[index]?.[key]}
-                                                                    >
-                                                                        <div className="input-with-tooltip">
-                                                                            <Input
-                                                                                defaultValue={cards[index]?.[key]}
-                                                                                placeholder={placeholder}
-                                                                                size="large"
-                                                                            />
-                                                                            <Tooltip placement="top" title={`Enter ${label} data`}>
-                                                                                <span className="info-icon">
-                                                                                    <IoMdInformationCircleOutline />
-                                                                                </span>
-                                                                            </Tooltip>
-                                                                        </div>
-                                                                    </Form.Item>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-
-                                                        <Divider />
-
-                                                        {/* Additional Information */}
-                                                        <div className="form-section">
-                                                            <Form.Item
-                                                                label="Additional Comments"
-                                                                name={[field.name, 'comments']}
-                                                                initialValue={cards[index]?.comments}
-                                                            >
-                                                                <div className="input-with-tooltip">
-                                                                    <Input.TextArea
-                                                                        defaultValue={cards[index]?.comments}
-                                                                        placeholder="Additional information"
-                                                                        rows={3}
-                                                                        size="large"
-                                                                    />
-                                                                    <Tooltip placement="top" title="Enter Additional Information">
-                                                                        <span className="info-icon">
-                                                                            <IoMdInformationCircleOutline />
-                                                                        </span>
-                                                                    </Tooltip>
-                                                                </div>
-                                                            </Form.Item>
-
-                                                            <Form.Item label="Custom Rewards">
-                                                                <Form.List name={[field.name, 'list']}>
-                                                                    {(subFields, subOpt) => (
-                                                                        <div className="custom-rewards-section">
-                                                                            {subFields.map((subField, subIndex) => (
-                                                                                <div key={subField.key} className="reward-item">
-                                                                                    <div className="reward-inputs">
-                                                                                        <Form.Item noStyle name={[subField.name, 'featureName']}>
-                                                                                            <div className="input-with-tooltip">
-                                                                                                <Input
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.featureName}
-                                                                                                    placeholder="Feature"
-                                                                                                    size="large"
-                                                                                                />
-                                                                                                <Tooltip placement="top" title="Enter feature name">
-                                                                                                    <span className="info-icon">
-                                                                                                        <IoMdInformationCircleOutline />
-                                                                                                    </span>
-                                                                                                </Tooltip>
-                                                                                            </div>
-                                                                                        </Form.Item>
-
-                                                                                        <Form.Item noStyle name={[subField.name, 'featureValue']}>
-                                                                                            <div className="input-with-tooltip">
-                                                                                                <Input
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.featureValue}
-                                                                                                    placeholder="Feature value"
-                                                                                                    size="large"
-                                                                                                />
-                                                                                                <Tooltip placement="top" title="Enter feature value">
-                                                                                                    <span className="info-icon">
-                                                                                                        <IoMdInformationCircleOutline />
-                                                                                                    </span>
-                                                                                                </Tooltip>
-                                                                                            </div>
-                                                                                        </Form.Item>
-
-                                                                                        <Form.Item noStyle name={[subField.name, 'rewardCapping']}>
-                                                                                            <div className="input-with-tooltip">
-                                                                                                <Input
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.rewardCapping}
-                                                                                                    placeholder="Reward Capping"
-                                                                                                    size="large"
-                                                                                                />
-                                                                                                <Tooltip placement="top" title="Enter Reward Capping">
-                                                                                                    <span className="info-icon">
-                                                                                                        <IoMdInformationCircleOutline />
-                                                                                                    </span>
-                                                                                                </Tooltip>
-                                                                                            </div>
-                                                                                        </Form.Item>
-
-                                                                                        <Form.Item noStyle name={[subField.name, 'remarks']}>
-                                                                                            <div className="input-with-tooltip">
-                                                                                                <Input
-                                                                                                    defaultValue={cards[index]?.list?.[subIndex]?.remarks}
-                                                                                                    placeholder="Additional comments"
-                                                                                                    size="large"
-                                                                                                />
-                                                                                                <Tooltip placement="top" title="Enter Additional Comments">
-                                                                                                    <span className="info-icon">
-                                                                                                        <IoMdInformationCircleOutline />
-                                                                                                    </span>
-                                                                                                </Tooltip>
-                                                                                            </div>
-                                                                                        </Form.Item>
-                                                                                    </div>
-
-                                                                                    <Button
-                                                                                        type="text"
-                                                                                        danger
-                                                                                        icon={<CloseOutlined />}
-                                                                                        onClick={() => subOpt.remove(subField.name)}
-                                                                                        className="remove-reward-button"
-                                                                                    />
-                                                                                </div>
-                                                                            ))}
-
-                                                                            <Button
-                                                                                type="dashed"
-                                                                                onClick={() => subOpt.add()}
-                                                                                className="add-reward-button"
-                                                                                size="large"
-                                                                            >
-                                                                                + Add Custom Reward
-                                                                            </Button>
-                                                                        </div>
-                                                                    )}
-                                                                </Form.List>
-                                                            </Form.Item>
-                                                        </div>
-                                                    </Card>
-                                                ))}
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div className="form-actions">
-                                                <Space size="middle" className="action-buttons">
-                                                    <Button
-                                                        type="dashed"
-                                                        onClick={() => add()}
-                                                        size="large"
-                                                        className="add-card-button"
-                                                    >
-                                                        + Add New Card
-                                                    </Button>
-                                                    <Button
-                                                        type="primary"
-                                                        onClick={handleSubmit}
-                                                        loading={loading}
-                                                        size="large"
-                                                        className="submit-button"
-                                                    >
-                                                        Save All Changes
-                                                    </Button>
-                                                </Space>
-                                            </div>
+                        <div className="ccm-table-container">
+                            <Table
+                                dataSource={filteredCards}
+                                columns={tableColumns}
+                                rowKey={(record, index) => record.id || `new-${index}`}
+                                className="ccm-table"
+                                pagination={{
+                                    defaultPageSize: 15,
+                                    showSizeChanger: true,
+                                    pageSizeOptions: ['10', '15', '25', '50'],
+                                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} cards`,
+                                }}
+                                scroll={{ x: 900 }}
+                                size="middle"
+                                locale={{
+                                    emptyText: (
+                                        <div className="ccm-empty">
+                                            <CreditCardOutlined style={{ fontSize: 48, color: '#d1d5db' }} />
+                                            <Title level={4} type="secondary">No cards yet</Title>
+                                            <Text type="secondary">Click "Add Card" to create your first card.</Text>
                                         </div>
-                                    )}
-                                </Form.List>
-                            </Form>
+                                    )
+                                }}
+                            />
                         </div>
                     )}
                 </div>
+
+                {/* ===== ADD / EDIT DRAWER ===== */}
+                <Drawer
+                    title={
+                        <div className="drawer-title">
+                            <CreditCardOutlined className="drawer-title-icon" />
+                            <span>{editingIndex !== null ? 'Edit Credit Card' : 'Add New Credit Card'}</span>
+                        </div>
+                    }
+                    placement="right"
+                    width={560}
+                    onClose={() => setDrawerOpen(false)}
+                    open={drawerOpen}
+                    className="ccm-drawer"
+                    footer={
+                        <div className="drawer-footer">
+                            <Button
+                                size="large"
+                                onClick={() => setDrawerOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="primary"
+                                size="large"
+                                icon={<SaveOutlined />}
+                                onClick={handleDrawerSave}
+                                className="drawer-save-btn"
+                            >
+                                {editingIndex !== null ? 'Update Card' : 'Add Card'}
+                            </Button>
+                        </div>
+                    }
+                >
+                    <Form
+                        form={drawerForm}
+                        layout="vertical"
+                        autoComplete="off"
+                        className="drawer-form"
+                    >
+                        {/* SECTION 1: Basic Info */}
+                        <div className="drawer-section">
+                            <div className="drawer-section-header">
+                                <span className="drawer-section-number">1</span>
+                                <Text strong className="drawer-section-title">Basic Information</Text>
+                            </div>
+
+                            <Form.Item
+                                label="Card Issuer Bank"
+                                name="cardIssuer"
+                                rules={[{ required: true, message: 'Please enter the bank name' }]}
+                            >
+                                <Input placeholder="e.g., HDFC Bank, Axis Bank, ICICI Bank" size="large" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Card Name"
+                                name="name"
+                                rules={[{ required: true, message: 'Please enter the card name' }]}
+                            >
+                                <Input placeholder="e.g., Regalia Gold, ACE, Millenia" size="large" />
+                            </Form.Item>
+
+                            <div className="drawer-row-2">
+                                <Form.Item label="Annual Fee (₹)" name="annualfee">
+                                    <Input placeholder="e.g., 500 or 0" size="large" />
+                                </Form.Item>
+                                <Form.Item label="Joining Fee (₹)" name="joiningfee">
+                                    <Input placeholder="e.g., 500 or 0" size="large" />
+                                </Form.Item>
+                            </div>
+                        </div>
+
+                        <Divider />
+
+                        {/* SECTION 2: Card Explorer Details (NEW) */}
+                        <div className="drawer-section">
+                            <div className="drawer-section-header">
+                                <span className="drawer-section-number">2</span>
+                                <Text strong className="drawer-section-title">Card Explorer Details</Text>
+                                <Tag color="blue" className="new-badge">NEW</Tag>
+                            </div>
+
+                            <Form.Item label="Categories" name="categories">
+                                <Select
+                                    mode="multiple"
+                                    placeholder="Select card categories..."
+                                    options={CATEGORY_OPTIONS}
+                                    size="large"
+                                    className="categories-select"
+                                    tagRender={({ label, value, closable, onClose }) => (
+                                        <Tag
+                                            color={CATEGORY_COLORS[value] || 'default'}
+                                            closable={closable}
+                                            onClose={onClose}
+                                            style={{ marginRight: 4 }}
+                                        >
+                                            {value}
+                                        </Tag>
+                                    )}
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="Intro Offer" name="introOffer">
+                                <Input.TextArea
+                                    placeholder="e.g., 5000 reward points + complimentary lounge access"
+                                    rows={2}
+                                    size="large"
+                                />
+                            </Form.Item>
+
+                            <div className="drawer-row-2">
+                                <Form.Item label="Reward Rate" name="rewardRate">
+                                    <Input placeholder="e.g., 3% → 36%" size="large" />
+                                </Form.Item>
+                                <Form.Item label="Rating (out of 5)" name="rating">
+                                    <Input placeholder="e.g., 4.5" size="large" />
+                                </Form.Item>
+                            </div>
+
+                            <Form.Item label="Card Image URL (optional)" name="cardImageUrl">
+                                <Input placeholder="https://example.com/card-image.png" size="large" />
+                            </Form.Item>
+                        </div>
+
+                        <Divider />
+
+                        {/* SECTION 3: Platform Rewards */}
+                        <div className="drawer-section">
+                            <div className="drawer-section-header">
+                                <span className="drawer-section-number">3</span>
+                                <Text strong className="drawer-section-title">Platform Rewards (%)</Text>
+                            </div>
+
+                            <div className="drawer-rewards-grid">
+                                {platformRewardFields.map(({ label, key, icon }) => (
+                                    <Form.Item key={key} label={`${icon} ${label}`} name={key}>
+                                        <Input placeholder="e.g., 5% or '-" size="large" />
+                                    </Form.Item>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Divider />
+
+                        {/* SECTION 4: Additional Benefits */}
+                        <div className="drawer-section">
+                            <div className="drawer-section-header">
+                                <span className="drawer-section-number">4</span>
+                                <Text strong className="drawer-section-title">Additional Benefits</Text>
+                            </div>
+
+                            <div className="drawer-rewards-grid">
+                                {additionalRewardFields.map(({ label, key, placeholder }) => (
+                                    <Form.Item key={key} label={label} name={key}>
+                                        <Input placeholder={placeholder} size="large" />
+                                    </Form.Item>
+                                ))}
+                            </div>
+                        </div>
+
+                        <Divider />
+
+                        {/* SECTION 5: Comments & Custom Rewards */}
+                        <div className="drawer-section">
+                            <div className="drawer-section-header">
+                                <span className="drawer-section-number">5</span>
+                                <Text strong className="drawer-section-title">Additional Info</Text>
+                            </div>
+
+                            <Form.Item label="Comments" name="comments">
+                                <Input.TextArea
+                                    placeholder="Any additional information about this card..."
+                                    rows={3}
+                                    size="large"
+                                />
+                            </Form.Item>
+
+                            <Form.Item label="Custom Features">
+                                <Form.List name="list">
+                                    {(subFields, subOpt) => (
+                                        <div className="drawer-custom-rewards">
+                                            {subFields.map((subField) => (
+                                                <div key={subField.key} className="drawer-reward-item">
+                                                    <div className="drawer-reward-inputs">
+                                                        <Form.Item noStyle name={[subField.name, 'featureName']}>
+                                                            <Input placeholder="Feature name" size="large" />
+                                                        </Form.Item>
+                                                        <Form.Item noStyle name={[subField.name, 'featureValue']}>
+                                                            <Input placeholder="Value" size="large" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <div className="drawer-reward-inputs">
+                                                        <Form.Item noStyle name={[subField.name, 'rewardCapping']}>
+                                                            <Input placeholder="Reward capping" size="large" />
+                                                        </Form.Item>
+                                                        <Form.Item noStyle name={[subField.name, 'remarks']}>
+                                                            <Input placeholder="Remarks" size="large" />
+                                                        </Form.Item>
+                                                    </div>
+                                                    <Button
+                                                        type="text"
+                                                        danger
+                                                        icon={<CloseOutlined />}
+                                                        onClick={() => subOpt.remove(subField.name)}
+                                                        className="drawer-remove-feature-btn"
+                                                        size="small"
+                                                    />
+                                                </div>
+                                            ))}
+                                            <Button
+                                                type="dashed"
+                                                onClick={() => subOpt.add()}
+                                                icon={<PlusOutlined />}
+                                                className="drawer-add-feature-btn"
+                                                block
+                                            >
+                                                Add Custom Feature
+                                            </Button>
+                                        </div>
+                                    )}
+                                </Form.List>
+                            </Form.Item>
+                        </div>
+                    </Form>
+                </Drawer>
             </div>
         </ConfigProvider>
     );
