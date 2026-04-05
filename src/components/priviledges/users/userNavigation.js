@@ -72,175 +72,177 @@ export default function UserNavigation() {
 
     return (
         <>
-        <div className="min-h-full">
-            <Disclosure as="nav" className="modern-navbar">
+            <div className="min-h-full">
+                <Disclosure as="nav" className="modern-navbar">
+                    {
+                        changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
+                    }
+                    <div className="navbar-container">
+                        <div className="navbar-content">
+                            <div className="mobile-menu-button">
+                                {/* Mobile menu button*/}
+                                <DisclosureButton className="mobile-menu-toggle">
+                                    <span className="sr-only">Open main menu</span>
+                                    <Bars3Icon aria-hidden="true" className="menu-icon menu-icon-open" />
+                                    <XMarkIcon aria-hidden="true" className="menu-icon menu-icon-close" />
+                                </DisclosureButton>
+                            </div>
+
+                            <div className="navbar-brand-section">
+                                <div className="brand-container">
+                                    <div className="logo-container">
+                                        <img
+                                            alt="CloudX Suite Logo"
+                                            src={logo}
+                                            className="brand-logo"
+                                        />
+                                    </div>
+                                    <div className="brand-text">
+                                        <h1 className="brand-title">
+                                            <LinearGradient gradient={['to right', '#DA5B9B', '#6B96F4']}>
+                                                CloudX Suite
+                                            </LinearGradient>
+                                        </h1>
+                                        <span className="brand-subtitle">User Dashboard</span>
+                                    </div>
+                                </div>
+
+                                <div className="desktop-navigation">
+                                    <div className="nav-items">
+                                        <button
+                                            className={`nav-button rewards-button ${isUserHome && activeView === 'home' ? 'active' : ''}`}
+                                            onClick={() => handleNavClick('home')}
+                                        >
+                                            🏠 Home
+                                        </button>
+                                        <button
+                                            className={`nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                                            onClick={() => navigate('/Cards')}
+                                        >
+                                            🃏 Card Explorer
+                                        </button>
+                                        <button
+                                            className={`nav-button rewards-button ${location.pathname === '/comparisontable' || (isUserHome && activeView === 'comparison') ? 'active' : ''}`}
+                                            onClick={() => handleNavClick('comparison')}
+                                        >
+                                            💳 Card Comparison
+                                        </button>
+                                        <button
+                                            className={`nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                                            onClick={() => handleNavClick('blogs')}
+                                        >
+                                            📝 Blogs
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="navbar-actions">
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    type="button"
+                                    className="notification-button"
+                                >
+                                    <span className="sr-only">View notifications</span>
+                                    <BellIcon aria-hidden="true" className="notification-icon" />
+                                    <span className="notification-badge"></span>
+                                </button>
+
+                                <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Notification"} content={"Your Notication goes here!"} />
+
+                                {/* Profile dropdown */}
+                                <Menu as="div" className="profile-menu">
+                                    <div>
+                                        <MenuButton className="profile-button">
+                                            <span className="sr-only">Open user menu</span>
+                                            <div className="profile-avatar">
+                                                {
+                                                    !filePath ?
+                                                        <div className="default-avatar">
+                                                            <img src={dummyImage} className="user-avatar" alt="Profile" />
+
+                                                        </div>
+                                                        :
+                                                        <img src={filePath} className="user-avatar" alt="Profile" />
+                                                }
+                                            </div>
+                                        </MenuButton>
+                                    </div>
+                                    <MenuItems className="profile-dropdown">
+                                        <MenuItem>
+                                            <div className="profile-info">
+                                                <span className="user-name">
+                                                    {sessionStorage.getItem("name")}
+                                                </span>
+                                                <span className="user-email">
+                                                    {sessionStorage.getItem("email")}
+                                                </span>
+                                            </div>
+                                        </MenuItem>
+                                        <hr className="dropdown-divider" />
+                                        <MenuItem>
+                                            <button
+                                                className="dropdown-item"
+                                                onClick={handleProfile}
+                                            >
+                                                👤 Your Profile
+                                            </button>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <button
+                                                className="dropdown-item logout-item"
+                                                onClick={signOut}
+                                            >
+                                                🚪 Sign Out
+                                            </button>
+                                        </MenuItem>
+                                    </MenuItems>
+                                </Menu>
+                            </div>
+                        </div>
+                    </div>
+
+                    <DisclosurePanel className="mobile-panel">
+                        <div className="mobile-nav-content">
+                            <button
+                                className={`mobile-nav-button rewards-button ${isUserHome && activeView === 'home' ? 'active' : ''}`}
+                                onClick={() => handleNavClick('home')}
+                            >
+                                🏠 Home
+                            </button>
+                            <button
+                                className={`mobile-nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                                onClick={() => navigate('/Cards')}
+                            >
+                                🃏 Card Explorer
+                            </button>
+                            <button
+                                className={`mobile-nav-button rewards-button ${location.pathname === '/comparisontable' || (isUserHome && activeView === 'comparison') ? 'active' : ''}`}
+                                onClick={() => handleNavClick('comparison')}
+                            >
+                                💳 Card Comparison
+                            </button>
+                            <button
+                                className={`mobile-nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                                onClick={() => handleNavClick('blogs')}
+                            >
+                                📝 Blogs
+                            </button>
+
+                        </div>
+                    </DisclosurePanel>
+                </Disclosure>
                 {
-                    changeProfile && <Profile setChangeProfile={setChangeProfile} changeProfile={changeProfile} />
+                    !isSubPage && (
+                        activeView === 'comparison' ?
+                            <CreditCardComparisonTable />
+                            :
+                            <PlatformRewards />
+                    )
                 }
-                <div className="navbar-container">
-                    <div className="navbar-content">
-                        <div className="mobile-menu-button">
-                            {/* Mobile menu button*/}
-                            <DisclosureButton className="mobile-menu-toggle">
-                                <span className="sr-only">Open main menu</span>
-                                <Bars3Icon aria-hidden="true" className="menu-icon menu-icon-open" />
-                                <XMarkIcon aria-hidden="true" className="menu-icon menu-icon-close" />
-                            </DisclosureButton>
-                        </div>
 
-                        <div className="navbar-brand-section">
-                            <div className="brand-container">
-                                <div className="logo-container">
-                                    <img
-                                        alt="CloudX Suite Logo"
-                                        src={logo}
-                                        className="brand-logo"
-                                    />
-                                </div>
-                                <div className="brand-text">
-                                    <h1 className="brand-title">
-                                        <LinearGradient gradient={['to right', '#DA5B9B', '#6B96F4']}>
-                                            CloudX Suite
-                                        </LinearGradient>
-                                    </h1>
-                                    <span className="brand-subtitle">User Dashboard</span>
-                                </div>
-                            </div>
-
-                            <div className="desktop-navigation">
-                                <div className="nav-items">
-                                    <button 
-                                        className={`nav-button rewards-button ${isUserHome && activeView === 'home' ? 'active' : ''}`}
-                                        onClick={() => handleNavClick('home')}
-                                    >
-                                        🏠 Home
-                                    </button>
-                                    <button 
-                                        className={`nav-button rewards-button ${location.pathname === '/comparisontable' || (isUserHome && activeView === 'comparison') ? 'active' : ''}`}
-                                        onClick={() => handleNavClick('comparison')}
-                                    >
-                                        💳 Credit Card Comparison
-                                    </button>
-                                    <button 
-                                        className={`nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
-                                        onClick={() => handleNavClick('blogs')}
-                                    >
-                                        📝 Blogs
-                                    </button>
-                                    <button 
-                                        className={`nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
-                                        onClick={() => navigate('/Cards')}
-                                    >
-                                        🃏 Card Explorer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="navbar-actions">
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            type="button"
-                            className="notification-button"
-                        >
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon aria-hidden="true" className="notification-icon" />
-                            <span className="notification-badge"></span>
-                        </button>
-
-                        <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Notification"} content={"Your Notication goes here!"} />
-
-                            {/* Profile dropdown */}
-                            <Menu as="div" className="profile-menu">
-                                <div>
-                                    <MenuButton className="profile-button">
-                                        <span className="sr-only">Open user menu</span>
-                                        <div className="profile-avatar">
-                                            {
-                                                !filePath ?
-                                                    <div className="default-avatar">
-                                                        <img src={dummyImage} className="user-avatar" alt="Profile" />
-
-                                                    </div>
-                                                    :
-                                                    <img src={filePath} className="user-avatar" alt="Profile" />
-                                            }
-                                        </div>
-                                    </MenuButton>
-                                </div>
-                                <MenuItems className="profile-dropdown">
-                                    <MenuItem>
-                                        <div className="profile-info">
-                                            <span className="user-name">
-                                                {sessionStorage.getItem("name")}
-                                            </span>
-                                            <span className="user-email">
-                                                {sessionStorage.getItem("email")}
-                                            </span>
-                                        </div>
-                                    </MenuItem>
-                                    <hr className="dropdown-divider" />
-                                    <MenuItem>
-                                        <button
-                                            className="dropdown-item"
-                                            onClick={handleProfile}
-                                        >
-                                            👤 Your Profile
-                                        </button>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <button
-                                            className="dropdown-item logout-item"
-                                            onClick={signOut}
-                                        >
-                                            🚪 Sign Out
-                                        </button>
-                                    </MenuItem>
-                                </MenuItems>
-                            </Menu>
-                        </div>
-                    </div>
-                </div>
-
-                <DisclosurePanel className="mobile-panel">
-                    <div className="mobile-nav-content">
-                        <button 
-                            className={`mobile-nav-button rewards-button ${isUserHome && activeView === 'home' ? 'active' : ''}`}
-                            onClick={() => handleNavClick('home')}
-                        >
-                            🏠 Home
-                        </button>
-                        <button 
-                            className={`mobile-nav-button rewards-button ${location.pathname === '/comparisontable' || (isUserHome && activeView === 'comparison') ? 'active' : ''}`}
-                            onClick={() => handleNavClick('comparison')}
-                        >
-                            💳 Credit Card Comparison
-                        </button>
-                        <button 
-                            className={`mobile-nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
-                            onClick={() => handleNavClick('blogs')}
-                        >
-                            📝 Blogs
-                        </button>
-                        <button 
-                            className={`mobile-nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
-                            onClick={() => navigate('/Cards')}
-                        >
-                            🃏 Card Explorer
-                        </button>
-                    </div>
-                </DisclosurePanel>
-            </Disclosure>
-            {
-                !isSubPage && (
-                    activeView === 'comparison' ? 
-                    <CreditCardComparisonTable />
-                    :
-                    <PlatformRewards/>
-                )
-            }
-
-        </div>
+            </div>
         </>
     );
 }

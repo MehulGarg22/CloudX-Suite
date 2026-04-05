@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../loginAuth/authContext";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
@@ -15,23 +15,23 @@ import dummyImage from '../../../assets/avatar.png';
 import Footer from "../../footer/footer";
 import CreditCardComparisonTable from "../../features/generalCardComparisonTable";
 import CustomModal from "../../features/customModal";
-import {getSession} from "../../loginAuth/auth";
+import { getSession } from "../../loginAuth/auth";
 
 
-export default function User(){
+export default function User() {
     const { signOut } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     // Determine if we're on a sub-page (navbar-only mode)
     const isGuestHome = location.pathname === '/guest';
     const isSubPage = !isGuestHome;
     const [activeView, setActiveView] = useState(location.state?.activeView || 'home'); // 'home' | 'comparison'
-    const [filePath, setFilePath]= useState("")
+    const [filePath, setFilePath] = useState("")
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [changeProfile, setChangeProfile]= useState(false)
+    const [changeProfile, setChangeProfile] = useState(false)
 
-    useEffect(()=>{
+    useEffect(() => {
         const fetchProfileImage = async () => {
             try {
                 const session = await getSession();
@@ -55,9 +55,9 @@ export default function User(){
             }
         };
         fetchProfileImage();
-    },[])
+    }, [])
 
-    const handleProfile=()=>{
+    const handleProfile = () => {
         console.log("set")
         setChangeProfile(true)
     }
@@ -74,7 +74,7 @@ export default function User(){
         }
     };
 
-    return(
+    return (
         <div className="min-h-full">
             <Disclosure as="nav" className="modern-navbar">
                 {
@@ -90,7 +90,7 @@ export default function User(){
                                 <XMarkIcon aria-hidden="true" className="menu-icon menu-icon-close" />
                             </DisclosureButton>
                         </div>
-                        
+
                         <div className="navbar-brand-section">
                             <div className="brand-container">
                                 <div className="logo-container">
@@ -109,49 +109,50 @@ export default function User(){
                                     <span className="brand-subtitle">Guest Dashboard</span>
                                 </div>
                             </div>
-                            
+
                             <div className="desktop-navigation">
                                 <div className="nav-items">
-                                    <button 
+                                    <button
                                         className={`nav-button rewards-button ${isGuestHome && activeView === 'home' ? 'active' : ''}`}
                                         onClick={() => handleNavClick('home')}
                                     >
                                         🏠 Home
                                     </button>
-                                    <button 
-                                        className={`nav-button rewards-button ${location.pathname === '/comparisontable' || (isGuestHome && activeView === 'comparison') ? 'active' : ''}`}
-                                        onClick={() => handleNavClick('comparison')}
-                                    >
-                                        💳 Credit Card Comparison
-                                    </button>
-                                    <button 
-                                        className={`nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
-                                        onClick={() => handleNavClick('blogs')}
-                                    >
-                                        📝 Blogs
-                                    </button>
-                                    <button 
+                                    <button
                                         className={`nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
                                         onClick={() => navigate('/Cards')}
                                     >
                                         🃏 Card Explorer
                                     </button>
+                                    <button
+                                        className={`nav-button rewards-button ${location.pathname === '/comparisontable' || (isGuestHome && activeView === 'comparison') ? 'active' : ''}`}
+                                        onClick={() => handleNavClick('comparison')}
+                                    >
+                                        💳 Card Comparison
+                                    </button>
+                                    <button
+                                        className={`nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                                        onClick={() => handleNavClick('blogs')}
+                                    >
+                                        📝 Blogs
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
-                        
-                        <div className="navbar-actions">
-                        <button
-                            onClick={()=>setIsModalOpen(true)} 
-                            type="button"
-                            className="notification-button"
-                        >
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon aria-hidden="true" className="notification-icon" />
-                            <span className="notification-badge"></span>
-                        </button>
 
-                        <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Guest Notification"} content={"Guest Notication goes here!"} />
+                        <div className="navbar-actions">
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                type="button"
+                                className="notification-button"
+                            >
+                                <span className="sr-only">View notifications</span>
+                                <BellIcon aria-hidden="true" className="notification-icon" />
+                                <span className="notification-badge"></span>
+                            </button>
+
+                            <CustomModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} heading={"Guest Notification"} content={"Guest Notication goes here!"} />
 
                             {/* Profile dropdown */}
                             <Menu as="div" className="profile-menu">
@@ -160,13 +161,13 @@ export default function User(){
                                         <span className="sr-only">Open user menu</span>
                                         <div className="profile-avatar">
                                             {
-                                                !filePath ? 
+                                                !filePath ?
                                                     <div className="default-avatar">
-                                                        <img src={dummyImage} className="user-avatar" alt="Profile"/>
+                                                        <img src={dummyImage} className="user-avatar" alt="Profile" />
 
                                                     </div>
                                                     :
-                                                    <img src={filePath} className="user-avatar" alt="Profile"/>
+                                                    <img src={filePath} className="user-avatar" alt="Profile" />
                                             }
                                         </div>
                                     </MenuButton>
@@ -204,45 +205,46 @@ export default function User(){
                         </div>
                     </div>
                 </div>
-                
+
                 <DisclosurePanel className="mobile-panel">
                     <div className="mobile-nav-content">
-                        <button 
+                        <button
                             className={`mobile-nav-button rewards-button ${isGuestHome && activeView === 'home' ? 'active' : ''}`}
                             onClick={() => handleNavClick('home')}
                         >
                             🏠 Home
                         </button>
-                        <button 
-                            className={`mobile-nav-button rewards-button ${location.pathname === '/comparisontable' || (isGuestHome && activeView === 'comparison') ? 'active' : ''}`}
-                            onClick={() => handleNavClick('comparison')}
-                        >
-                            💳 Credit Card Comparison
-                        </button>
-                        <button 
-                            className={`mobile-nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
-                            onClick={() => handleNavClick('blogs')}
-                        >
-                            📝 Blogs
-                        </button>
-                        <button 
+                        <button
                             className={`mobile-nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
                             onClick={() => navigate('/Cards')}
                         >
                             🃏 Card Explorer
                         </button>
+                        <button
+                            className={`mobile-nav-button rewards-button ${location.pathname === '/comparisontable' || (isGuestHome && activeView === 'comparison') ? 'active' : ''}`}
+                            onClick={() => handleNavClick('comparison')}
+                        >
+                            💳 Card Comparison
+                        </button>
+                        <button
+                            className={`mobile-nav-button rewards-button ${location.pathname === '/blogs' ? 'active' : ''}`}
+                            onClick={() => handleNavClick('blogs')}
+                        >
+                            📝 Blogs
+                        </button>
+
                     </div>
                 </DisclosurePanel>
             </Disclosure>
             {
                 !isSubPage && (
-                    activeView === 'comparison' ? 
-                    <CreditCardComparisonTable />
-                    :
-                    <PlatformRewards/>
+                    activeView === 'comparison' ?
+                        <CreditCardComparisonTable />
+                        :
+                        <PlatformRewards />
                 )
             }
-      
+
         </div>
     );
 }

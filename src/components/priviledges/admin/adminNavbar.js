@@ -107,29 +107,31 @@ export default function AdminNavbar() {
                             <div className="admin-desktop-navigation">
                                 <div className="admin-nav-items">
                                     <button
-                                        className={`admin-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
-                                        onClick={CreditCardReward}
+                                        className={`admin-nav-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                                        onClick={() => navigate('/Cards')}
                                     >
-                                        💳 Credit Card Management
+                                        🃏 Card Explorer
                                     </button>
                                     <button
                                         className={`admin-nav-button ${location.pathname === '/admin/creditcardlist' ? 'active' : ''}`}
                                         onClick={() => navigate('/comparisontable')}
                                     >
-                                        📋 Credit Card Comparison
+                                        📋 Card Comparison
                                     </button>
+                                    <button
+                                        className={`admin-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
+                                        onClick={CreditCardReward}
+                                    >
+                                        💳 Credit Card Management
+                                    </button>
+
                                     <button
                                         className={`admin-nav-button ${location.pathname === '/blogs' ? 'active' : ''}`}
                                         onClick={() => navigate('/blogs')}
                                     >
                                         📝 Blogs
                                     </button>
-                                    <button
-                                        className={`admin-nav-button ${location.pathname === '/Cards' ? 'active' : ''}`}
-                                        onClick={() => navigate('/Cards')}
-                                    >
-                                        🃏 Card Explorer
-                                    </button>
+
                                 </div>
                             </div>
                         </div>
@@ -202,10 +204,16 @@ export default function AdminNavbar() {
                 <DisclosurePanel className="admin-mobile-panel">
                     <div className="admin-mobile-nav-content">
                         <button
+                            className={`admin-mobile-nav-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                            onClick={() => navigate('/Cards')}
+                        >
+                            🃏 Card Explorer
+                        </button>
+                        <button
                             className={`admin-mobile-nav-button ${location.pathname === '/admin/creditcard' ? 'active' : ''}`}
                             onClick={CreditCardReward}
                         >
-                            💳 Credit Card Rewards
+                            💳 Card Rewards
                         </button>
                         <button
                             className={`admin-mobile-nav-button ${location.pathname === '/admin/creditcardlist' ? 'active' : ''}`}
@@ -219,12 +227,7 @@ export default function AdminNavbar() {
                         >
                             📝 Blogs
                         </button>
-                        <button
-                            className={`admin-mobile-nav-button ${location.pathname === '/Cards' ? 'active' : ''}`}
-                            onClick={() => navigate('/Cards')}
-                        >
-                            🃏 Card Explorer
-                        </button>
+
                     </div>
                 </DisclosurePanel>
             </Disclosure>
