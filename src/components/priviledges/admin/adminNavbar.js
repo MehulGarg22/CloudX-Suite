@@ -124,6 +124,12 @@ export default function AdminNavbar() {
                                     >
                                         📝 Blogs
                                     </button>
+                                    <button
+                                        className={`admin-nav-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                                        onClick={() => navigate('/Cards')}
+                                    >
+                                        🃏 Card Explorer
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -212,6 +218,12 @@ export default function AdminNavbar() {
                             onClick={() => navigate('/blogs')}
                         >
                             📝 Blogs
+                        </button>
+                        <button
+                            className={`admin-mobile-nav-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                            onClick={() => navigate('/Cards')}
+                        >
+                            🃏 Card Explorer
                         </button>
                     </div>
                 </DisclosurePanel>

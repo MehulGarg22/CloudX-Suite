@@ -11,16 +11,30 @@ import CreditCardReward from "../priviledges/admin/creditCardReward";
 import CreditCard from "../priviledges/users/creditcards";
 import Dashboard from "../blog/dashboard/dashboard";
 import GeneralCardComparisonTable from '../features/generalCardComparisonTable'
+import Cards from "../Cards/Cards";
 
-// Wrapper: renders the role-based navbar above the comparison table
+
 function ComparisonTablePage() {
     const role = sessionStorage.getItem("role");
     const NavComponent = role === 'Administrator' ? AdminDashboard :
-                         role === 'Guest User' ? GuestUser : null;
+        role === 'Guest User' ? GuestUser : null;
     return (
         <>
             {NavComponent && <NavComponent />}
             <GeneralCardComparisonTable />
+        </>
+    );
+}
+
+function CardsPage() {
+    const role = sessionStorage.getItem("role");
+    const NavComponent = role === 'Administrator' ? AdminDashboard :
+        role === 'Guest User' ? GuestUser :
+        role === 'User' ? User : null;
+    return (
+        <>
+            {NavComponent && <NavComponent />}
+            <Cards />
         </>
     );
 }
@@ -43,6 +57,11 @@ export default function MyRoutes() {
                         </RouteGuard>
                     }
                     />
+                    <Route path="/Cards" element={
+                        <RouteGuard>
+                            <CardsPage />
+                        </RouteGuard>
+                    } />
                     <Route path="/guest" element={
                         <RouteGuard>
                             <GuestUser />

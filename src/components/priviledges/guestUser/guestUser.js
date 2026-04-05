@@ -130,6 +130,12 @@ export default function User(){
                                     >
                                         📝 Blogs
                                     </button>
+                                    <button 
+                                        className={`nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                                        onClick={() => navigate('/Cards')}
+                                    >
+                                        🃏 Card Explorer
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -218,6 +224,12 @@ export default function User(){
                             onClick={() => handleNavClick('blogs')}
                         >
                             📝 Blogs
+                        </button>
+                        <button 
+                            className={`mobile-nav-button rewards-button ${location.pathname === '/Cards' ? 'active' : ''}`}
+                            onClick={() => navigate('/Cards')}
+                        >
+                            🃏 Card Explorer
                         </button>
                     </div>
                 </DisclosurePanel>
